@@ -1,0 +1,28 @@
+{
+  "query": "SELECT * FROM productModels ORDER BY `order`;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM productModels ORDER BY `order`;",
+  "rows": [
+    {
+      "id": "30004",
+      "name": "C18ES-L",
+      "order": "1",
+      "createdAt": "2025-11-24 15:18:12"
+    },
+    {
+      "id": "30001",
+      "name": "Vephos True",
+      "order": "2",
+      "createdAt": "2025-11-24 15:17:40"
+    },
+    {
+      "id": "30002",
+      "name": "Ultra S7",
+      "order": "3",
+      "createdAt": "2025-11-24 15:17:46"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\torder\tcreatedAt\n30004\tC18ES-L\t1\t2025-11-24 15:18:12\n30001\tVephos True\t2\t2025-11-24 15:17:40\n30002\tUltra S7\t3\t2025-11-24 15:17:46\n",
+  "stderr": "",
+  "execution_time_ms": 1641
+}

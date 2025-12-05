@@ -1,0 +1,17 @@
+{
+  "query": "SELECT * FROM partners ORDER BY createdAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM partners ORDER BY createdAt DESC LIMIT 5;",
+  "rows": [],
+  "messages": [
+    "1\t測試科技公司\t李大明\ttest2@company.com\t0987654321\t合作類型: distributor",
+    "統一編號: 87654321",
+    "地址: 台中市西區台灣大道二段186號",
+    "公司規模: 30-50人",
+    "年營業額: 500萬-1000萬",
+    "主要業務: 專注於環保科技產品銷售,包括空氣清淨機、水質淨化設備等環保家電的批發與零售。",
+    "合作意向: 希望成為Apolnus在台中地區的經銷商,拓展空氣清淨機市場,並建立長期合作關係。\tpending\t2025-11-24 15:40:56"
+  ],
+  "stdout": "id\tcompanyName\tcontactName\temail\tphone\tmessage\tstatus\tcreatedAt\n1\t測試科技公司\t李大明\ttest2@company.com\t0987654321\t合作類型: distributor\n統一編號: 87654321\n地址: 台中市西區台灣大道二段186號\n公司規模: 30-50人\n年營業額: 500萬-1000萬\n主要業務: 專注於環保科技產品銷售,包括空氣清淨機、水質淨化設備等環保家電的批發與零售。\n合作意向: 希望成為Apolnus在台中地區的經銷商,拓展空氣清淨機市場,並建立長期合作關係。\tpending\t2025-11-24 15:40:56\n",
+  "stderr": "",
+  "execution_time_ms": 1583
+}

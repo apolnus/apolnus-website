@@ -1,0 +1,1 @@
+ALTER TABLE `ticketReplies` ADD `attachments` text;

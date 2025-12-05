@@ -1,0 +1,24 @@
+{
+  "query": "SELECT id, userId, issueTitle, status, createdAt FROM supportTickets;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, userId, issueTitle, status, createdAt FROM supportTickets;",
+  "rows": [
+    {
+      "id": "90001",
+      "userId": "930432",
+      "issueTitle": "ㄉˇ",
+      "status": "pending",
+      "createdAt": "2025-12-01 07:11:23"
+    },
+    {
+      "id": "90002",
+      "userId": "1440170",
+      "issueTitle": "有問題",
+      "status": "pending",
+      "createdAt": "2025-12-01 07:18:57"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tissueTitle\tstatus\tcreatedAt\n90001\t930432\tㄉˇ\tpending\t2025-12-01 07:11:23\n90002\t1440170\t有問題\tpending\t2025-12-01 07:18:57\n",
+  "stderr": "",
+  "execution_time_ms": 1575
+}

@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE seoSettings SET description = '致力於打造頂級智慧家電,結合極致工藝與永續科技。Apolnus 為追求卓越的您,重新定義生活品質的最高標準。' WHERE page = 'home' AND language = 'zh-TW';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute UPDATE seoSettings SET description = '致力於打造頂級智慧家電,結合極致工藝與永續科技。Apolnus 為追求卓越的您,重新定義生活品質的最高標準。' WHERE page = 'home' AND language = 'zh-TW';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1592
+}

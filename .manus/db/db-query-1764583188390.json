@@ -1,0 +1,110 @@
+{
+  "query": "SELECT * FROM ticketReplies ORDER BY createdAt DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM ticketReplies ORDER BY createdAt DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "30013",
+      "ticketId": "90001",
+      "userId": "930432",
+      "isAdmin": "1",
+      "message": "asdasd",
+      "createdAt": "2025-12-01 09:58:47",
+      "isReadByUser": "0",
+      "isReadByAdmin": "0"
+    },
+    {
+      "id": "30012",
+      "ticketId": "90004",
+      "userId": "930432",
+      "isAdmin": "1",
+      "message": "asdasd",
+      "createdAt": "2025-12-01 09:58:37",
+      "isReadByUser": "0",
+      "isReadByAdmin": "0"
+    },
+    {
+      "id": "30011",
+      "ticketId": "90004",
+      "userId": "1",
+      "isAdmin": "1",
+      "message": "12312313",
+      "createdAt": "2025-12-01 09:56:36",
+      "isReadByUser": "0",
+      "isReadByAdmin": "0"
+    },
+    {
+      "id": "30010",
+      "ticketId": "90004",
+      "userId": "930432",
+      "isAdmin": "1",
+      "message": "回覆啊啊啊",
+      "createdAt": "2025-12-01 09:46:53",
+      "isReadByUser": "0",
+      "isReadByAdmin": "0"
+    },
+    {
+      "id": "30009",
+      "ticketId": "90004",
+      "userId": "930432",
+      "isAdmin": "0",
+      "message": "ㄅˇ",
+      "createdAt": "2025-12-01 09:46:39",
+      "isReadByUser": "0",
+      "isReadByAdmin": "0"
+    },
+    {
+      "id": "30008",
+      "ticketId": "90004",
+      "userId": "930432",
+      "isAdmin": "1",
+      "message": "asdasdasd",
+      "createdAt": "2025-12-01 09:45:59",
+      "isReadByUser": "1",
+      "isReadByAdmin": "0"
+    },
+    {
+      "id": "30007",
+      "ticketId": "90001",
+      "userId": "930432",
+      "isAdmin": "1",
+      "message": "asdad",
+      "createdAt": "2025-12-01 09:45:13",
+      "isReadByUser": "0",
+      "isReadByAdmin": "0"
+    },
+    {
+      "id": "30006",
+      "ticketId": "90001",
+      "userId": "1",
+      "isAdmin": "1",
+      "message": "第二次測試 - 驗證新回覆提醒功能是否正常",
+      "createdAt": "2025-12-01 08:13:56",
+      "isReadByUser": "1",
+      "isReadByAdmin": "0"
+    },
+    {
+      "id": "30005",
+      "ticketId": "90001",
+      "userId": "1",
+      "isAdmin": "1",
+      "message": "測試新回覆提醒功能 - 這是管理員的回覆",
+      "createdAt": "2025-12-01 08:02:17",
+      "isReadByUser": "1",
+      "isReadByAdmin": "0"
+    },
+    {
+      "id": "30004",
+      "ticketId": "90001",
+      "userId": "930432",
+      "isAdmin": "1",
+      "message": "asdad",
+      "createdAt": "2025-12-01 07:58:00",
+      "isReadByUser": "1",
+      "isReadByAdmin": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tticketId\tuserId\tisAdmin\tmessage\tcreatedAt\tisReadByUser\tisReadByAdmin\n30013\t90001\t930432\t1\tasdasd\t2025-12-01 09:58:47\t0\t0\n30012\t90004\t930432\t1\tasdasd\t2025-12-01 09:58:37\t0\t0\n30011\t90004\t1\t1\t12312313\t2025-12-01 09:56:36\t0\t0\n30010\t90004\t930432\t1\t回覆啊啊啊\t2025-12-01 09:46:53\t0\t0\n30009\t90004\t930432\t0\tㄅˇ\t2025-12-01 09:46:39\t0\t0\n30008\t90004\t930432\t1\tasdasdasd\t2025-12-01 09:45:59\t1\t0\n30007\t90001\t930432\t1\tasdad\t2025-12-01 09:45:13\t0\t0\n30006\t90001\t1\t1\t第二次測試 - 驗證新回覆提醒功能是否正常\t2025-12-01 08:13:56\t1\t0\n30005\t90001\t1\t1\t測試新回覆提醒功能 - 這是管理員的回覆\t2025-12-01 08:02:17\t1\t0\n30004\t90001\t930432\t1\tasdad\t2025-12-01 07:58:00\t1\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1585
+}

@@ -1,0 +1,50 @@
+{
+  "query": "SELECT page, language, title FROM seoSettings WHERE page LIKE '%one-x%' AND language = 'zh-TW' ORDER BY page;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT page, language, title FROM seoSettings WHERE page LIKE '%one-x%' AND language = 'zh-TW' ORDER BY page;",
+  "rows": [
+    {
+      "page": "product-one-x",
+      "language": "zh-TW",
+      "title": "Apolnus One X | 永續循環科技的極致演繹 | Apolnus®"
+    },
+    {
+      "page": "product-one-x-downloads",
+      "language": "zh-TW",
+      "title": "One X 下載中心 | 使用手冊與韌體更新 | Apolnus®"
+    },
+    {
+      "page": "product-one-x-faq",
+      "language": "zh-TW",
+      "title": "One X 產品問答 | 專業使用與保養指南 | Apolnus®"
+    },
+    {
+      "page": "product-one-x-specs",
+      "language": "zh-TW",
+      "title": "One X 技術規格 | 頂級效能數據詳解 | Apolnus®"
+    },
+    {
+      "page": "products/one-x",
+      "language": "zh-TW",
+      "title": "one-x"
+    },
+    {
+      "page": "products/one-x/downloads",
+      "language": "zh-TW",
+      "title": "downloads"
+    },
+    {
+      "page": "products/one-x/faq",
+      "language": "zh-TW",
+      "title": "faq"
+    },
+    {
+      "page": "products/one-x/specs",
+      "language": "zh-TW",
+      "title": "specs"
+    }
+  ],
+  "messages": [],
+  "stdout": "page\tlanguage\ttitle\nproduct-one-x\tzh-TW\tApolnus One X | 永續循環科技的極致演繹 | Apolnus®\nproduct-one-x-downloads\tzh-TW\tOne X 下載中心 | 使用手冊與韌體更新 | Apolnus®\nproduct-one-x-faq\tzh-TW\tOne X 產品問答 | 專業使用與保養指南 | Apolnus®\nproduct-one-x-specs\tzh-TW\tOne X 技術規格 | 頂級效能數據詳解 | Apolnus®\nproducts/one-x\tzh-TW\tone-x\nproducts/one-x/downloads\tzh-TW\tdownloads\nproducts/one-x/faq\tzh-TW\tfaq\nproducts/one-x/specs\tzh-TW\tspecs\n",
+  "stderr": "",
+  "execution_time_ms": 1485
+}

@@ -1,0 +1,42 @@
+{
+  "query": "SELECT * FROM supportTickets LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM supportTickets LIMIT 5;",
+  "rows": [
+    {
+      "id": "90001",
+      "userId": "930432",
+      "contactName": "Aaron",
+      "contactPhone": "0918313565",
+      "contactAddress": "8F.-1, No. 420, Sec. 1, Keelung Rd.",
+      "productModel": "One X",
+      "serialNumber": "ㄉˇ",
+      "purchaseDate": "2025-12-05 00:00:00",
+      "purchaseChannel": "授權經銷商",
+      "issueTitle": "ㄉˇ",
+      "issueDescription": "ㄅˇ",
+      "status": "pending",
+      "createdAt": "2025-12-01 07:11:23",
+      "updatedAt": "2025-12-01 07:11:23"
+    },
+    {
+      "id": "90002",
+      "userId": "1440170",
+      "contactName": "陳又綺",
+      "contactPhone": "0919329286",
+      "contactAddress": "台北市大安區信義路四段396號13樓",
+      "productModel": "C18ES-L",
+      "serialNumber": "19293727",
+      "purchaseDate": "2025-12-01 00:00:00",
+      "purchaseChannel": "授權經銷商",
+      "issueTitle": "有問題",
+      "issueDescription": "有問題",
+      "status": "pending",
+      "createdAt": "2025-12-01 07:18:57",
+      "updatedAt": "2025-12-01 07:18:57"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tcontactName\tcontactPhone\tcontactAddress\tproductModel\tserialNumber\tpurchaseDate\tpurchaseChannel\tissueTitle\tissueDescription\tstatus\tcreatedAt\tupdatedAt\n90001\t930432\tAaron\t0918313565\t8F.-1, No. 420, Sec. 1, Keelung Rd.\tOne X\tㄉˇ\t2025-12-05 00:00:00\t授權經銷商\tㄉˇ\tㄅˇ\tpending\t2025-12-01 07:11:23\t2025-12-01 07:11:23\n90002\t1440170\t陳又綺\t0919329286\t台北市大安區信義路四段396號13樓\tC18ES-L\t19293727\t2025-12-01 00:00:00\t授權經銷商\t有問題\t有問題\tpending\t2025-12-01 07:18:57\t2025-12-01 07:18:57\n",
+  "stderr": "",
+  "execution_time_ms": 1621
+}

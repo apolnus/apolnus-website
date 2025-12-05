@@ -1,0 +1,13 @@
+{
+  "query": "SHOW TABLES LIKE '%seo%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SHOW TABLES LIKE '%seo%';",
+  "rows": [
+    {
+      "Tables_in_fSQyfmdSvtTzG7Fo7nT3qq (%seo%)": "seoSettings"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_fSQyfmdSvtTzG7Fo7nT3qq (%seo%)\nseoSettings\n",
+  "stderr": "",
+  "execution_time_ms": 1568
+}

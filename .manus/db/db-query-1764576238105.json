@@ -1,0 +1,73 @@
+{
+  "query": "SELECT * FROM ticketReplies ORDER BY createdAt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM ticketReplies ORDER BY createdAt DESC;",
+  "rows": [
+    {
+      "id": "30005",
+      "ticketId": "90001",
+      "userId": "1",
+      "isAdmin": "1",
+      "message": "測試新回覆提醒功能 - 這是管理員的回覆",
+      "createdAt": "2025-12-01 08:02:17",
+      "isReadByUser": "0"
+    },
+    {
+      "id": "30004",
+      "ticketId": "90001",
+      "userId": "930432",
+      "isAdmin": "1",
+      "message": "asdad",
+      "createdAt": "2025-12-01 07:58:00",
+      "isReadByUser": "1"
+    },
+    {
+      "id": "30003",
+      "ticketId": "90001",
+      "userId": "930432",
+      "isAdmin": "0",
+      "message": "dad",
+      "createdAt": "2025-12-01 07:57:46",
+      "isReadByUser": "1"
+    },
+    {
+      "id": "30002",
+      "ticketId": "90001",
+      "userId": "930432",
+      "isAdmin": "1",
+      "message": "123123123",
+      "createdAt": "2025-12-01 07:11:45",
+      "isReadByUser": "1"
+    },
+    {
+      "id": "30001",
+      "ticketId": "90001",
+      "userId": "930432",
+      "isAdmin": "0",
+      "message": "asdasd",
+      "createdAt": "2025-12-01 07:11:31",
+      "isReadByUser": "1"
+    },
+    {
+      "id": "2",
+      "ticketId": "1",
+      "userId": "1",
+      "isAdmin": "1",
+      "message": "您好,感謝您的反饋。我們已經收到您的問題,技術人員將盡快與您聯繫處理。請確保您的聯絡電話保持暢通。",
+      "createdAt": "2025-11-25 09:10:34",
+      "isReadByUser": "0"
+    },
+    {
+      "id": "1",
+      "ticketId": "1",
+      "userId": "1",
+      "isAdmin": "0",
+      "message": "ㄇ",
+      "createdAt": "2025-11-25 09:02:31",
+      "isReadByUser": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tticketId\tuserId\tisAdmin\tmessage\tcreatedAt\tisReadByUser\n30005\t90001\t1\t1\t測試新回覆提醒功能 - 這是管理員的回覆\t2025-12-01 08:02:17\t0\n30004\t90001\t930432\t1\tasdad\t2025-12-01 07:58:00\t1\n30003\t90001\t930432\t0\tdad\t2025-12-01 07:57:46\t1\n30002\t90001\t930432\t1\t123123123\t2025-12-01 07:11:45\t1\n30001\t90001\t930432\t0\tasdasd\t2025-12-01 07:11:31\t1\n2\t1\t1\t1\t您好,感謝您的反饋。我們已經收到您的問題,技術人員將盡快與您聯繫處理。請確保您的聯絡電話保持暢通。\t2025-11-25 09:10:34\t0\n1\t1\t1\t0\tㄇ\t2025-11-25 09:02:31\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1599
+}

@@ -1,0 +1,35 @@
+{
+  "query": "SELECT id, email, name FROM users LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, email, name FROM users LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "email": "test@example.com",
+      "name": "Ａ"
+    },
+    {
+      "id": "930429",
+      "email": "hello@apolnus.com",
+      "name": "Apolnus Co., Ltd."
+    },
+    {
+      "id": "930432",
+      "email": "",
+      "name": "Aaron"
+    },
+    {
+      "id": "930486",
+      "email": "xus25825@gmail.com",
+      "name": "許世偉"
+    },
+    {
+      "id": "1080115",
+      "email": "fire41457@gmail.com",
+      "name": "Kim"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tname\n1\ttest@example.com\tＡ\n930429\thello@apolnus.com\tApolnus Co., Ltd.\n930432\t\tAaron\n930486\txus25825@gmail.com\t許世偉\n1080115\tfire41457@gmail.com\tKim\n",
+  "stderr": "",
+  "execution_time_ms": 1615
+}

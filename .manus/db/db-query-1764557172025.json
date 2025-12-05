@@ -1,0 +1,40 @@
+{
+  "query": "SELECT id, openId, name, email FROM users ORDER BY id DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, openId, name, email FROM users ORDER BY id DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "1440075",
+      "openId": "google_107321635422404102671",
+      "name": "David Weng (David)",
+      "email": "kyousuke916@gmail.com"
+    },
+    {
+      "id": "1410186",
+      "openId": "google_109414973173427103237",
+      "name": "wei-hsueh chen",
+      "email": "bigbear.chen@gmail.com"
+    },
+    {
+      "id": "1410124",
+      "openId": "google_105368102306987920841",
+      "name": "方俐文",
+      "email": "violafang24@gmail.com"
+    },
+    {
+      "id": "1410001",
+      "openId": "google_101411615950787501407",
+      "name": "Full Young",
+      "email": "fullyounglife@gmail.com"
+    },
+    {
+      "id": "1320067",
+      "openId": "google_115865932288617608658",
+      "name": "Grey Day",
+      "email": "loveyou82121300625@gmail.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\n1440075\tgoogle_107321635422404102671\tDavid Weng (David)\tkyousuke916@gmail.com\n1410186\tgoogle_109414973173427103237\twei-hsueh chen\tbigbear.chen@gmail.com\n1410124\tgoogle_105368102306987920841\t方俐文\tviolafang24@gmail.com\n1410001\tgoogle_101411615950787501407\tFull Young\tfullyounglife@gmail.com\n1320067\tgoogle_115865932288617608658\tGrey Day\tloveyou82121300625@gmail.com\n",
+  "stderr": "",
+  "execution_time_ms": 1551
+}

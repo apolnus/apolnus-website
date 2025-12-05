@@ -1,0 +1,2 @@
+-- FAQ Backup (2025-11-25)
+-- 6 records from faqs table

@@ -1,0 +1,83 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1763977280726,
+      "tag": "0000_lowly_maverick",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1764006914207,
+      "tag": "0001_misty_fantastic_four",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1764073384664,
+      "tag": "0002_opposite_crusher_hogan",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1764077155215,
+      "tag": "0003_first_garia",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1764090401396,
+      "tag": "0004_yellow_shen",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1764092751060,
+      "tag": "0005_sour_thena",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1764130611030,
+      "tag": "0006_open_triathlon",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1764557095702,
+      "tag": "0007_mature_lightspeed",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1764573498500,
+      "tag": "0008_puzzling_molecule_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1764583127827,
+      "tag": "0009_redundant_ironclad",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1764586192173,
+      "tag": "0010_chubby_susan_delgado",
+      "breakpoints": true
+    }
+  ]
+}

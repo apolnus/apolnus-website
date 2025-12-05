@@ -1,0 +1,242 @@
+import { User, Shield, MessageSquare, Settings } from "lucide-react";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { useAuth } from "@/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
+import { useTranslation } from "react-i18next";
+import SEOHead from "@/components/seo/SEOHead";
+
+export default function Profile() {
+  const { t } = useTranslation();
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const { data: warranties, isLoading: loadingWarranties } = trpc.warranty.list.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  const { data: tickets, isLoading: loadingTickets } = trpc.tickets.myTickets.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">載入中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center py-16">
+          <div className="container max-w-md text-center">
+            <div className="bg-white rounded-2xl p-8 border shadow-sm">
+              <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h1 className="text-2xl font-bold mb-4">請先登入</h1>
+              <p className="text-gray-600 mb-6">
+                您需要登入才能查看個人中心
+              </p>
+              <Button
+                onClick={() => window.location.href = "/api/oauth/login"}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                立即登入
+              </Button>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Navbar />
+
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-blue-50 to-blue-100 py-16 border-b">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+                <User className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">個人中心</h1>
+                <p className="text-gray-700">歡迎回來，{user?.name || "用戶"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="py-12">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            {/* Quick Actions */}
+            <div className="grid md:grid-cols-3 gap-6 mb-12">
+              <Link href="/support/warranty">
+                <div className="block" onClick={scrollToTop}>
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
+                        <Shield className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <CardTitle className="text-lg">產品保固登錄</CardTitle>
+                      <CardDescription>註冊新產品保固</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </div>
+              </Link>
+
+              <Link href="/support-ticket">
+                <div className="block" onClick={scrollToTop}>
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3">
+                        <MessageSquare className="w-6 h-6 text-green-600" />
+                      </div>
+                      <CardTitle className="text-lg">提交工單</CardTitle>
+                      <CardDescription>獲取技術支援</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </div>
+              </Link>
+
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer opacity-60">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
+                    <Settings className="w-6 h-6 text-gray-600" />
+                  </div>
+                  <CardTitle className="text-lg">帳號設定</CardTitle>
+                  <CardDescription>即將推出</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+
+            {/* Warranty Registrations */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>我的保固登錄</CardTitle>
+                <CardDescription>查看您已註冊的產品保固</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loadingWarranties ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                    <p className="text-sm text-gray-600">載入中...</p>
+                  </div>
+                ) : warranties && warranties.length > 0 ? (
+                  <div className="space-y-4">
+                    {warranties.map((warranty: any) => (
+                      <div
+                        key={warranty.id}
+                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                      >
+                        <div>
+                          <h4 className="font-medium">{warranty.productModel}</h4>
+                          <p className="text-sm text-gray-600">序號：{warranty.serialNumber}</p>
+                          <p className="text-sm text-gray-500">
+                            購買日期：{new Date(warranty.purchaseDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span className="inline-block px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                            已登錄
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Shield className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-600 mb-4">您還沒有註冊任何產品保固</p>
+                    <Link href="/support/warranty">
+                      <Button variant="outline" className="border-gray-300">
+                        立即註冊
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Support Tickets */}
+            <Card>
+              <CardHeader>
+                <CardTitle>我的客服工單</CardTitle>
+                <CardDescription>追蹤您的技術支援請求</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loadingTickets ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                    <p className="text-sm text-gray-600">載入中...</p>
+                  </div>
+                ) : tickets && tickets.length > 0 ? (
+                  <div className="space-y-4">
+                    {tickets.map((ticket: any) => (
+                      <div
+                        key={ticket.id}
+                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                      >
+                        <div>
+                          <h4 className="font-medium">{ticket.subject}</h4>
+                          <p className="text-sm text-gray-600 line-clamp-1">{ticket.description}</p>
+                          <p className="text-sm text-gray-500">
+                            {new Date(ticket.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span
+                            className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${
+                              ticket.status === "open"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : ticket.status === "in_progress"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-green-100 text-green-800"
+                            }`}
+                          >
+                            {ticket.status === "open"
+                              ? "待處理"
+                              : ticket.status === "in_progress"
+                              ? "處理中"
+                              : "已完成"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-600 mb-4">您還沒有提交任何客服工單</p>
+                    <Link href="/support-ticket">
+                      <Button variant="outline" className="border-gray-300">
+                        提交工單
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

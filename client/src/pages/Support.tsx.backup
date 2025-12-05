@@ -1,0 +1,160 @@
+import { Shield, MessageSquare, Wrench, FileText, Phone, Mail } from "lucide-react";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { useTranslation } from "react-i18next";
+import SEOHead from "@/components/seo/SEOHead";
+
+export default function Support() {
+  const { t } = useTranslation();
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const services = [
+    {
+      icon: Shield,
+      title: "產品保固登錄",
+      description: "註冊您的產品，享受完整的全球保固服務",
+      link: "/warranty-registration",
+      color: "bg-blue-500",
+    },
+    {
+      icon: MessageSquare,
+      title: "客服工單系統",
+      description: "提交問題並追蹤處理進度",
+      link: "/support-ticket",
+      color: "bg-green-500",
+    },
+    {
+      icon: Wrench,
+      title: "授權維修中心",
+      description: "查找維修授權中心",
+      link: "/service-centers",
+      color: "bg-orange-500",
+    },
+    {
+      icon: FileText,
+      title: "常見問題",
+      description: "快速找到常見問題的解答",
+      link: "/faq",
+      color: "bg-purple-500",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Navbar />
+
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20">
+        <div className="container">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">服務與支援</h1>
+          <p className="text-lg text-blue-100 text-center max-w-2xl mx-auto">
+            我們致力於為您提供最優質的售後服務，無論您遇到任何問題，我們都會竭誠為您服務
+          </p>
+        </div>
+      </section>
+
+      {/* Services Grid */}
+      <section className="py-16">
+        <div className="container">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {services.map((service, index) => {
+              const Icon = service.icon;
+              return (
+                <Link key={index} href={service.link}>
+                  <div className="block bg-white rounded-xl p-6 border hover:shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer" onClick={scrollToTop}>
+                    <div className={`${service.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="font-bold text-lg mb-2">{service.title}</h3>
+                    <p className="text-sm text-gray-600">{service.description}</p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Contact Section */}
+          <div className="bg-white rounded-2xl p-8 md:p-12 border">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-4">需要協助？</h2>
+              <p className="text-gray-600">我們的客服團隊隨時準備為您提供幫助</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Phone Support */}
+              <div className="flex items-start gap-4">
+                <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg mb-2">電話支援</h3>
+                  <p className="text-gray-600 mb-2">週一至週五，09:00-18:00（台北時間）</p>
+                  <a href="tel:0800-700-788" className="text-blue-600 hover:underline font-medium">
+                    0800-700-788
+                  </a>
+                  <br />
+                  <a href="tel:02-2758-5879" className="text-blue-600 hover:underline font-medium">
+                    02-2758-5879
+                  </a>
+                </div>
+              </div>
+
+              {/* Email Support */}
+              <div className="flex items-start gap-4">
+                <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg mb-2">電子郵件支援</h3>
+                  <p className="text-gray-600 mb-2">我們會在 24 小時內回覆您的郵件</p>
+                  <a href="mailto:support@apolnus.com" className="text-blue-600 hover:underline font-medium">
+                    support@apolnus.com
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center mt-8">
+              <Link href="/about">
+                <Button variant="outline" className="border-gray-300" onClick={scrollToTop}>
+                  查看更多聯絡方式
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Resources Section */}
+          <div className="mt-16">
+            <h2 className="text-3xl font-bold mb-8 text-center">其他資源</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <Link href="/where-to-buy">
+                <div className="block bg-white rounded-xl p-6 border hover:shadow-lg transition-shadow cursor-pointer" onClick={scrollToTop}>
+                  <h3 className="font-bold text-lg mb-2">購買通路</h3>
+                  <p className="text-sm text-gray-600">查找官方商城和授權經銷商</p>
+                </div>
+              </Link>
+              <Link href="/about">
+                <div className="block bg-white rounded-xl p-6 border hover:shadow-lg transition-shadow cursor-pointer" onClick={scrollToTop}>
+                  <h3 className="font-bold text-lg mb-2">關於我們</h3>
+                  <p className="text-sm text-gray-600">了解 Apolnus 品牌故事</p>
+                </div>
+              </Link>
+              <a
+                href="#"
+                className="block bg-white rounded-xl p-6 border hover:shadow-lg transition-shadow"
+              >
+                <h3 className="font-bold text-lg mb-2">下載中心</h3>
+                <p className="text-sm text-gray-600">產品手冊、驅動程式和軟體</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

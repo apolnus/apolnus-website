@@ -1,0 +1,20 @@
+{
+  "query": "SELECT id, userId, userId IS NULL as is_null FROM supportTickets;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, userId, userId IS NULL as is_null FROM supportTickets;",
+  "rows": [
+    {
+      "id": "90001",
+      "userId": "1",
+      "is_null": "0"
+    },
+    {
+      "id": "90002",
+      "userId": "1",
+      "is_null": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tis_null\n90001\t1\t0\n90002\t1\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1628
+}

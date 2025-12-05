@@ -1,0 +1,34 @@
+{
+  "query": "SELECT id, userId, name, email, productModel, serialNumber FROM warrantyRegistrations;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, userId, name, email, productModel, serialNumber FROM warrantyRegistrations;",
+  "rows": [
+    {
+      "id": "60001",
+      "userId": "0",
+      "name": "Joanne_Chen",
+      "email": "fullyounglife@gmail.com",
+      "productModel": "Vephos True",
+      "serialNumber": "true02-02439"
+    },
+    {
+      "id": "60002",
+      "userId": "0",
+      "name": "方俐文",
+      "email": "violafang24@gmail.com",
+      "productModel": "Ultra S7",
+      "serialNumber": "U7-2507-0003127"
+    },
+    {
+      "id": "60003",
+      "userId": "0",
+      "name": "方俐文",
+      "email": "violafang24@gmail.com",
+      "productModel": "Ultra S7",
+      "serialNumber": "U7-2507-0002859"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tname\temail\tproductModel\tserialNumber\n60001\t0\tJoanne_Chen\tfullyounglife@gmail.com\tVephos True\ttrue02-02439\n60002\t0\t方俐文\tviolafang24@gmail.com\tUltra S7\tU7-2507-0003127\n60003\t0\t方俐文\tviolafang24@gmail.com\tUltra S7\tU7-2507-0002859\n",
+  "stderr": "",
+  "execution_time_ms": 1617
+}

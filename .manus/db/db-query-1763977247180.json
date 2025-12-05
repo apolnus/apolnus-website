@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO authorizedDealers (name, phone, address, businessHours, latitude, longitude) VALUES\n('How living 秀泰文心店', '04-2473-8980', '臺中市南屯區文心南路289號5樓', '週一至週日 11:00-22:00', '24.1397', '120.6397'),\n('台北旗艦店', '02-8772-1234', '台北市大安區忠孝東路四段181巷35弄10號', '週一至週日 10:00-21:00', '25.0418', '121.5464'),\n('新竹門市', '03-533-5566', '新竹市東區光復路二段101號', '週一至週日 10:00-21:00', '24.7993', '120.9959')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute INSERT INTO authorizedDealers (name, phone, address, businessHours, latitude, longitude) VALUES\n('How living 秀泰文心店', '04-2473-8980', '臺中市南屯區文心南路289號5樓', '週一至週日 11:00-22:00', '24.1397', '120.6397'),\n('台北旗艦店', '02-8772-1234', '台北市大安區忠孝東路四段181巷35弄10號', '週一至週日 10:00-21:00', '25.0418', '121.5464'),\n('新竹門市', '03-533-5566', '新竹市東區光復路二段101號', '週一至週日 10:00-21:00', '24.7993', '120.9959')",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1608
+}

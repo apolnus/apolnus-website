@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, name, email FROM users WHERE id = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, name, email FROM users WHERE id = 1;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "測試用戶",
+      "email": "test@example.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\n1\t測試用戶\ttest@example.com\n",
+  "stderr": "",
+  "execution_time_ms": 1640
+}

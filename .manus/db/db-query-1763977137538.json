@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `seoSettings` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `page` varchar(100) NOT NULL,\n  `language` varchar(10) NOT NULL,\n  `title` varchar(500) NOT NULL,\n  `description` text,\n  `keywords` text,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `seoSettings_id` PRIMARY KEY(`id`),\n  UNIQUE KEY `page_language_unique` (`page`, `language`)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute CREATE TABLE IF NOT EXISTS `seoSettings` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `page` varchar(100) NOT NULL,\n  `language` varchar(10) NOT NULL,\n  `title` varchar(500) NOT NULL,\n  `description` text,\n  `keywords` text,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `seoSettings_id` PRIMARY KEY(`id`),\n  UNIQUE KEY `page_language_unique` (`page`, `language`)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1709
+}

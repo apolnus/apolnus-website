@@ -1,0 +1,22 @@
+{
+  "query": "SELECT id, userId, issueTitle, IFNULL(userId, 'NULL') as userId_display FROM supportTickets;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, userId, issueTitle, IFNULL(userId, 'NULL') as userId_display FROM supportTickets;",
+  "rows": [
+    {
+      "id": "90001",
+      "userId": "930432",
+      "issueTitle": "ㄉˇ",
+      "userId_display": "930432"
+    },
+    {
+      "id": "90002",
+      "userId": "1440170",
+      "issueTitle": "有問題",
+      "userId_display": "1440170"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tissueTitle\tuserId_display\n90001\t930432\tㄉˇ\t930432\n90002\t1440170\t有問題\t1440170\n",
+  "stderr": "",
+  "execution_time_ms": 1566
+}

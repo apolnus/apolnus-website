@@ -1,0 +1,246 @@
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { useTranslation } from "react-i18next";
+import SEOHead from "@/components/seo/SEOHead";
+
+export default function Terms() {
+  const { t } = useTranslation();
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      
+      <main className="flex-1 bg-white">
+        {/* Hero Section */}
+        <div className="bg-gray-50 py-16">
+          <div className="container">
+            <h1 className="text-4xl font-bold text-center mb-4">使用條款</h1>
+            <p className="text-gray-600 text-center max-w-2xl mx-auto">
+              最後更新日期：2024年11月
+            </p>
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="container py-16">
+          <div className="max-w-4xl mx-auto prose prose-lg">
+            {/* 前言 */}
+            <div className="mb-12">
+              <p className="text-gray-700 leading-relaxed mb-4">
+                歡迎您使用由 Apolnus Ventures LLC（以下稱「本公司」、「我們」）所提供之官方網站、線上商店及相關服務（以下合稱「本網站」或「本服務」）。
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                在使用本網站前,請您先詳細閱讀本使用條款（以下稱「本條款」）。當您瀏覽、註冊帳號、下單購買、使用任何線上功能或以任何方式使用本網站時,即表示您已閱讀、瞭解並同意受本條款及本公司隱私權政策之拘束。
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                若您不同意本條款之任何內容,請立即停止使用本網站。
+              </p>
+            </div>
+
+            {/* 一、適用範圍 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">一、適用範圍</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                本條款適用於您使用本公司名下之:
+              </p>
+              <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-2">
+                <li>Apolnus 官方網站及其子頁面</li>
+                <li>本公司營運之線上商店、活動頁面、產品介紹頁面</li>
+                <li>線上客服、表單、電子報訂閱等相關服務</li>
+              </ul>
+              <p className="text-gray-700 leading-relaxed">
+                本網站可能包含通往第三方網站或服務之連結（例如:金流、物流查詢、社群平台等）,該等第三方網站或服務由各該業者自行負責,其內容與隱私權政策不在本條款之適用範圍內。
+              </p>
+            </section>
+
+            {/* 二、接受條款與使用資格 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">二、接受條款與使用資格</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                您使用本網站,即表示您聲明並保證自己:
+              </p>
+              <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-2">
+                <li>已滿您所在地法律所定之完全行為能力年齡（例如 18 歲或當地法定成年人年齡）；以及</li>
+                <li>未曾因違反本條款而被本公司終止或限制使用資格；以及</li>
+                <li>您使用本網站並未違反任何適用法律或規範。</li>
+              </ul>
+              <p className="text-gray-700 leading-relaxed">
+                若您係代表公司、組織或其他法人使用本網站,則您聲明並保證已取得該實體之合法授權,有權使該實體受本條款拘束,且您同意本條款對該實體亦同樣生效。
+              </p>
+            </section>
+
+            {/* 三、帳號註冊與安全 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">三、帳號註冊與安全</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                為使用本網站部分功能（例如:查詢訂單、管理保固、使用會員專區等）,您可能需要註冊帳號並提供必要資訊。您同意:
+              </p>
+              <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-2">
+                <li>提供真實、正確、最新且完整的註冊資料；</li>
+                <li>於資料變更時,適時更新相關資訊。</li>
+              </ul>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                您有責任妥善保管帳號與密碼,不得將帳號出借、轉讓或提供他人使用。凡經由您的帳號進行之操作或行為,視為您本人之行為,您應負全部責任。
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                若您發現帳號遭未授權使用或有任何安全疑慮,請立即通知本公司,本公司得視情況暫停或終止該帳號之使用,以保護您的權益。
+              </p>
+            </section>
+
+            {/* 四、商品購買與其他約定條款 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">四、商品購買與其他約定條款</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                若您透過本網站購買商品或服務,相關訂購流程、價格、付款方式、配送方式、退換貨與保固等,可能另有「購買條款」、「保固條款」、「退換貨政策」或平台專屬規範,前述內容均視為本條款之一部分,與本條款具有同等效力。
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                如本條款與特定活動或特定服務之專屬條款有不一致之處,除另有明文約定外,以該專屬條款為優先。
+              </p>
+            </section>
+
+            {/* 五、使用者內容 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">五、使用者內容（User Content）</h2>
+              
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">使用者內容的一般規定</h3>
+              <p className="text-gray-700 leading-relaxed mb-6">
+                當您在本網站（包含但不限於評論區、回饋表單、活動上傳區域等）上傳、提交或張貼文字、圖片、影音、評價、建議或其他任何資料（以下統稱「使用者內容」）時,您仍保有該等內容之著作權或合法權利。
+              </p>
+
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">授予本公司之有限授權</h3>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                您同意自您上傳或提供使用者內容起,授予本公司一項全球性、非專屬、免權利金、可轉授權及可再授權之權利與授權,使本公司得於營運本網站及相關業務合理範圍內,以任何形式或媒介,對該等內容進行:
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-6">
+                儲存、備份、展示、重製、散佈、改作（僅為版面調整、縮圖或適配不同裝置之目的）及公開傳輸。
+              </p>
+
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">使用者對其內容之保證</h3>
+              <p className="text-gray-700 leading-relaxed mb-4">您保證:</p>
+              <ul className="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+                <li>您為該使用者內容之權利人,或已取得足夠授權；</li>
+                <li>該等內容不會侵害任何第三人之智慧財產權、隱私權、肖像權或其他權利；</li>
+                <li>該等內容不包含違法、誹謗、猥褻、仇恨、歧視或其他不當資訊。</li>
+              </ul>
+
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">內容管理權</h3>
+              <p className="text-gray-700 leading-relaxed">
+                本公司無義務事前審查、監控或編輯任何使用者內容,但得基於法令要求、權利人通知或本公司合理判斷,於不預先通知之情形下,隨時移除、遮蔽或限制存取任何使用者內容,且無須對您或任何第三人負賠償或補償責任。
+              </p>
+            </section>
+
+            {/* 六、禁止行為 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">六、禁止行為</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                您同意不會利用本網站從事下列行為,亦不協助、教唆或允許任何第三人為之:
+              </p>
+              <ul className="list-disc pl-6 text-gray-700 space-y-2">
+                <li>以任何違反適用法律、法規或公序良俗之方式使用本網站；</li>
+                <li>侵害或可能侵害本公司或任何第三人之智慧財產權、隱私權、人格權或其他合法權益；</li>
+                <li>上傳或散布病毒、惡意程式、木馬程式、垃圾郵件或其他足以干擾本網站正常運作之程式或資訊；</li>
+                <li>未經授權試圖存取本網站之非公開區域、伺服器或相關系統；</li>
+                <li>嘗試探測、掃描或測試本網站任何系統或網路之弱點,或破壞其安全或認證機制；</li>
+                <li>使用自動化程式（例如爬蟲、機器人等）大量存取、擷取本網站內容,除非事前取得本公司書面同意；</li>
+                <li>冒用他人身分或偽造傳輸來源,或不實陳述與本公司之關係；</li>
+                <li>任何足以影響本公司商譽或品牌形象之惡意行為；</li>
+                <li>其他本公司依合理判斷認為不適當或違反本條款之行為。</li>
+              </ul>
+            </section>
+
+            {/* 七、智慧財產權 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">七、智慧財產權</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                本網站上所載之所有內容與資料,包括但不限於:文字、圖片、影片、圖示、商標、標誌、按鈕圖示、版面設計、程式碼及其他素材（以下合稱「網站內容」）,均受著作權、商標權及其他相關智慧財產權法令之保護,為本公司或合法權利人所有。
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                除法律明文許可或本公司事前書面同意外,您不得對網站內容進行任何形式之重製、散佈、公開播送、公開傳輸、改作、翻譯、出售、出租或以其他方式利用。
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                您使用本網站並不因此取得任何智慧財產權或授權,除非本條款明示授與之有限使用權。
+              </p>
+            </section>
+
+            {/* 八、第三方連結與服務 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">八、第三方連結與服務</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                本網站可能提供連結或導向第三方所提供之網站、產品或服務。該等第三方內容並非由本公司控制或維護,本公司不對其正確性、完整性、安全性或合法性負責。
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                您與第三方之間所生之任何交易、合約或法律關係,僅存在於您與該第三方之間,本公司概不負責。
+              </p>
+            </section>
+
+            {/* 九、免責聲明 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">九、免責聲明</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                本網站及其所提供之資訊、內容與服務,係在「現況」及「可得」基礎上提供。本公司不保證本網站:
+              </p>
+              <ul className="list-disc pl-6 mb-4 text-gray-700 space-y-2">
+                <li>永遠不會中斷、延遲或發生錯誤；</li>
+                <li>永遠不受病毒或其他有害成分之影響；</li>
+                <li>所示資訊在任何時間皆完全即時、正確、完整或適用於您的特定需求。</li>
+              </ul>
+              <p className="text-gray-700 leading-relaxed">
+                在法律允許之最大範圍內,本公司明示否認任何明示或默示之保證責任,包括但不限於適售性、特定目的適用性及非侵權之默示保證。
+              </p>
+            </section>
+
+            {/* 十、責任限制 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">十、責任限制</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                在適用法令所允許之最大範圍內,對於因您使用或無法使用本網站所致之任何直接、間接、附帶、特殊、衍生或懲罰性損害,包括但不限於利潤損失、商譽損失、資料遺失或其他無形損失,本公司對您之總責任額度以您於合理期間內就本網站實際支付予本公司之金額為上限；若無此支付紀錄,則以合理且有限之金額為上限。
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                某些司法管轄區可能不允許排除或限制特定損害賠償,在此情況下,上述限制可能對您不完全適用。
+              </p>
+            </section>
+
+            {/* 十一、賠償責任 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">十一、賠償責任</h2>
+              <p className="text-gray-700 leading-relaxed">
+                如因您違反本條款、侵害第三人權利或違反任何適用法規,致本公司、其董事、管理人員、員工、代理人或關係企業遭受任何索賠、損害、損失、責任、費用或支出（包括合理之律師費）,您同意負擔完全賠償責任,並配合本公司進行抗辯或處理相關事宜。
+              </p>
+            </section>
+
+            {/* 十二、服務變更、中止與終止 */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 pb-3 border-b-2 border-gray-200">十二、服務變更、中止與終止</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                本公司保留隨時依實際情況調整、本網站全部或部分內容、功能或服務之權利,包括但不限於新增、修改、暫停或終止本網站之全部或一部分,且無須事先個別通知。
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                如您違反本條款,或本公司認為有必要保障本公司或其他用戶之權益時,本公司得立即暫停或終止您使用本網站之全部或部分權限,並得刪除或移除您的帳號或使用者內容。
+              </p>
+            </section>
+
+            {/* 聯絡資訊 */}
+            <section className="mt-16 pt-8 border-t-2 border-gray-200">
+              <h2 className="text-2xl font-bold mb-6">聯絡我們</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                如您對本使用條款有任何疑問或需要進一步協助,請透過以下方式與我們聯繫:
+              </p>
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <p className="text-gray-700 mb-2">
+                  <strong>公司名稱：</strong>Apolnus Ventures LLC
+                </p>
+                <p className="text-gray-700 mb-2">
+                  <strong>電子郵件：</strong>support@apolnus.com
+                </p>
+                <p className="text-gray-700">
+                  <strong>客服時間：</strong>週一至週五 09:00-18:00（國定假日除外）
+                </p>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

@@ -1,0 +1,8 @@
+{
+  "query": "UPDATE seo_settings \nSET description = 'Committed to creating top-tier smart home appliances, combining ultimate craftsmanship with sustainable technology. Apolnus redefines the highest standard of living quality for those who pursue excellence.'\nWHERE page_key = 'home' AND language = 'en';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute UPDATE seo_settings \nSET description = 'Committed to creating top-tier smart home appliances, combining ultimate craftsmanship with sustainable technology. Apolnus redefines the highest standard of living quality for those who pursue excellence.'\nWHERE page_key = 'home' AND language = 'en';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 1: Table 'fsqyfmdsvttzg7fo7nt3qq.seo_settings' doesn't exist"
+  ]
+}

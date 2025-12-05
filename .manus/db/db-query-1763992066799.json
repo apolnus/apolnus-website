@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `supportTickets` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int,\n  `contactName` varchar(100) NOT NULL,\n  `contactPhone` varchar(20) NOT NULL,\n  `contactAddress` text NOT NULL,\n  `productModel` varchar(100) NOT NULL,\n  `serialNumber` varchar(100),\n  `purchaseDate` timestamp,\n  `purchaseChannel` varchar(100),\n  `issueTitle` varchar(200) NOT NULL,\n  `issueDescription` text NOT NULL,\n  `status` enum('pending', 'in_progress', 'resolved', 'closed') NOT NULL DEFAULT 'pending',\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `supportTickets_id` PRIMARY KEY(`id`)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute CREATE TABLE IF NOT EXISTS `supportTickets` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int,\n  `contactName` varchar(100) NOT NULL,\n  `contactPhone` varchar(20) NOT NULL,\n  `contactAddress` text NOT NULL,\n  `productModel` varchar(100) NOT NULL,\n  `serialNumber` varchar(100),\n  `purchaseDate` timestamp,\n  `purchaseChannel` varchar(100),\n  `issueTitle` varchar(200) NOT NULL,\n  `issueDescription` text NOT NULL,\n  `status` enum('pending', 'in_progress', 'resolved', 'closed') NOT NULL DEFAULT 'pending',\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `supportTickets_id` PRIMARY KEY(`id`)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1783
+}

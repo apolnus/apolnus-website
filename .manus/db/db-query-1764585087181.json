@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, name, email FROM users WHERE id = 1440170;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, name, email FROM users WHERE id = 1440170;",
+  "rows": [
+    {
+      "id": "1440170",
+      "name": "陳又綺",
+      "email": "b96040666@gmail.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\n1440170\t陳又綺\tb96040666@gmail.com\n",
+  "stderr": "",
+  "execution_time_ms": 1628
+}

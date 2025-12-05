@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO supportTickets (contactName, contactPhone, contactAddress, productModel, issueTitle, issueDescription, status) VALUES ('測試用戶', '0912345678', '台北市信義區', 'One X', '測試工單', '測試描述', 'pending')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute INSERT INTO supportTickets (contactName, contactPhone, contactAddress, productModel, issueTitle, issueDescription, status) VALUES ('測試用戶', '0912345678', '台北市信義區', 'One X', '測試工單', '測試描述', 'pending')",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1674
+}

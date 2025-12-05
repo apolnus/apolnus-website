@@ -1,0 +1,100 @@
+{
+  "query": "SELECT id, name, email, role FROM users ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, name, email, role FROM users ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Ａ",
+      "email": "test@example.com",
+      "role": "admin"
+    },
+    {
+      "id": "930429",
+      "name": "Apolnus Co., Ltd.",
+      "email": "hello@apolnus.com",
+      "role": "admin"
+    },
+    {
+      "id": "930432",
+      "name": "Aaron",
+      "email": "",
+      "role": "admin"
+    },
+    {
+      "id": "930486",
+      "name": "許世偉",
+      "email": "xus25825@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1080115",
+      "name": "Kim",
+      "email": "fire41457@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1140654",
+      "name": "Only one",
+      "email": "kentp0897@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1320043",
+      "name": "修羅",
+      "email": "devil71730@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1320047",
+      "name": "Totty",
+      "email": "totty4741@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1320067",
+      "name": "Grey Day",
+      "email": "loveyou82121300625@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1410001",
+      "name": "Full Young",
+      "email": "fullyounglife@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1410124",
+      "name": "方俐文",
+      "email": "violafang24@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1410186",
+      "name": "wei-hsueh chen",
+      "email": "bigbear.chen@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1440075",
+      "name": "David Weng (David)",
+      "email": "kyousuke916@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1440170",
+      "name": "陳又綺",
+      "email": "b96040666@gmail.com",
+      "role": "user"
+    },
+    {
+      "id": "1440200",
+      "name": "Kam Lee",
+      "email": "tabemono6530@gmail.com",
+      "role": "user"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\trole\n1\tＡ\ttest@example.com\tadmin\n930429\tApolnus Co., Ltd.\thello@apolnus.com\tadmin\n930432\tAaron\t\tadmin\n930486\t許世偉\txus25825@gmail.com\tuser\n1080115\tKim\tfire41457@gmail.com\tuser\n1140654\tOnly one\tkentp0897@gmail.com\tuser\n1320043\t修羅\tdevil71730@gmail.com\tuser\n1320047\tTotty\ttotty4741@gmail.com\tuser\n1320067\tGrey Day\tloveyou82121300625@gmail.com\tuser\n1410001\tFull Young\tfullyounglife@gmail.com\tuser\n1410124\t方俐文\tviolafang24@gmail.com\tuser\n1410186\twei-hsueh chen\tbigbear.chen@gmail.com\tuser\n1440075\tDavid Weng (David)\tkyousuke916@gmail.com\tuser\n1440170\t陳又綺\tb96040666@gmail.com\tuser\n1440200\tKam Lee\ttabemono6530@gmail.com\tuser\n",
+  "stderr": "",
+  "execution_time_ms": 1572
+}

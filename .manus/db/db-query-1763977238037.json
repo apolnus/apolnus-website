@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO authorizedServiceCenters (name, phone, address, businessHours, services, latitude, longitude) VALUES\n('台北維修中心', '02-2345-6789', '台北市信義區信義路五段7號', '週一至週五 09:00-18:00', '產品維修、保固服務、技術諮詢', '25.0330', '121.5654'),\n('台中維修中心', '04-2234-5678', '台中市西屯區台灣大道三段99號', '週一至週五 09:00-18:00', '產品維修、保固服務', '24.1636', '120.6478'),\n('高雄維修中心', '07-334-5678', '高雄市前鎮區中山二路5號', '週一至週五 09:00-18:00', '產品維修、保固服務、技術諮詢', '22.6056', '120.2978')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute INSERT INTO authorizedServiceCenters (name, phone, address, businessHours, services, latitude, longitude) VALUES\n('台北維修中心', '02-2345-6789', '台北市信義區信義路五段7號', '週一至週五 09:00-18:00', '產品維修、保固服務、技術諮詢', '25.0330', '121.5654'),\n('台中維修中心', '04-2234-5678', '台中市西屯區台灣大道三段99號', '週一至週五 09:00-18:00', '產品維修、保固服務', '24.1636', '120.6478'),\n('高雄維修中心', '07-334-5678', '高雄市前鎮區中山二路5號', '週一至週五 09:00-18:00', '產品維修、保固服務、技術諮詢', '22.6056', '120.2978')",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1594
+}

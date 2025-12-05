@@ -1,0 +1,31 @@
+{
+  "query": "SELECT id, userId, contactName, issueTitle, createdAt FROM supportTickets ORDER BY createdAt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, userId, contactName, issueTitle, createdAt FROM supportTickets ORDER BY createdAt DESC;",
+  "rows": [
+    {
+      "id": "90004",
+      "userId": "930432",
+      "contactName": "Aaron",
+      "issueTitle": "sdaasd",
+      "createdAt": "2025-12-01 09:45:43"
+    },
+    {
+      "id": "90002",
+      "userId": "1",
+      "contactName": "陳又綺",
+      "issueTitle": "有問題",
+      "createdAt": "2025-12-01 07:18:57"
+    },
+    {
+      "id": "90001",
+      "userId": "1",
+      "contactName": "Aaron",
+      "issueTitle": "ㄉˇ",
+      "createdAt": "2025-12-01 07:11:23"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tcontactName\tissueTitle\tcreatedAt\n90004\t930432\tAaron\tsdaasd\t2025-12-01 09:45:43\n90002\t1\t陳又綺\t有問題\t2025-12-01 07:18:57\n90001\t1\tAaron\tㄉˇ\t2025-12-01 07:11:23\n",
+  "stderr": "",
+  "execution_time_ms": 1597
+}

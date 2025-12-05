@@ -1,0 +1,58 @@
+{
+  "query": "SELECT DISTINCT page FROM seoSettings WHERE page LIKE '%one%' OR page LIKE '%ultra%' OR page LIKE '%vephos%' OR page LIKE '%c18%' ORDER BY page",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT DISTINCT page FROM seoSettings WHERE page LIKE '%one%' OR page LIKE '%ultra%' OR page LIKE '%vephos%' OR page LIKE '%c18%' ORDER BY page",
+  "rows": [
+    {
+      "page": "product-one-x"
+    },
+    {
+      "page": "product-one-x-downloads"
+    },
+    {
+      "page": "product-one-x-faq"
+    },
+    {
+      "page": "product-one-x-specs"
+    },
+    {
+      "page": "products/c18es-l"
+    },
+    {
+      "page": "products/c18es-l/downloads"
+    },
+    {
+      "page": "products/c18es-l/faq"
+    },
+    {
+      "page": "products/c18es-l/specs"
+    },
+    {
+      "page": "products/ultra-s7"
+    },
+    {
+      "page": "products/ultra-s7/downloads"
+    },
+    {
+      "page": "products/ultra-s7/faq"
+    },
+    {
+      "page": "products/ultra-s7/specs"
+    },
+    {
+      "page": "products/vephos-true"
+    },
+    {
+      "page": "products/vephos-true/downloads"
+    },
+    {
+      "page": "products/vephos-true/faq"
+    },
+    {
+      "page": "products/vephos-true/specs"
+    }
+  ],
+  "messages": [],
+  "stdout": "page\nproduct-one-x\nproduct-one-x-downloads\nproduct-one-x-faq\nproduct-one-x-specs\nproducts/c18es-l\nproducts/c18es-l/downloads\nproducts/c18es-l/faq\nproducts/c18es-l/specs\nproducts/ultra-s7\nproducts/ultra-s7/downloads\nproducts/ultra-s7/faq\nproducts/ultra-s7/specs\nproducts/vephos-true\nproducts/vephos-true/downloads\nproducts/vephos-true/faq\nproducts/vephos-true/specs\n",
+  "stderr": "",
+  "execution_time_ms": 1622
+}

@@ -1,0 +1,19 @@
+{
+  "query": "SELECT * FROM seoSettings WHERE page = 'home' AND language = 'en' LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM seoSettings WHERE page = 'home' AND language = 'en' LIMIT 1;",
+  "rows": [
+    {
+      "id": "30003",
+      "page": "home",
+      "language": "en",
+      "title": "Apolnus® Official Website | Redefining the Standard of Living",
+      "description": "Committed to creating top-tier smart home appliances, combining ultimate craftsmanship with sustainable technology. Apolnus redefines the highest standard of living quality for those who pursue excellence.",
+      "keywords": "Apolnus,波那斯,Air Purifier Recommendation,Air Purifier,Dehumidifier.No Consumables",
+      "updatedAt": "2025-11-24 21:56:59"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tpage\tlanguage\ttitle\tdescription\tkeywords\tupdatedAt\n30003\thome\ten\tApolnus® Official Website | Redefining the Standard of Living\tCommitted to creating top-tier smart home appliances, combining ultimate craftsmanship with sustainable technology. Apolnus redefines the highest standard of living quality for those who pursue excellence.\tApolnus,波那斯,Air Purifier Recommendation,Air Purifier,Dehumidifier.No Consumables\t2025-11-24 21:56:59\n",
+  "stderr": "",
+  "execution_time_ms": 1649
+}

@@ -1,0 +1,58 @@
+{
+  "query": "SELECT page, title FROM seoSettings WHERE language = 'zh-TW' AND page LIKE 'products/%' ORDER BY page LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT page, title FROM seoSettings WHERE language = 'zh-TW' AND page LIKE 'products/%' ORDER BY page LIMIT 20",
+  "rows": [
+    {
+      "page": "products/c18es-l",
+      "title": "c18es-l"
+    },
+    {
+      "page": "products/c18es-l/downloads",
+      "title": "downloads"
+    },
+    {
+      "page": "products/c18es-l/faq",
+      "title": "faq"
+    },
+    {
+      "page": "products/c18es-l/specs",
+      "title": "specs"
+    },
+    {
+      "page": "products/ultra-s7",
+      "title": "ultra-s7"
+    },
+    {
+      "page": "products/ultra-s7/downloads",
+      "title": "downloads"
+    },
+    {
+      "page": "products/ultra-s7/faq",
+      "title": "faq"
+    },
+    {
+      "page": "products/ultra-s7/specs",
+      "title": "specs"
+    },
+    {
+      "page": "products/vephos-true",
+      "title": "vephos-true"
+    },
+    {
+      "page": "products/vephos-true/downloads",
+      "title": "downloads"
+    },
+    {
+      "page": "products/vephos-true/faq",
+      "title": "faq"
+    },
+    {
+      "page": "products/vephos-true/specs",
+      "title": "specs"
+    }
+  ],
+  "messages": [],
+  "stdout": "page\ttitle\nproducts/c18es-l\tc18es-l\nproducts/c18es-l/downloads\tdownloads\nproducts/c18es-l/faq\tfaq\nproducts/c18es-l/specs\tspecs\nproducts/ultra-s7\tultra-s7\nproducts/ultra-s7/downloads\tdownloads\nproducts/ultra-s7/faq\tfaq\nproducts/ultra-s7/specs\tspecs\nproducts/vephos-true\tvephos-true\nproducts/vephos-true/downloads\tdownloads\nproducts/vephos-true/faq\tfaq\nproducts/vephos-true/specs\tspecs\n",
+  "stderr": "",
+  "execution_time_ms": 1556
+}

@@ -1,0 +1,88 @@
+{
+  "query": "SELECT id, name, email, openId FROM users;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, name, email, openId FROM users;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Ａ",
+      "email": "test@example.com",
+      "openId": "csy8es3zCUyxjaGziQ8W9C"
+    },
+    {
+      "id": "930429",
+      "name": "Apolnus Co., Ltd.",
+      "email": "hello@apolnus.com",
+      "openId": "google_117796399118595586363"
+    },
+    {
+      "id": "930432",
+      "name": "Aaron",
+      "email": "",
+      "openId": "line_U4feac0f3287609f45bd7cf03ccd189ac"
+    },
+    {
+      "id": "930486",
+      "name": "許世偉",
+      "email": "xus25825@gmail.com",
+      "openId": "google_110642292423914316481"
+    },
+    {
+      "id": "1080115",
+      "name": "Kim",
+      "email": "fire41457@gmail.com",
+      "openId": "google_118020040610427759327"
+    },
+    {
+      "id": "1140654",
+      "name": "Only one",
+      "email": "kentp0897@gmail.com",
+      "openId": "google_113271856366250682485"
+    },
+    {
+      "id": "1320043",
+      "name": "修羅",
+      "email": "devil71730@gmail.com",
+      "openId": "google_111494991181781196228"
+    },
+    {
+      "id": "1320047",
+      "name": "Totty",
+      "email": "totty4741@gmail.com",
+      "openId": "google_101333628111915685754"
+    },
+    {
+      "id": "1320067",
+      "name": "Grey Day",
+      "email": "loveyou82121300625@gmail.com",
+      "openId": "google_115865932288617608658"
+    },
+    {
+      "id": "1410001",
+      "name": "Full Young",
+      "email": "fullyounglife@gmail.com",
+      "openId": "google_101411615950787501407"
+    },
+    {
+      "id": "1410124",
+      "name": "方俐文",
+      "email": "violafang24@gmail.com",
+      "openId": "google_105368102306987920841"
+    },
+    {
+      "id": "1410186",
+      "name": "wei-hsueh chen",
+      "email": "bigbear.chen@gmail.com",
+      "openId": "google_109414973173427103237"
+    },
+    {
+      "id": "1440075",
+      "name": "David Weng (David)",
+      "email": "kyousuke916@gmail.com",
+      "openId": "google_107321635422404102671"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\topenId\n1\tＡ\ttest@example.com\tcsy8es3zCUyxjaGziQ8W9C\n930429\tApolnus Co., Ltd.\thello@apolnus.com\tgoogle_117796399118595586363\n930432\tAaron\t\tline_U4feac0f3287609f45bd7cf03ccd189ac\n930486\t許世偉\txus25825@gmail.com\tgoogle_110642292423914316481\n1080115\tKim\tfire41457@gmail.com\tgoogle_118020040610427759327\n1140654\tOnly one\tkentp0897@gmail.com\tgoogle_113271856366250682485\n1320043\t修羅\tdevil71730@gmail.com\tgoogle_111494991181781196228\n1320047\tTotty\ttotty4741@gmail.com\tgoogle_101333628111915685754\n1320067\tGrey Day\tloveyou82121300625@gmail.com\tgoogle_115865932288617608658\n1410001\tFull Young\tfullyounglife@gmail.com\tgoogle_101411615950787501407\n1410124\t方俐文\tviolafang24@gmail.com\tgoogle_105368102306987920841\n1410186\twei-hsueh chen\tbigbear.chen@gmail.com\tgoogle_109414973173427103237\n1440075\tDavid Weng (David)\tkyousuke916@gmail.com\tgoogle_107321635422404102671\n",
+  "stderr": "",
+  "execution_time_ms": 1671
+}

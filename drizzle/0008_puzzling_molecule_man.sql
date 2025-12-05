@@ -1,0 +1,1 @@
+ALTER TABLE `ticketReplies` ADD `isReadByUser` int DEFAULT 0 NOT NULL;

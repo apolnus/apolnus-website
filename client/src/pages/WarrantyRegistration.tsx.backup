@@ -1,0 +1,311 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { CheckCircle2, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { trpc } from "@/lib/trpc";
+import { useTranslation } from "react-i18next";
+import SEOHead from "@/components/seo/SEOHead";
+
+const warrantySchema = z.object({
+  name: z.string().min(1, "姓名為必填"),
+  email: z.string().email("請輸入有效的電子郵件"),
+  phone: z.string().min(1, "聯絡電話為必填"),
+  productModel: z.string().min(1, "請選擇產品型號"),
+  serialNumber: z.string().min(1, "產品序號為必填"),
+  purchaseDate: z.string().min(1, "購買日期為必填"),
+  purchaseChannel: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+type WarrantyFormData = z.infer<typeof warrantySchema>;
+
+export default function WarrantyRegistration() {
+  const { t } = useTranslation();
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<WarrantyFormData>({
+    resolver: zodResolver(warrantySchema),
+  });
+
+  const { data: productModels } = trpc.admin.productModels.list.useQuery();
+  const registerWarranty = trpc.warranty.register.useMutation({
+    onSuccess: () => {
+      setIsSubmitted(true);
+      toast.success("保固登錄成功！");
+    },
+    onError: (error) => {
+      toast.error("保固登錄失敗：" + error.message);
+    },
+  });
+
+  const onSubmit = (data: WarrantyFormData) => {
+    registerWarranty.mutate(data);
+  };
+
+  const productModel = watch("productModel");
+  const purchaseChannel = watch("purchaseChannel");
+
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center py-16">
+          <div className="container max-w-2xl">
+            <div className="bg-white rounded-2xl p-8 md:p-12 text-center border shadow-sm">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle2 className="w-10 h-10 text-green-600" />
+              </div>
+              <h1 className="text-3xl font-bold mb-4">保固登錄成功！</h1>
+              <p className="text-gray-600 mb-8">
+                感謝您註冊 Apolnus 產品保固。我們已收到您的資料，您的產品現已享有完整的全球保固服務。
+              </p>
+              <div className="flex gap-4 justify-center flex-wrap">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsSubmitted(false)}
+                  className="border-gray-300"
+                >
+                  再次登錄
+                </Button>
+                <Button
+                  onClick={() => (window.location.href = "/")}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  返回首頁
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Navbar />
+
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-blue-50 to-blue-100 py-16 border-b">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">產品保固登錄</h1>
+            <p className="text-lg text-gray-700">
+              註冊您的產品，享受完整的全球保固服務
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Form Section */}
+      <section className="py-12">
+        <div className="container">
+          <div className="max-w-3xl mx-auto">
+            <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl p-8 md:p-12 border shadow-sm">
+              {/* Personal Information */}
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold mb-6">個人資訊</h2>
+                <div className="space-y-6">
+                  <div>
+                    <Label htmlFor="name" className="text-sm font-medium mb-2 block">
+                      姓名 <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="name"
+                      {...register("name")}
+                      className={errors.name ? "border-red-500" : ""}
+                    />
+                    {errors.name && (
+                      <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="email" className="text-sm font-medium mb-2 block">
+                      電子郵件 <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      {...register("email")}
+                      className={errors.email ? "border-red-500" : ""}
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="phone" className="text-sm font-medium mb-2 block">
+                      聯絡電話 <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="phone"
+                      {...register("phone")}
+                      className={errors.phone ? "border-red-500" : ""}
+                    />
+                    {errors.phone && (
+                      <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Product Information */}
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold mb-6">產品資訊</h2>
+                <div className="space-y-6">
+                  <div>
+                    <Label htmlFor="productModel" className="text-sm font-medium mb-2 block">
+                      產品型號 <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      value={productModel}
+                      onValueChange={(value) => setValue("productModel", value)}
+                    >
+                      <SelectTrigger className={errors.productModel ? "border-red-500" : ""}>
+                        <SelectValue placeholder="請選擇" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {productModels?.map((model) => (
+                          <SelectItem key={model.id} value={model.name}>
+                            {model.name}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="其他">其他</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {errors.productModel && (
+                      <p className="text-red-500 text-sm mt-1">{errors.productModel.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="serialNumber" className="text-sm font-medium mb-2 block">
+                      產品序號 <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="serialNumber"
+                      {...register("serialNumber")}
+                      className={errors.serialNumber ? "border-red-500" : ""}
+                    />
+                    <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+                      <Info className="w-4 h-4" />
+                      序號位於產品底部標籤上
+                    </p>
+                    {errors.serialNumber && (
+                      <p className="text-red-500 text-sm mt-1">{errors.serialNumber.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="purchaseDate" className="text-sm font-medium mb-2 block">
+                      購買日期 <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="purchaseDate"
+                      type="date"
+                      {...register("purchaseDate")}
+                      className={errors.purchaseDate ? "border-red-500" : ""}
+                    />
+                    {errors.purchaseDate && (
+                      <p className="text-red-500 text-sm mt-1">{errors.purchaseDate.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="purchaseChannel" className="text-sm font-medium mb-2 block">
+                      購買通路
+                    </Label>
+                    <Select
+                      value={purchaseChannel}
+                      onValueChange={(value) => setValue("purchaseChannel", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="請選擇" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="官方網站">官方網站</SelectItem>
+                        <SelectItem value="授權經銷商">授權經銷商</SelectItem>
+                        <SelectItem value="線上商城">線上商城</SelectItem>
+                        <SelectItem value="實體店面">實體店面</SelectItem>
+                        <SelectItem value="其他">其他</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="notes" className="text-sm font-medium mb-2 block">
+                      備註
+                    </Label>
+                    <Textarea
+                      id="notes"
+                      {...register("notes")}
+                      rows={4}
+                      placeholder="如有其他需要說明的事項，請在此填寫"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={registerWarranty.isPending}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12 text-lg"
+              >
+                {registerWarranty.isPending ? "提交中..." : "提交保固登錄"}
+              </Button>
+            </form>
+
+            {/* Warranty Notice */}
+            <div className="mt-8 bg-blue-50 rounded-xl p-6 border border-blue-200">
+              <h3 className="font-bold text-lg mb-4">保固須知</h3>
+              <ul className="space-y-2 text-sm text-gray-700">
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-1">•</span>
+                  <span>所有 Apolnus 產品享有全球完整保固</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-1">•</span>
+                  <span>保固期間內提供免費維修服務</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-1">•</span>
+                  <span>請妥善保管購買憑證以便保固服務</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-600 mt-1">•</span>
+                  <span>人為損壞、濾網耗材不在保固範圍內</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

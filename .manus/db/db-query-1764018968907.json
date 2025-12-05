@@ -1,0 +1,80 @@
+{
+  "query": "SELECT page, title, description FROM seoSettings WHERE language = 'zh-TW' AND (page LIKE 'product-%' OR page LIKE '%specs' OR page LIKE '%downloads' OR page LIKE '%faq') ORDER BY page LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT page, title, description FROM seoSettings WHERE language = 'zh-TW' AND (page LIKE 'product-%' OR page LIKE '%specs' OR page LIKE '%downloads' OR page LIKE '%faq') ORDER BY page LIMIT 20",
+  "rows": [
+    {
+      "page": "faq",
+      "title": "常見問題 | 產品技術與使用指南 | Apolnus®",
+      "description": "搜尋關於 Apolnus 全系列產品技術、保養維護、App 連線與帳號管理的詳細解答。我們隨時為您提供最專業的指引。"
+    },
+    {
+      "page": "product-one-x",
+      "title": "Apolnus One X | 永續循環科技的極致演繹 | Apolnus®",
+      "description": "突破傳統家電限制，One X 以專利 TPA 技術實現終身免耗材。結合美學設計與環保理念，為您的空間注入純淨與質感，重新定義潔淨標準。"
+    },
+    {
+      "page": "product-one-x-downloads",
+      "title": "One X 下載中心 | 使用手冊與韌體更新 | Apolnus®",
+      "description": "獲取 One X 完整支援資源。下載最新版產品說明書、快速入門指南及相關驅動程式，確保您的設備隨時保持最佳狀態。"
+    },
+    {
+      "page": "product-one-x-faq",
+      "title": "One X 產品問答 | 專業使用與保養指南 | Apolnus®",
+      "description": "針對 One X 用戶的專屬解答。涵蓋清洗保養、故障排除與日常操作技巧，讓您輕鬆掌握無耗材清淨機的使用訣竅。"
+    },
+    {
+      "page": "product-one-x-specs",
+      "title": "One X 技術規格 | 頂級效能數據詳解 | Apolnus®",
+      "description": "深入了解 One X 的核心參數。從 CADR 值、噪音分貝到 TPA 離子場數據，以透明、精確的規格展現真正的技術實力。"
+    },
+    {
+      "page": "products/c18es-l/downloads",
+      "title": "downloads",
+      "description": ""
+    },
+    {
+      "page": "products/c18es-l/faq",
+      "title": "faq",
+      "description": ""
+    },
+    {
+      "page": "products/c18es-l/specs",
+      "title": "specs",
+      "description": ""
+    },
+    {
+      "page": "products/ultra-s7/downloads",
+      "title": "downloads",
+      "description": ""
+    },
+    {
+      "page": "products/ultra-s7/faq",
+      "title": "faq",
+      "description": ""
+    },
+    {
+      "page": "products/ultra-s7/specs",
+      "title": "specs",
+      "description": ""
+    },
+    {
+      "page": "products/vephos-true/downloads",
+      "title": "downloads",
+      "description": ""
+    },
+    {
+      "page": "products/vephos-true/faq",
+      "title": "faq",
+      "description": ""
+    },
+    {
+      "page": "products/vephos-true/specs",
+      "title": "specs",
+      "description": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "page\ttitle\tdescription\nfaq\t常見問題 | 產品技術與使用指南 | Apolnus®\t搜尋關於 Apolnus 全系列產品技術、保養維護、App 連線與帳號管理的詳細解答。我們隨時為您提供最專業的指引。\nproduct-one-x\tApolnus One X | 永續循環科技的極致演繹 | Apolnus®\t突破傳統家電限制，One X 以專利 TPA 技術實現終身免耗材。結合美學設計與環保理念，為您的空間注入純淨與質感，重新定義潔淨標準。\nproduct-one-x-downloads\tOne X 下載中心 | 使用手冊與韌體更新 | Apolnus®\t獲取 One X 完整支援資源。下載最新版產品說明書、快速入門指南及相關驅動程式，確保您的設備隨時保持最佳狀態。\nproduct-one-x-faq\tOne X 產品問答 | 專業使用與保養指南 | Apolnus®\t針對 One X 用戶的專屬解答。涵蓋清洗保養、故障排除與日常操作技巧，讓您輕鬆掌握無耗材清淨機的使用訣竅。\nproduct-one-x-specs\tOne X 技術規格 | 頂級效能數據詳解 | Apolnus®\t深入了解 One X 的核心參數。從 CADR 值、噪音分貝到 TPA 離子場數據，以透明、精確的規格展現真正的技術實力。\nproducts/c18es-l/downloads\tdownloads\t\nproducts/c18es-l/faq\tfaq\t\nproducts/c18es-l/specs\tspecs\t\nproducts/ultra-s7/downloads\tdownloads\t\nproducts/ultra-s7/faq\tfaq\t\nproducts/ultra-s7/specs\tspecs\t\nproducts/vephos-true/downloads\tdownloads\t\nproducts/vephos-true/faq\tfaq\t\nproducts/vephos-true/specs\tspecs\t\n",
+  "stderr": "",
+  "execution_time_ms": 1786
+}

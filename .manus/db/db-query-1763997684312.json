@@ -1,0 +1,22 @@
+{
+  "query": "SELECT * FROM warrantyRegistrations ORDER BY registeredAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM warrantyRegistrations ORDER BY registeredAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "王小明",
+      "email": "test3@example.com",
+      "phone": "0912345678",
+      "productModel": "One X",
+      "serialNumber": "TEST2024FINAL",
+      "purchaseDate": "2024-11-24 00:00:00",
+      "purchaseChannel": "NULL",
+      "notes": "NULL",
+      "registeredAt": "2025-11-24 15:20:58"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tphone\tproductModel\tserialNumber\tpurchaseDate\tpurchaseChannel\tnotes\tregisteredAt\n1\t王小明\ttest3@example.com\t0912345678\tOne X\tTEST2024FINAL\t2024-11-24 00:00:00\tNULL\tNULL\t2025-11-24 15:20:58\n",
+  "stderr": "",
+  "execution_time_ms": 1573
+}

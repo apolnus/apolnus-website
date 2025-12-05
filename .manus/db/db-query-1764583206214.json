@@ -1,0 +1,122 @@
+{
+  "query": "SELECT st.id, st.issueTitle, tr.id as replyId, tr.isAdmin, tr.isReadByUser, tr.message FROM supportTickets st LEFT JOIN ticketReplies tr ON st.id = tr.ticketId ORDER BY st.id, tr.createdAt;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT st.id, st.issueTitle, tr.id as replyId, tr.isAdmin, tr.isReadByUser, tr.message FROM supportTickets st LEFT JOIN ticketReplies tr ON st.id = tr.ticketId ORDER BY st.id, tr.createdAt;",
+  "rows": [
+    {
+      "id": "90001",
+      "issueTitle": "ㄉˇ",
+      "replyId": "30001",
+      "isAdmin": "0",
+      "isReadByUser": "1",
+      "message": "asdasd"
+    },
+    {
+      "id": "90001",
+      "issueTitle": "ㄉˇ",
+      "replyId": "30002",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message": "123123123"
+    },
+    {
+      "id": "90001",
+      "issueTitle": "ㄉˇ",
+      "replyId": "30003",
+      "isAdmin": "0",
+      "isReadByUser": "1",
+      "message": "dad"
+    },
+    {
+      "id": "90001",
+      "issueTitle": "ㄉˇ",
+      "replyId": "30004",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message": "asdad"
+    },
+    {
+      "id": "90001",
+      "issueTitle": "ㄉˇ",
+      "replyId": "30005",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message": "測試新回覆提醒功能 - 這是管理員的回覆"
+    },
+    {
+      "id": "90001",
+      "issueTitle": "ㄉˇ",
+      "replyId": "30006",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message": "第二次測試 - 驗證新回覆提醒功能是否正常"
+    },
+    {
+      "id": "90001",
+      "issueTitle": "ㄉˇ",
+      "replyId": "30007",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message": "asdad"
+    },
+    {
+      "id": "90001",
+      "issueTitle": "ㄉˇ",
+      "replyId": "30013",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message": "asdasd"
+    },
+    {
+      "id": "90002",
+      "issueTitle": "有問題",
+      "replyId": "NULL",
+      "isAdmin": "NULL",
+      "isReadByUser": "NULL",
+      "message": "NULL"
+    },
+    {
+      "id": "90004",
+      "issueTitle": "sdaasd",
+      "replyId": "30008",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message": "asdasdasd"
+    },
+    {
+      "id": "90004",
+      "issueTitle": "sdaasd",
+      "replyId": "30009",
+      "isAdmin": "0",
+      "isReadByUser": "0",
+      "message": "ㄅˇ"
+    },
+    {
+      "id": "90004",
+      "issueTitle": "sdaasd",
+      "replyId": "30010",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message": "回覆啊啊啊"
+    },
+    {
+      "id": "90004",
+      "issueTitle": "sdaasd",
+      "replyId": "30011",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message": "12312313"
+    },
+    {
+      "id": "90004",
+      "issueTitle": "sdaasd",
+      "replyId": "30012",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message": "asdasd"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tissueTitle\treplyId\tisAdmin\tisReadByUser\tmessage\n90001\tㄉˇ\t30001\t0\t1\tasdasd\n90001\tㄉˇ\t30002\t1\t1\t123123123\n90001\tㄉˇ\t30003\t0\t1\tdad\n90001\tㄉˇ\t30004\t1\t1\tasdad\n90001\tㄉˇ\t30005\t1\t1\t測試新回覆提醒功能 - 這是管理員的回覆\n90001\tㄉˇ\t30006\t1\t1\t第二次測試 - 驗證新回覆提醒功能是否正常\n90001\tㄉˇ\t30007\t1\t0\tasdad\n90001\tㄉˇ\t30013\t1\t0\tasdasd\n90002\t有問題\tNULL\tNULL\tNULL\tNULL\n90004\tsdaasd\t30008\t1\t1\tasdasdasd\n90004\tsdaasd\t30009\t0\t0\tㄅˇ\n90004\tsdaasd\t30010\t1\t0\t回覆啊啊啊\n90004\tsdaasd\t30011\t1\t0\t12312313\n90004\tsdaasd\t30012\t1\t0\tasdasd\n",
+  "stderr": "",
+  "execution_time_ms": 1654
+}

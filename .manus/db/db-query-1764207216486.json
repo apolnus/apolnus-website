@@ -1,0 +1,19 @@
+{
+  "query": "SELECT * FROM seoSettings WHERE page = 'home' AND language = 'zh-TW';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM seoSettings WHERE page = 'home' AND language = 'zh-TW';",
+  "rows": [
+    {
+      "id": "30001",
+      "page": "home",
+      "language": "zh-TW",
+      "title": "Apolnus® 波那斯官方網站 | 重新定義生活的標準",
+      "description": "致力於打造頂級智慧家電,結合極致工藝與永續科技。Apolnus 為追求卓越的您,重新定義生活品質的最高標準。",
+      "keywords": "Apolnus,波那斯,空氣清淨機推薦,空氣清淨機,除濕機.無耗材",
+      "updatedAt": "2025-11-25 10:29:12"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tpage\tlanguage\ttitle\tdescription\tkeywords\tupdatedAt\n30001\thome\tzh-TW\tApolnus® 波那斯官方網站 | 重新定義生活的標準\t致力於打造頂級智慧家電,結合極致工藝與永續科技。Apolnus 為追求卓越的您,重新定義生活品質的最高標準。\tApolnus,波那斯,空氣清淨機推薦,空氣清淨機,除濕機.無耗材\t2025-11-25 10:29:12\n",
+  "stderr": "",
+  "execution_time_ms": 1684
+}

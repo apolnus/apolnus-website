@@ -1,0 +1,8 @@
+{
+  "query": "SELECT * FROM seoSettings WHERE pageId = 'home' AND language = 'zh-TW';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM seoSettings WHERE pageId = 'home' AND language = 'zh-TW';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'pageid' in 'where clause'"
+  ]
+}

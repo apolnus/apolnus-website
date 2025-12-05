@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `ticketReplies` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `ticketId` int NOT NULL,\n  `userId` int,\n  `isAdmin` int NOT NULL DEFAULT 0,\n  `message` text NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `ticketReplies_id` PRIMARY KEY(`id`)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute CREATE TABLE IF NOT EXISTS `ticketReplies` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `ticketId` int NOT NULL,\n  `userId` int,\n  `isAdmin` int NOT NULL DEFAULT 0,\n  `message` text NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `ticketReplies_id` PRIMARY KEY(`id`)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1816
+}

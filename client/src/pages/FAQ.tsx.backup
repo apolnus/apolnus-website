@@ -1,0 +1,175 @@
+import { useState } from "react";
+import { Search, ChevronDown } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { useTranslation } from "react-i18next";
+import SEOHead from "@/components/seo/SEOHead";
+
+interface FAQItem {
+  question: string;
+  answer: string;
+  category: string;
+  tags: string[];
+}
+
+export default function FAQ() {
+  const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("全部分類");
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const categories = [
+    "全部分類",
+    "疑難排解",
+    "Smartcasa App",
+    "產品介紹",
+    "運網與保養",
+    "訂單與運送",
+    "售後與保固",
+    "運網與充電",
+    "其他",
+  ];
+
+  const faqs: FAQItem[] = [
+    {
+      question: "如何完成產品保固登錄？",
+      answer:
+        "您可以前往「服務與支援」頁面，點擊「產品保固登錄」，填寫產品序號、購買日期等資訊即可完成登錄。登錄後即可享受完整的保固服務。",
+      category: "售後與保固",
+      tags: ["One X", "Ultra S7"],
+    },
+    {
+      question: "SmartCasa App 如何下載？",
+      answer:
+        "您可以在 App Store（iOS）或 Google Play（Android）搜尋「SmartCasa」即可下載。下載後使用您的帳號登入，即可遠端控制您的 Apolnus 空氣清淨機。",
+      category: "Smartcasa App",
+      tags: ["One X", "Ultra S7"],
+    },
+    {
+      question: "無耗材空氣清淨機需要保養嗎？",
+      answer:
+        "雖然 Apolnus 空氣清淨機採用無耗材設計，但仍建議定期清潔機身和濾網。建議每 1-2 週使用吸塵器清潔濾網表面，每 3-6 個月進行一次深度清潔，以維持最佳效能。",
+      category: "運網與保養",
+      tags: ["One X"],
+    },
+  ];
+
+  const filteredFAQs = faqs.filter((faq) => {
+    const matchesSearch =
+      searchTerm === "" ||
+      faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "全部分類" || faq.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-blue-600 to-blue-700 text-white py-20">
+        <div className="container">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">常見問題</h1>
+          <p className="text-lg text-blue-100 text-center mb-8">尋找您需要的答案</p>
+
+          {/* Search */}
+          <div className="max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="搜尋問題..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-14 text-lg bg-white text-gray-900 border-0"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Content */}
+      <section className="flex-1 py-12 bg-gray-50">
+        <div className="container">
+          <div className="grid lg:grid-cols-4 gap-8">
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-xl p-6 border sticky top-24">
+                <h3 className="font-bold text-lg mb-4">分類</h3>
+                <div className="space-y-2">
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                        selectedCategory === category
+                          ? "bg-blue-600 text-white"
+                          : "hover:bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* FAQ List */}
+            <div className="lg:col-span-3">
+              {filteredFAQs.length > 0 ? (
+                <div className="space-y-4">
+                  {filteredFAQs.map((faq, index) => (
+                    <div
+                      key={index}
+                      className="bg-white rounded-xl border overflow-hidden"
+                    >
+                      <button
+                        onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg mb-2">{faq.question}</h3>
+                          <div className="flex gap-2">
+                            {faq.tags.map((tag, tagIndex) => (
+                              <span
+                                key={tagIndex}
+                                className="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <ChevronDown
+                          className={`w-6 h-6 text-gray-400 transition-transform flex-shrink-0 ml-4 ${
+                            openIndex === index ? "transform rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                      {openIndex === index && (
+                        <div className="px-6 py-4 border-t bg-gray-50">
+                          <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-xl p-12 text-center border">
+                  <p className="text-gray-500 text-lg">沒有找到相關問題</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

@@ -1,0 +1,76 @@
+{
+  "query": "SELECT * FROM faqs ORDER BY id",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM faqs ORDER BY id",
+  "rows": [
+    {
+      "id": "1",
+      "category": "保固相關",
+      "order": "0",
+      "question": "如何註冊產品保固？",
+      "answer": "請前往「產品保固登錄」頁面,填寫您的個人資訊、產品型號、序號及購買日期等資料,即可完成保固註冊。",
+      "sortOrder": "0",
+      "isActive": "1",
+      "createdAt": "2025-11-24 09:41:07",
+      "updatedAt": "2025-11-24 09:41:07"
+    },
+    {
+      "id": "2",
+      "category": "保固相關",
+      "order": "0",
+      "question": "保固期限是多久？",
+      "answer": "Apolnus產品提供2年保固服務,自購買日起計算。部分產品可能有不同的保固期限,詳情請參閱產品說明書。",
+      "sortOrder": "0",
+      "isActive": "1",
+      "createdAt": "2025-11-24 09:41:07",
+      "updatedAt": "2025-11-24 09:41:07"
+    },
+    {
+      "id": "3",
+      "category": "維修服務",
+      "order": "0",
+      "question": "如何提交維修申請？",
+      "answer": "請前往「客服中心」頁面,填寫維修申請表單,我們的客服人員會在24小時內與您聯繫。",
+      "sortOrder": "0",
+      "isActive": "1",
+      "createdAt": "2025-11-24 09:41:07",
+      "updatedAt": "2025-11-24 09:41:07"
+    },
+    {
+      "id": "4",
+      "category": "維修服務",
+      "order": "0",
+      "question": "維修需要多久時間？",
+      "answer": "一般維修時間為5-7個工作天,實際時間依故障情況而定。我們會盡快為您處理。",
+      "sortOrder": "0",
+      "isActive": "1",
+      "createdAt": "2025-11-24 09:41:07",
+      "updatedAt": "2025-11-24 09:41:07"
+    },
+    {
+      "id": "5",
+      "category": "購買相關",
+      "order": "0",
+      "question": "可以在哪裡購買Apolnus產品？",
+      "answer": "您可以透過我們的官方網站、授權經銷商或指定電商平台購買Apolnus產品。",
+      "sortOrder": "0",
+      "isActive": "1",
+      "createdAt": "2025-11-24 09:41:07",
+      "updatedAt": "2025-11-24 09:41:07"
+    },
+    {
+      "id": "6",
+      "category": "購買相關",
+      "order": "0",
+      "question": "產品有哪些付款方式？",
+      "answer": "我們接受信用卡、ATM轉帳、貨到付款等多種付款方式。",
+      "sortOrder": "0",
+      "isActive": "1",
+      "createdAt": "2025-11-24 09:41:07",
+      "updatedAt": "2025-11-24 09:41:07"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcategory\torder\tquestion\tanswer\tsortOrder\tisActive\tcreatedAt\tupdatedAt\n1\t保固相關\t0\t如何註冊產品保固？\t請前往「產品保固登錄」頁面,填寫您的個人資訊、產品型號、序號及購買日期等資料,即可完成保固註冊。\t0\t1\t2025-11-24 09:41:07\t2025-11-24 09:41:07\n2\t保固相關\t0\t保固期限是多久？\tApolnus產品提供2年保固服務,自購買日起計算。部分產品可能有不同的保固期限,詳情請參閱產品說明書。\t0\t1\t2025-11-24 09:41:07\t2025-11-24 09:41:07\n3\t維修服務\t0\t如何提交維修申請？\t請前往「客服中心」頁面,填寫維修申請表單,我們的客服人員會在24小時內與您聯繫。\t0\t1\t2025-11-24 09:41:07\t2025-11-24 09:41:07\n4\t維修服務\t0\t維修需要多久時間？\t一般維修時間為5-7個工作天,實際時間依故障情況而定。我們會盡快為您處理。\t0\t1\t2025-11-24 09:41:07\t2025-11-24 09:41:07\n5\t購買相關\t0\t可以在哪裡購買Apolnus產品？\t您可以透過我們的官方網站、授權經銷商或指定電商平台購買Apolnus產品。\t0\t1\t2025-11-24 09:41:07\t2025-11-24 09:41:07\n6\t購買相關\t0\t產品有哪些付款方式？\t我們接受信用卡、ATM轉帳、貨到付款等多種付款方式。\t0\t1\t2025-11-24 09:41:07\t2025-11-24 09:41:07\n",
+  "stderr": "",
+  "execution_time_ms": 1713
+}

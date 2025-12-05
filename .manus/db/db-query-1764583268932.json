@@ -1,0 +1,76 @@
+{
+  "query": "SELECT ticketId, isAdmin, isReadByUser, LEFT(message, 50) as message_preview FROM ticketReplies WHERE isAdmin = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT ticketId, isAdmin, isReadByUser, LEFT(message, 50) as message_preview FROM ticketReplies WHERE isAdmin = 1;",
+  "rows": [
+    {
+      "ticketId": "1",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message_preview": "您好,感謝您的反饋。我們已經收到您的問題,技術人員將盡快與您聯繫處理。請確保您的聯絡電話保持暢通。"
+    },
+    {
+      "ticketId": "90001",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message_preview": "123123123"
+    },
+    {
+      "ticketId": "90001",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message_preview": "asdad"
+    },
+    {
+      "ticketId": "90001",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message_preview": "測試新回覆提醒功能 - 這是管理員的回覆"
+    },
+    {
+      "ticketId": "90001",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message_preview": "第二次測試 - 驗證新回覆提醒功能是否正常"
+    },
+    {
+      "ticketId": "90001",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message_preview": "asdad"
+    },
+    {
+      "ticketId": "90004",
+      "isAdmin": "1",
+      "isReadByUser": "1",
+      "message_preview": "asdasdasd"
+    },
+    {
+      "ticketId": "90004",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message_preview": "回覆啊啊啊"
+    },
+    {
+      "ticketId": "90004",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message_preview": "12312313"
+    },
+    {
+      "ticketId": "90004",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message_preview": "asdasd"
+    },
+    {
+      "ticketId": "90001",
+      "isAdmin": "1",
+      "isReadByUser": "0",
+      "message_preview": "asdasd"
+    }
+  ],
+  "messages": [],
+  "stdout": "ticketId\tisAdmin\tisReadByUser\tmessage_preview\n1\t1\t0\t您好,感謝您的反饋。我們已經收到您的問題,技術人員將盡快與您聯繫處理。請確保您的聯絡電話保持暢通。\n90001\t1\t1\t123123123\n90001\t1\t1\tasdad\n90001\t1\t1\t測試新回覆提醒功能 - 這是管理員的回覆\n90001\t1\t1\t第二次測試 - 驗證新回覆提醒功能是否正常\n90001\t1\t0\tasdad\n90004\t1\t1\tasdasdasd\n90004\t1\t0\t回覆啊啊啊\n90004\t1\t0\t12312313\n90004\t1\t0\tasdasd\n90001\t1\t0\tasdasd\n",
+  "stderr": "",
+  "execution_time_ms": 1592
+}

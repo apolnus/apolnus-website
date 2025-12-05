@@ -1,0 +1,322 @@
+import { Link } from "wouter";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Briefcase, Users, TrendingUp, Heart, Award, Globe } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import SEOHead from "@/components/seo/SEOHead";
+
+export default function Careers() {
+  const { t } = useTranslation();
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const teams = [
+    {
+      title: "研發團隊",
+      description: "讓產品「心明眼亮有智慧」。我們通過持續深耕空氣清淨技術、智能控制、材料科學等核心技術領域，打造劃時代的產品。在創造產品的同時，我們像打磨產品一樣打磨自身，不斷追求成為更好的自己。",
+      icon: TrendingUp,
+    },
+    {
+      title: "市場銷售團隊",
+      description: "為科技賦能，讓 Apolnus 的理念和產品走向全球。我們汇聚全球各地的靈感與創意，用深入人心的文字與影像，讓更多人了解 Apolnus 產品如何為健康生活帶來全新視角，推動我們的產品走進千家萬戶。",
+      icon: Globe,
+    },
+    {
+      title: "產品應用技術支持團隊",
+      description: "從心出發，讓科技更有溫度。我們致力於為全球 Apolnus 用戶提供從售前到售後的全生命周期服務，通過多樣化的服務渠道、智能化的服務工具、創新性的服務解決方案，守護每一次健康呼吸之旅。",
+      icon: Heart,
+    },
+    {
+      title: "職能團隊",
+      description: "做業務方最有價值的伙伴。我們的職能團隊由人力資源、行政、法務、財務等多個領域的專家組成，以專業賦能業務。你將與我們一起，讓 Apolnus 成為一群志同道合之人實現夢想、超越自我的精神家園。",
+      icon: Users,
+    },
+  ];
+
+  const benefits = [
+    {
+      title: "競爭力薪酬",
+      description: "提供具有市場競爭力的薪資待遇，讓你的付出得到應有的回報",
+      icon: Award,
+    },
+    {
+      title: "成長空間",
+      description: "完善的培訓體系和職業發展規劃，助力你的職業成長",
+      icon: TrendingUp,
+    },
+    {
+      title: "團隊氛圍",
+      description: "開放包容的工作環境，與志同道合的夥伴一起創造價值",
+      icon: Users,
+    },
+    {
+      title: "健康保障",
+      description: "完善的健康保險和定期體檢，守護你和家人的健康",
+      icon: Heart,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+
+      {/* Hero Section with Video Background */}
+      <section className="relative min-h-screen flex items-center justify-center pt-16">
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50" />
+        
+        {/* Content */}
+        <div className="relative z-10 text-center px-6 md:px-12 py-20">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+            從你的想像 到世界現象
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto">
+            加入 Apolnus，與我們一起用科技創新守護每一次呼吸
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/careers#positions">
+              <Button
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-base rounded-md"
+                onClick={scrollToTop}
+              >
+                查看在招職位
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-white text-white hover:bg-white/20 px-8 py-3 text-base rounded-md"
+            >
+              觀看影片
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              我們致力於
+            </h2>
+            <p className="text-2xl md:text-3xl text-gray-600 mb-4">
+              讓生命更豐富
+            </p>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              將科技與文明的力量和每個人的生命緊密相連
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center p-8 rounded-lg hover:shadow-lg transition-shadow">
+              <div className="w-full h-48 bg-gradient-to-br from-blue-100 to-blue-50 rounded-lg mb-6 flex items-center justify-center">
+                <TrendingUp className="w-16 h-16 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                為世界帶來全新視角
+              </h3>
+              <p className="text-gray-600">
+                用創新技術重新定義空氣清淨，為健康生活開創新可能
+              </p>
+            </div>
+
+            <div className="text-center p-8 rounded-lg hover:shadow-lg transition-shadow">
+              <div className="w-full h-48 bg-gradient-to-br from-green-100 to-green-50 rounded-lg mb-6 flex items-center justify-center">
+                <Heart className="w-16 h-16 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                重塑人們的生產和生活方式
+              </h3>
+              <p className="text-gray-600">
+                讓每個家庭都能享受純淨空氣，提升生活品質
+              </p>
+            </div>
+
+            <div className="text-center p-8 rounded-lg hover:shadow-lg transition-shadow">
+              <div className="w-full h-48 bg-gradient-to-br from-purple-100 to-purple-50 rounded-lg mb-6 flex items-center justify-center">
+                <Award className="w-16 h-16 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                培養社會的科技創新力量
+              </h3>
+              <p className="text-gray-600">
+                持續投入研發，推動空氣清淨技術的進步與創新
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Culture Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              人在 Apolnus
+            </h2>
+            <p className="text-2xl text-gray-600 mb-4">
+              一起成為更好的我們
+            </p>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              成就志同道合的夥伴，提供體面生活和成長空間
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {benefits.map((benefit) => {
+              const Icon = benefit.icon;
+              return (
+                <div key={benefit.title} className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                    <Icon className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-gray-600">
+                    {benefit.description}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Video Section - Third Screen */}
+      <section className="relative min-h-screen flex items-center justify-center">
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/careers-video.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40" />
+        
+        {/* Content */}
+        <div className="relative z-10 text-center px-6 md:px-12 py-20">
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            與我們一起創造未來
+          </h2>
+          <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
+            加入 Apolnus，讓你的想像成為現實
+          </p>
+        </div>
+      </section>
+
+      {/* Teams Section */}
+      <section id="teams" className="py-20 bg-white">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              團隊介紹
+            </h2>
+            <p className="text-xl text-gray-600">
+              找到適合你的團隊
+            </p>
+            <p className="text-lg text-gray-600 mt-2">
+              在合適的職位，你的想像將大放異彩
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {teams.map((team) => {
+              const Icon = team.icon;
+              return (
+                <div key={team.title} className="bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                      <Icon className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <h3 className="text-2xl font-semibold text-gray-900">
+                      {team.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    {team.description}
+                  </p>
+                  <Link href="/careers#positions">
+                    <Button
+                      variant="outline"
+                      className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                      onClick={scrollToTop}
+                    >
+                      在招職位
+                    </Button>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Positions Section */}
+      <section id="positions" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              在招職位
+            </h2>
+            <p className="text-xl text-gray-600">
+              加入我們，一起創造更好的未來
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-12 text-center">
+            <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-6" />
+            <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              職位招募中
+            </h3>
+            <p className="text-gray-600 mb-8">
+              我們正在尋找優秀的人才加入團隊。如果您對空氣清淨技術充滿熱情，歡迎將您的履歷發送至我們的招聘郵箱。
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="mailto:hr@apolnus.com">
+                <Button
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-base rounded-md"
+                >
+                  發送履歷
+                </Button>
+              </a>
+              <Link href="/support">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-3 text-base rounded-md"
+                  onClick={scrollToTop}
+                >
+                  聯絡我們
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

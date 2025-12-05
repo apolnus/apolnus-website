@@ -1,0 +1,1 @@
+ALTER TABLE `warrantyRegistrations` ADD `userId` int NOT NULL;

@@ -1,0 +1,22 @@
+{
+  "query": "SELECT * FROM siteSettings;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM siteSettings;",
+  "rows": [
+    {
+      "id": "1",
+      "key": "ga4_id",
+      "value": "G-TEST123456",
+      "updatedAt": "2025-11-24 15:25:45"
+    },
+    {
+      "id": "2",
+      "key": "meta_pixel_id",
+      "value": "123456789012345",
+      "updatedAt": "2025-11-24 15:25:46"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tkey\tvalue\tupdatedAt\n1\tga4_id\tG-TEST123456\t2025-11-24 15:25:45\n2\tmeta_pixel_id\t123456789012345\t2025-11-24 15:25:46\n",
+  "stderr": "",
+  "execution_time_ms": 1696
+}

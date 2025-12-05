@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE siteSettings SET value = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663216678001/fSQyfmdSvtTzG7Fo7nT3qq/site-assets/1764206524707-ap.jpg' WHERE `key` = 'default_og_image';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute UPDATE siteSettings SET value = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663216678001/fSQyfmdSvtTzG7Fo7nT3qq/site-assets/1764206524707-ap.jpg' WHERE `key` = 'default_og_image';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1585
+}

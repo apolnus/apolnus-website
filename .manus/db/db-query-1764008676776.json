@@ -1,0 +1,60 @@
+{
+  "query": "SELECT * FROM socialLinks WHERE locale = 'zh-TW' ORDER BY displayOrder;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT * FROM socialLinks WHERE locale = 'zh-TW' ORDER BY displayOrder;",
+  "rows": [
+    {
+      "id": "1",
+      "locale": "zh-TW",
+      "platform": "line",
+      "url": "https://lin.ee/9oputvu",
+      "isActive": "1",
+      "displayOrder": "0",
+      "createdAt": "2025-11-24 18:24:17",
+      "updatedAt": "2025-11-24 18:24:17"
+    },
+    {
+      "id": "2",
+      "locale": "zh-TW",
+      "platform": "facebook",
+      "url": "https://www.facebook.com/Apolnus",
+      "isActive": "1",
+      "displayOrder": "0",
+      "createdAt": "2025-11-24 18:24:18",
+      "updatedAt": "2025-11-24 18:24:18"
+    },
+    {
+      "id": "3",
+      "locale": "zh-TW",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/apolnus/",
+      "isActive": "1",
+      "displayOrder": "0",
+      "createdAt": "2025-11-24 18:24:18",
+      "updatedAt": "2025-11-24 18:24:18"
+    },
+    {
+      "id": "4",
+      "locale": "zh-TW",
+      "platform": "youtube",
+      "url": "https://www.youtube.com/@Apolnus",
+      "isActive": "1",
+      "displayOrder": "0",
+      "createdAt": "2025-11-24 18:24:19",
+      "updatedAt": "2025-11-24 18:24:19"
+    },
+    {
+      "id": "5",
+      "locale": "zh-TW",
+      "platform": "twitter",
+      "url": "https://x.com/apolnus",
+      "isActive": "1",
+      "displayOrder": "0",
+      "createdAt": "2025-11-24 18:24:19",
+      "updatedAt": "2025-11-24 18:24:19"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tlocale\tplatform\turl\tisActive\tdisplayOrder\tcreatedAt\tupdatedAt\n1\tzh-TW\tline\thttps://lin.ee/9oputvu\t1\t0\t2025-11-24 18:24:17\t2025-11-24 18:24:17\n2\tzh-TW\tfacebook\thttps://www.facebook.com/Apolnus\t1\t0\t2025-11-24 18:24:18\t2025-11-24 18:24:18\n3\tzh-TW\tinstagram\thttps://www.instagram.com/apolnus/\t1\t0\t2025-11-24 18:24:18\t2025-11-24 18:24:18\n4\tzh-TW\tyoutube\thttps://www.youtube.com/@Apolnus\t1\t0\t2025-11-24 18:24:19\t2025-11-24 18:24:19\n5\tzh-TW\ttwitter\thttps://x.com/apolnus\t1\t0\t2025-11-24 18:24:19\t2025-11-24 18:24:19\n",
+  "stderr": "",
+  "execution_time_ms": 1614
+}

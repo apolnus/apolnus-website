@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, userId, issueTitle, contactName, createdAt FROM supportTickets WHERE id = 90002;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT id, userId, issueTitle, contactName, createdAt FROM supportTickets WHERE id = 90002;",
+  "rows": [
+    {
+      "id": "90002",
+      "userId": "1",
+      "issueTitle": "有問題",
+      "contactName": "陳又綺",
+      "createdAt": "2025-12-01 07:18:57"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tissueTitle\tcontactName\tcreatedAt\n90002\t1\t有問題\t陳又綺\t2025-12-01 07:18:57\n",
+  "stderr": "",
+  "execution_time_ms": 1620
+}

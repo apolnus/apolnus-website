@@ -1,0 +1,110 @@
+{
+  "query": "SELECT page, language, COUNT(*) as count FROM seoSettings GROUP BY page, language ORDER BY page, language LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user N4kPE9xHcBqcJ7A.925911140993 --database fSQyfmdSvtTzG7Fo7nT3qq --execute SELECT page, language, COUNT(*) as count FROM seoSettings GROUP BY page, language ORDER BY page, language LIMIT 20",
+  "rows": [
+    {
+      "page": "about",
+      "language": "de",
+      "count": "1"
+    },
+    {
+      "page": "about",
+      "language": "en",
+      "count": "1"
+    },
+    {
+      "page": "about",
+      "language": "fr",
+      "count": "1"
+    },
+    {
+      "page": "about",
+      "language": "ja",
+      "count": "1"
+    },
+    {
+      "page": "about",
+      "language": "ko",
+      "count": "1"
+    },
+    {
+      "page": "about",
+      "language": "zh-CN",
+      "count": "1"
+    },
+    {
+      "page": "about",
+      "language": "zh-TW",
+      "count": "1"
+    },
+    {
+      "page": "careers",
+      "language": "de",
+      "count": "1"
+    },
+    {
+      "page": "careers",
+      "language": "en",
+      "count": "1"
+    },
+    {
+      "page": "careers",
+      "language": "fr",
+      "count": "1"
+    },
+    {
+      "page": "careers",
+      "language": "ja",
+      "count": "1"
+    },
+    {
+      "page": "careers",
+      "language": "ko",
+      "count": "1"
+    },
+    {
+      "page": "careers",
+      "language": "zh-CN",
+      "count": "1"
+    },
+    {
+      "page": "careers",
+      "language": "zh-TW",
+      "count": "1"
+    },
+    {
+      "page": "faq",
+      "language": "de",
+      "count": "1"
+    },
+    {
+      "page": "faq",
+      "language": "en",
+      "count": "1"
+    },
+    {
+      "page": "faq",
+      "language": "fr",
+      "count": "1"
+    },
+    {
+      "page": "faq",
+      "language": "ja",
+      "count": "1"
+    },
+    {
+      "page": "faq",
+      "language": "ko",
+      "count": "1"
+    },
+    {
+      "page": "faq",
+      "language": "zh-CN",
+      "count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "page\tlanguage\tcount\nabout\tde\t1\nabout\ten\t1\nabout\tfr\t1\nabout\tja\t1\nabout\tko\t1\nabout\tzh-CN\t1\nabout\tzh-TW\t1\ncareers\tde\t1\ncareers\ten\t1\ncareers\tfr\t1\ncareers\tja\t1\ncareers\tko\t1\ncareers\tzh-CN\t1\ncareers\tzh-TW\t1\nfaq\tde\t1\nfaq\ten\t1\nfaq\tfr\t1\nfaq\tja\t1\nfaq\tko\t1\nfaq\tzh-CN\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1531
+}
