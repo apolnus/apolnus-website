@@ -42,6 +42,7 @@ COPY drizzle ./drizzle
 COPY scripts ./scripts
 COPY shared ./shared
 COPY --from=builder /app/client ./client
+COPY client/src/i18n/locales ./client/src/i18n/locales
 COPY *.csv ./
 
 # Expose port (Zeabur will override this with PORT env var)
