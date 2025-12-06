@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { google } from 'googleapis';
 import axios from 'axios';
-import { getDb } from '../db';
+import { getDb, upsertUser } from '../db';
 import { users } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { ENV } from './env';
@@ -57,9 +57,12 @@ authRouter.get('/api/auth/google/callback', async (req: Request, res: Response) 
   } catch (error: any) {
     console.error('[Auth Error] Google Login Failed:', {
       message: error.message,
+      code: error.code,
+      sqlMessage: error.sqlMessage,
       stack: error.stack
     });
-    res.redirect(`/login?error=google_failed&reason=${encodeURIComponent(error.message || 'unknown')}`);
+    const reason = error.sqlMessage || error.message || 'unknown';
+    res.redirect(`/login?error=google_failed&reason=${encodeURIComponent(reason)}`);
   }
 });
 
@@ -109,7 +112,7 @@ authRouter.get('/api/auth/line/callback', async (req: Request, res: Response) =>
     await handleUserLogin(req, res, {
       openId: `line_${payload.sub}`,
       name: payload.name,
-      email: payload.email || '', // LINE Email 需申請權限
+      email: payload.email || undefined, // LINE Email 需申請權限，若無則為 undefined
       avatar: payload.picture || '',
       loginMethod: 'line'
     });
@@ -118,34 +121,29 @@ authRouter.get('/api/auth/line/callback', async (req: Request, res: Response) =>
   } catch (error: any) {
     console.error('[Auth Error] LINE Login Failed:', {
       message: error.message,
+      code: error.code,
+      sqlMessage: error.sqlMessage,
       response: error.response?.data,
       stack: error.stack
     });
-    // 將錯誤訊息帶到 URL 以便前端顯示 (或暫時用於除錯)
-    res.redirect(`/login?error=line_failed&reason=${encodeURIComponent(error.message || 'unknown')}`);
+    const reason = error.sqlMessage || error.message || 'unknown';
+    res.redirect(`/login?error=line_failed&reason=${encodeURIComponent(reason)}`);
   }
 });
 
 // --- 3. 共用登入邏輯 (DB & Session) ---
 async function handleUserLogin(req: Request, res: Response, userData: any) {
-  const db = await getDb();
-  if (!db) throw new Error("DB not connected");
-
-  // 更新或建立用戶
-  await db.insert(users).values({
+  // 使用 centralized upsert logic
+  await upsertUser({
     openId: userData.openId,
     name: userData.name,
-    email: userData.email,
+    email: userData.email, // undefined 會在 upsertUser 中被忽略 (轉為 NULL 或 skip)
     avatar: userData.avatar,
     loginMethod: userData.loginMethod,
-    lastSignedIn: new Date(),
-  }).onDuplicateKeyUpdate({
-    set: {
-      name: userData.name,
-      avatar: userData.avatar, // 更新頭像
-      lastSignedIn: new Date(),
-      loginMethod: userData.loginMethod
-    }
+    role: undefined, // Let DB default handling it or upsertUser logic
+    createdAt: undefined,
+    updatedAt: undefined,
+    lastSignedIn: new Date() // upsertUser 邏輯會處理這個
   });
 
   // 建立 Session
