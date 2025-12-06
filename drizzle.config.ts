@@ -3,8 +3,8 @@ import { defineConfig } from "drizzle-kit";
 export default defineConfig({
   out: "./drizzle/migrations",
   schema: "./drizzle/schema.ts",
-  dialect: "sqlite",
+  dialect: "mysql",
   dbCredentials: {
-    url: "file:sqlite.db"
+    url: process.env.DATABASE_URL || "mysql://root:root@localhost:3306/apolnus",
   },
 });
