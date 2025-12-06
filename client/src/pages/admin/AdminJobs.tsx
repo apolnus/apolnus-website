@@ -381,17 +381,12 @@ export default function AdminJobs() {
                   </div>
 
                   <div className="flex justify-end gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setIsDialogOpen(false);
-                        setEditingJob(null);
-                      }}
-                    >
+                    <Button type="button" variant="outline" onClick={() => { setIsDialogOpen(false); setEditingJob(null); }}>
                       取消
                     </Button>
-                    <Button type="submit">儲存</Button>
+                    <Button type="submit" disabled={upsertMutation.isPending}>
+                      {upsertMutation.isPending ? "儲存中..." : "儲存"}
+                    </Button>
                   </div>
                 </form>
               </DialogContent>
@@ -425,8 +420,8 @@ export default function AdminJobs() {
                     <td className="p-3">
                       <span
                         className={`inline-block px-2 py-1 text-xs rounded ${job.isActive
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
                           }`}
                       >
                         {job.isActive ? "上架" : "下架"}

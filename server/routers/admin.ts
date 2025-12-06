@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { adminProcedure, router } from "../_core/trpc";
+import { invokeLLM } from "../_core/llm";
 import { getDb } from "../db";
 import { subscribers, partners, siteSettings, productModels, faqs, warrantyRegistrations, supportTickets, ticketReplies, seoSettings, jobs, users } from "../../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
@@ -596,7 +597,7 @@ Example: If input is "Apolnus® Air Purifier", output must be:
           }
         }
 
-        return { success: true, addedCount, pages: addedPages };
+        return { success: true, totalPages: allPages.length, addedSettings: addedCount, pages: addedPages };
       }),
 
     // Batch fill SEO content for product pages
@@ -698,6 +699,71 @@ Example: If input is "Apolnus® Air Purifier", output must be:
           success: true,
           message: '✅ Sitemap 已成功更新!'
         };
+
+      }),
+
+    // AI 生成 SEO 建議 (僅管理員)
+    generateSuggestions: adminProcedure
+      .input(z.object({
+        pageId: z.string(),
+        pageName: z.string(),
+        currentTitle: z.string().optional(),
+        currentDescription: z.string().optional(),
+        language: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const langNames: Record<string, string> = {
+          "zh-TW": "Traditional Chinese (Taiwan)",
+          "en": "English",
+          "zh-CN": "Simplified Chinese",
+          "ja": "Japanese",
+          "ko": "Korean",
+          "de": "German",
+          "fr": "French",
+        };
+
+        const targetLang = langNames[input.language] || input.language;
+
+        const prompt = `As an SEO Expert, generate optimized SEO content for a webpage.
+Page Context:
+- ID: ${input.pageId}
+- Name: ${input.pageName}
+- Current Title: ${input.currentTitle || "N/A"}
+- Current Description: ${input.currentDescription || "N/A"}
+
+Target Language: ${targetLang}
+
+Requirements:
+1. Title: Engaging, includes relevant keywords, under 60 characters.
+2. Description: Compelling summary, includes call-to-action, under 160 characters.
+3. Keywords: 5-10 relevant keywords, comma-separated.
+
+Respond ONLY in valid JSON format:
+{
+  "title": "Generated Title",
+  "description": "Generated Description",
+  "keywords": "keyword1, keyword2, keyword3"
+}`;
+
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a professional SEO copywriter. Always respond with valid JSON." },
+            { role: "user", content: prompt },
+          ],
+        });
+
+        const content = response.choices[0]?.message?.content;
+        if (!content || typeof content !== 'string') {
+          throw new Error("AI 生成回應為空");
+        }
+
+        try {
+          // Clean markdown code blocks if present
+          const jsonStr = content.replace(/```json\n|```/g, "").trim();
+          return JSON.parse(jsonStr);
+        } catch (e) {
+          throw new Error("AI 回應格式錯誤");
+        }
       }),
   }),
 

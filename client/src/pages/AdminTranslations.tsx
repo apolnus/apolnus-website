@@ -394,6 +394,12 @@ export default function AdminTranslations() {
                               ? "bg-gradient-to-r from-purple-600 to-blue-600"
                               : "bg-green-500"
                               }`}
+                            aria-valuenow={Math.round((translationProgress.current / (translationProgress.total || 1)) * 100)}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            role="progressbar"
+
+                            // eslint-disable-next-line react-dom/no-unsafe-inline-style
                             style={{
                               width: `${(translationProgress.current / (translationProgress.total || 1)) * 100}%`,
                             } as React.CSSProperties}

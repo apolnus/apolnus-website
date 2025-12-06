@@ -225,9 +225,9 @@ export default function AdminSocialLinks() {
                       <div className="flex justify-end gap-3 pt-4">
                         <Button
                           onClick={handleSave}
-                          disabled={updateMutation.isLoading}
+                          disabled={updateMutation.isPending}
                         >
-                          {updateMutation.isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                          {updateMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                           儲存變更
                         </Button>
                       </div>

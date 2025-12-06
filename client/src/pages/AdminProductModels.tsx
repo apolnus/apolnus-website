@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import AdminNav, { AdminSidebar } from "@/components/AdminNav";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -50,8 +50,9 @@ function SortableRow({ model, onDelete }: { model: ProductModel; onDelete: (id: 
     opacity: isDragging ? 0.5 : 1,
   };
 
+  // eslint-disable-next-line react-dom/no-unsafe-inline-style
   return (
-    <tr ref={setNodeRef} style={style} className="hover:bg-gray-50">
+    <tr ref={setNodeRef} style={style as React.CSSProperties} className="hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap">
         <div
           {...attributes}
@@ -97,9 +98,12 @@ export default function AdminProductModels() {
   const [items, setItems] = useState<ProductModel[]>(productModels || []);
 
   // Update items when productModels data changes
-  if (productModels && JSON.stringify(items.map(i => i.id)) !== JSON.stringify(productModels.map(m => m.id))) {
-    setItems([...productModels]);
-  }
+  // Update items when productModels data changes
+  useEffect(() => {
+    if (productModels) {
+      setItems(productModels);
+    }
+  }, [productModels]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -111,7 +115,7 @@ export default function AdminProductModels() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-      <SEOHead pageKey="adminProductModels" />
+        <SEOHead pageKey="adminProductModels" />
         <div className="text-gray-600">{t('adminProductModels.t_d3933730')}</div>
       </div>
     );
@@ -122,7 +126,7 @@ export default function AdminProductModels() {
       toast.error("請輸入產品型號");
       return;
     }
-    
+
     try {
       await addMutation.mutateAsync({ name: newModel.trim() });
       toast.success("產品型號已新增");
@@ -135,7 +139,7 @@ export default function AdminProductModels() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("確定要刪除此產品型號嗎？")) return;
-    
+
     try {
       await deleteMutation.mutateAsync({ id });
       toast.success("產品型號已刪除");
@@ -179,7 +183,7 @@ export default function AdminProductModels() {
     <div className="min-h-screen bg-gray-100">
       <AdminNav />
       <AdminSidebar currentPath={location} />
-      
+
       <main className="ml-64 pt-24 p-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('adminProductModels.t_cab0397c')}</h1>
