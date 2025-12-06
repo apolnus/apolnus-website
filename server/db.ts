@@ -1,21 +1,36 @@
-import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/libsql";
-import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
 import { InsertUser, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
+// Global connection pool
+let _pool: mysql.Pool | null = null;
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db) {
     try {
-      const client = createClient({
-        url: 'file:sqlite.db',
+      if (!ENV.databaseUrl) {
+        throw new Error("DATABASE_URL is not set");
+      }
+
+      _pool = mysql.createPool({
+        uri: ENV.databaseUrl,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
+        // 添加 SSL 設定以支援外部連線 (若需要)
+        ssl: {
+          rejectUnauthorized: false
+        }
       });
-      _db = drizzle(client);
+
+      _db = drizzle(_pool, { mode: "default" });
+      console.log("[Database] Connected to MySQL via Pool");
     } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
+      console.error("[Database] Failed to connect:", error);
       _db = null;
     }
   }
@@ -39,13 +54,15 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     };
     const updateSet: Record<string, unknown> = {};
 
-    const textFields = ["name", "email", "loginMethod"] as const;
+    const textFields = ["name", "email", "loginMethod", "phone", "address", "avatar"] as const;
     type TextField = (typeof textFields)[number];
 
     const assignNullable = (field: TextField) => {
+      // @ts-ignore - dynamic access
       const value = user[field];
       if (value === undefined) return;
       const normalized = value ?? null;
+      // @ts-ignore
       values[field] = normalized;
       updateSet[field] = normalized;
     };
@@ -72,8 +89,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onConflictDoUpdate({
-      target: users.openId,
+    // MySQL uses onDuplicateKeyUpdate
+    await db.insert(users).values(values).onDuplicateKeyUpdate({
       set: updateSet,
     });
   } catch (error) {
@@ -89,9 +106,10 @@ export async function getUserByOpenId(openId: string) {
     return undefined;
   }
 
+  // @ts-ignore - basic where clause
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+import { eq } from "drizzle-orm";
