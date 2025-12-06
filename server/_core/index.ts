@@ -41,11 +41,11 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
-  
+
   // Sitemap.xml and robots.txt routes - must be registered before static files
   app.get("/sitemap.xml", sitemapHandler);
   app.get("/robots.txt", robotsHandler);
-  
+
   // 檔案上傳 API
   const upload = multer({ storage: multer.memoryStorage() });
   app.post('/api/upload', upload.single('file'), async (req, res) => {
@@ -92,6 +92,33 @@ async function startServer() {
   if (port !== preferredPort) {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
+
+  // Debug Route for Database Check
+  app.get('/api/debug/db-check', async (req, res) => {
+    try {
+      const db = await getDb();
+      if (!db) throw new Error("DB Connection Failed");
+
+      const { authorizedServiceCenters, users } = await import('../drizzle/schema');
+      const { sql } = await import('drizzle-orm');
+
+      // @ts-ignore
+      const [centerCount] = await db.select({ count: sql`count(*)` }).from(authorizedServiceCenters);
+      // @ts-ignore
+      const [userCount] = await db.select({ count: sql`count(*)` }).from(users);
+
+      res.json({
+        status: 'ok',
+        databaseUrl: process.env.DATABASE_URL?.replace(/:[^:@]+@/, ':***@'), // Mask password
+        counts: {
+          centers: centerCount,
+          users: userCount
+        }
+      });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message, stack: e.stack });
+    }
+  });
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
