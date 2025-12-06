@@ -142,12 +142,17 @@ async function importCSV(filePath: string, table: any, tableName: string, db: an
             const batch = valuesToInsert.slice(i, i + BATCH_SIZE);
             try {
                 // @ts-ignore
-                await db.insert(table).values(batch).onDuplicateKeyIgnore();
-            } catch (e) {
-                console.error(`[Error] 匯入批次失敗 (${tableName}):`, e);
+                await db.insert(table).values(batch);
+            } catch (e: any) {
+                // 若是重複鍵值錯誤 (ER_DUP_ENTRY)，則忽略 (模擬 Ignore 行為)
+                if (e.code === 'ER_DUP_ENTRY') {
+                    console.log(`[Info] 部分資料已存在 (${tableName})，跳過批次`);
+                } else {
+                    console.error(`[Error] 匯入批次失敗 (${tableName}):`, e);
+                }
             }
         }
-        console.log(`[Success] 已處理 ${valuesToInsert.length} 筆資料至 ${tableName}`);
+        console.log(`[Done] 已處理 ${valuesToInsert.length} 筆資料至 ${tableName}`);
     }
 }
 
