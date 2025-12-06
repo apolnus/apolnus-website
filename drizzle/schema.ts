@@ -273,5 +273,19 @@ export const jobs = mysqlTable("jobs", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
+
 export type Job = typeof jobs.$inferSelect;
 export type InsertJob = typeof jobs.$inferInsert;
+
+// Translations Table (i18n)
+export const translations = mysqlTable("translations", {
+  key: varchar("key", { length: 255 }).notNull(),   // e.g. "nav.home"
+  lang: varchar("lang", { length: 10 }).notNull(),  // e.g. "zh-TW"
+  value: text("value"),                             // e.g. "首頁"
+  namespace: varchar("namespace", { length: 50 }).default("translation").notNull(),
+}, (table) => ({
+  pk: { columns: [table.key, table.lang, table.namespace] }, // Composite Primary Key
+}));
+
+export type Translation = typeof translations.$inferSelect;
+export type InsertTranslation = typeof translations.$inferInsert;

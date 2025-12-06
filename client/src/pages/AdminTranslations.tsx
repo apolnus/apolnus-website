@@ -65,15 +65,7 @@ export default function AdminTranslations() {
     },
   });
 
-  const extractMutation = trpc.admin.translations.extractFromSource.useMutation({
-    onSuccess: (result) => {
-      toast.success(`成功提取 ${result.extractedCount} 個新翻譯條目`);
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(`提取失敗: ${error.message}`);
-    },
-  });
+
 
   const autoFillMutation = trpc.admin.translations.autoFill.useMutation({
     onMutate: () => {
@@ -309,40 +301,8 @@ export default function AdminTranslations() {
                   </Card>
                 </div>
 
-                {/* Extract & AI Auto-Fill Buttons */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <ScanSearch className="w-5 h-5 text-blue-600" />
-                        掃描並提取新文字
-                      </CardTitle>
-                      <CardDescription>
-                        自動掃描程式碼中的硬編碼中文，提取到翻譯檔案中
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button
-                        onClick={() => extractMutation.mutate()}
-                        disabled={extractMutation.isPending}
-                        className="w-full"
-                        variant="outline"
-                      >
-                        {extractMutation.isPending ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            掃描中...
-                          </>
-                        ) : (
-                          <>
-                            <ScanSearch className="mr-2 h-4 w-4" />
-                            🔄 掃描並提取新文字
-                          </>
-                        )}
-                      </Button>
-                    </CardContent>
-                  </Card>
-
+                {/* AI Auto-Fill Buttons */}
+                <div className="grid grid-cols-1 gap-4">
                   <Card>
                     <CardHeader>
                       <CardTitle>AI 自動翻譯</CardTitle>

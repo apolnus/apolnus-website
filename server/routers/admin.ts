@@ -2,11 +2,12 @@ import { z } from "zod";
 import { adminProcedure, router } from "../_core/trpc";
 import { invokeLLM } from "../_core/llm";
 import { getDb } from "../db";
-import { subscribers, partners, siteSettings, productModels, faqs, warrantyRegistrations, supportTickets, ticketReplies, seoSettings, jobs, users } from "../../drizzle/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { subscribers, partners, siteSettings, productModels, faqs, warrantyRegistrations, supportTickets, ticketReplies, seoSettings, jobs, users, translations } from "../../drizzle/schema";
+import { eq, and, desc, sql, like, or } from 'drizzle-orm';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import * as crypto from 'crypto';
+import Razorpay from 'razorpay';
+import crypto from 'crypto';
 import * as XLSX from 'xlsx';
 
 export const adminRouter = router({
@@ -767,113 +768,41 @@ Respond ONLY in valid JSON format:
       }),
   }),
 
-  // Translations Management
+  // Translations Management (Database-backed)
   translations: router({
     // Get all translations for a specific language
     list: adminProcedure
       .input(z.object({ lang: z.string() }))
       .query(async ({ input }) => {
-        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
-        const zhTWPath = path.join(localesDir, 'zh-TW.json');
-        const targetPath = path.join(localesDir, `${input.lang}.json`);
+        const db = await getDb();
 
-        // Read both files
-        try {
-          // Check if directory exists first
-          try {
-            await fs.access(localesDir);
-          } catch (e) {
-            console.error(`Locales directory not found at: ${localesDir}`);
-            const clientSrc = path.join(process.cwd(), 'client/src');
-            const filesInSrc = await fs.readdir(clientSrc).catch(err => `Error reading ${clientSrc}: ${err.message}`);
-            throw new Error(`Locales directory missing at ${localesDir}. client/src contents: ${Array.isArray(filesInSrc) ? filesInSrc.join(', ') : filesInSrc}`);
-          }
+        // Fetch zh-TW (source) and target language
+        const [zhTWRecords, targetRecords] = await Promise.all([
+          db.select().from(translations).where(eq(translations.lang, 'zh-TW')),
+          db.select().from(translations).where(eq(translations.lang, input.lang)),
+        ]);
 
-          const [zhTWContent, targetContent] = await Promise.all([
-            fs.readFile(zhTWPath, 'utf-8'),
-            fs.readFile(targetPath, 'utf-8').catch(() => '{}'),
-          ]);
+        // Create maps for quick lookup
+        const zhTWMap = new Map(zhTWRecords.map(r => [r.key, r.value || '']));
+        const targetMap = new Map(targetRecords.map(r => [r.key, r.value || '']));
 
-          const zhTWData = JSON.parse(zhTWContent);
-          const targetData = JSON.parse(targetContent);
+        // Build entries based on zh-TW keys
+        const entries = Array.from(zhTWMap.entries()).map(([key, zhTWValue]) => ({
+          key,
+          zhTW: zhTWValue,
+          target: targetMap.get(key) || '',
+          missing: !targetMap.has(key) || !targetMap.get(key),
+        }));
 
-          // Flatten nested objects to get all keys
-          const flattenObject = (obj: any, prefix = ''): Record<string, string> => {
-            return Object.keys(obj).reduce((acc: Record<string, string>, key) => {
-              const newKey = prefix ? `${prefix}.${key}` : key;
-              if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-                Object.assign(acc, flattenObject(obj[key], newKey));
-              } else {
-                acc[newKey] = obj[key];
-              }
-              return acc;
-            }, {});
-          };
+        const totalCount = entries.length;
+        const missingCount = entries.filter(e => e.missing).length;
 
-          const zhTWFlat = flattenObject(zhTWData);
-          const targetFlat = flattenObject(targetData);
-
-          // Build translation entries
-          const entries = Object.keys(zhTWFlat).map(key => ({
-            key,
-            zhTW: zhTWFlat[key],
-            target: targetFlat[key] || '',
-            missing: !targetFlat[key],
-          }));
-
-          const totalCount = entries.length;
-          const missingCount = entries.filter(e => e.missing).length;
-
-          return {
-            lang: input.lang,
-            totalCount,
-            missingCount,
-            entries,
-          };
-
-        } catch (error: any) {
-          console.error('Error in translations.list:', error);
-          if (error.code === 'ENOENT') {
-            // List directory contents to debug
-            const files = await fs.readdir(localesDir).catch(e => [`Error listing directory: ${e.message}`]);
-            throw new Error(`Translation file not found at ${zhTWPath}. Locales dir (${localesDir}) contains: ${files.join(', ')}`);
-          }
-          throw error;
-        }
-
-
-      }),
-
-    // Update a single translation entry
-    update: adminProcedure
-      .input(z.object({
-        lang: z.string(),
-        key: z.string(),
-        value: z.string(),
-      }))
-      .mutation(async ({ input }) => {
-        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
-        const targetPath = path.join(localesDir, `${input.lang}.json`);
-
-        // Read current file
-        const content = await fs.readFile(targetPath, 'utf-8').catch(() => '{}');
-        const data = JSON.parse(content);
-
-        // Set nested value
-        const keys = input.key.split('.');
-        let current = data;
-        for (let i = 0; i < keys.length - 1; i++) {
-          if (!current[keys[i]]) {
-            current[keys[i]] = {};
-          }
-          current = current[keys[i]];
-        }
-        current[keys[keys.length - 1]] = input.value;
-
-        // Write back
-        await fs.writeFile(targetPath, JSON.stringify(data, null, 2), 'utf-8');
-
-        return { success: true };
+        return {
+          lang: input.lang,
+          totalCount,
+          missingCount,
+          entries,
+        };
       }),
 
     // Batch update multiple translation entries
@@ -886,122 +815,78 @@ Respond ONLY in valid JSON format:
         })),
       }))
       .mutation(async ({ input }) => {
-        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
-        const targetPath = path.join(localesDir, `${input.lang}.json`);
+        const db = await getDb();
 
-        // Read current file
-        const content = await fs.readFile(targetPath, 'utf-8').catch(() => '{}');
-        const data = JSON.parse(content);
-
-        // Apply all updates
+        // Upsert each translation
         for (const update of input.updates) {
-          const keys = update.key.split('.');
-          let current = data;
-          for (let i = 0; i < keys.length - 1; i++) {
-            if (!current[keys[i]]) {
-              current[keys[i]] = {};
-            }
-            current = current[keys[i]];
-          }
-          current[keys[keys.length - 1]] = update.value;
-        }
+          const existing = await db.select()
+            .from(translations)
+            .where(and(
+              eq(translations.key, update.key),
+              eq(translations.lang, input.lang)
+            ));
 
-        // Write back once
-        await fs.writeFile(targetPath, JSON.stringify(data, null, 2), 'utf-8');
+          if (existing.length > 0) {
+            await db.update(translations)
+              .set({ value: update.value })
+              .where(and(
+                eq(translations.key, update.key),
+                eq(translations.lang, input.lang)
+              ));
+          } else {
+            await db.insert(translations).values({
+              key: update.key,
+              lang: input.lang,
+              value: update.value,
+            });
+          }
+        }
 
         return { success: true, updatedCount: input.updates.length };
       }),
 
-    // AI auto-fill missing translations
-    // Create a new translation key
+    // Create a new translation key (in zh-TW)
     create: adminProcedure
       .input(z.object({
         key: z.string(),
         zhTW: z.string(),
       }))
       .mutation(async ({ input }) => {
-        const fs = await import('fs/promises');
-        const path = await import('path');
-        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
-        const zhTWPath = path.join(localesDir, 'zh-TW.json');
+        const db = await getDb();
 
-        // Read current file
-        const content = await fs.readFile(zhTWPath, 'utf-8');
-        const data = JSON.parse(content);
+        // Check if key already exists in zh-TW
+        const existing = await db.select()
+          .from(translations)
+          .where(and(
+            eq(translations.key, input.key),
+            eq(translations.lang, 'zh-TW')
+          ));
 
-        // Check if key already exists
-        const keys = input.key.split('.');
-        let current = data;
-        let exists = true;
-        for (let i = 0; i < keys.length - 1; i++) {
-          if (!current[keys[i]]) {
-            exists = false;
-            break;
-          }
-          current = current[keys[i]];
-        }
-        if (exists && current[keys[keys.length - 1]]) {
+        if (existing.length > 0) {
           throw new Error('Key already exists');
         }
 
-        // Set value
-        current = data;
-        for (let i = 0; i < keys.length - 1; i++) {
-          if (!current[keys[i]]) {
-            current[keys[i]] = {};
-          }
-          current = current[keys[i]];
-        }
-        current[keys[keys.length - 1]] = input.zhTW;
-
-        // Write back
-        await fs.writeFile(zhTWPath, JSON.stringify(data, null, 2), 'utf-8');
+        // Insert new translation
+        await db.insert(translations).values({
+          key: input.key,
+          lang: 'zh-TW',
+          value: input.zhTW,
+        });
 
         return { success: true };
       }),
 
-    // Delete a translation key
+    // Delete a translation key (from all languages)
     delete: adminProcedure
       .input(z.object({
         key: z.string(),
       }))
       .mutation(async ({ input }) => {
-        const fs = await import('fs/promises');
-        const path = await import('path');
-        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
-        const files = await fs.readdir(localesDir);
+        const db = await getDb();
 
-        for (const file of files) {
-          if (!file.endsWith('.json')) continue;
-
-          const filePath = path.join(localesDir, file);
-          const content = await fs.readFile(filePath, 'utf-8');
-          const data = JSON.parse(content);
-
-          const keys = input.key.split('.');
-          let current = data;
-          const stack: { obj: any, key: string }[] = [];
-
-          // Navigate to parent of leaf
-          let found = true;
-          for (let i = 0; i < keys.length - 1; i++) {
-            if (!current[keys[i]]) {
-              found = false;
-              break;
-            }
-            stack.push({ obj: current, key: keys[i] });
-            current = current[keys[i]];
-          }
-
-          if (found && current[keys[keys.length - 1]] !== undefined) {
-            delete current[keys[keys.length - 1]];
-
-            // Clean up empty objects up the tree
-            // (Optional: usually not strictly necessary but keeps JSON clean)
-
-            await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
-          }
-        }
+        // Delete from all languages
+        await db.delete(translations)
+          .where(eq(translations.key, input.key));
 
         return { success: true };
       }),
@@ -1013,50 +898,30 @@ Respond ONLY in valid JSON format:
         keys: z.array(z.string()).optional()
       }))
       .mutation(async ({ input }) => {
-        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
-        const zhTWPath = path.join(localesDir, 'zh-TW.json');
-        const targetPath = path.join(localesDir, `${input.lang}.json`);
+        const db = await getDb();
 
-        // Read both files
-        const [zhTWContent, targetContent] = await Promise.all([
-          fs.readFile(zhTWPath, 'utf-8'),
-          fs.readFile(targetPath, 'utf-8').catch(() => '{}'),
+        // Fetch zh-TW (source) and target language
+        const [zhTWRecords, targetRecords] = await Promise.all([
+          db.select().from(translations).where(eq(translations.lang, 'zh-TW')),
+          db.select().from(translations).where(eq(translations.lang, input.lang)),
         ]);
 
-        const zhTWData = JSON.parse(zhTWContent);
-        const targetData = JSON.parse(targetContent);
+        const zhTWMap = new Map(zhTWRecords.map(r => [r.key, r.value || '']));
+        const targetMap = new Map(targetRecords.map(r => [r.key, r.value || '']));
 
-        // Flatten to find missing keys
-        const flattenObject = (obj: any, prefix = ''): Record<string, string> => {
-          return Object.keys(obj).reduce((acc: Record<string, string>, key) => {
-            const newKey = prefix ? `${prefix}.${key}` : key;
-            if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-              Object.assign(acc, flattenObject(obj[key], newKey));
-            } else {
-              acc[newKey] = obj[key];
-            }
-            return acc;
-          }, {});
-        };
-
-        const zhTWFlat = flattenObject(zhTWData);
-        const targetFlat = flattenObject(targetData);
-
-        // Find missing translations
+        // Find missing keys
         let missingKeys: string[];
         if (input.keys && input.keys.length > 0) {
-          // 只處理指定的keys中缺漏的項目
-          missingKeys = input.keys.filter(key => !targetFlat[key] && zhTWFlat[key]);
+          missingKeys = input.keys.filter(key => !targetMap.get(key) && zhTWMap.has(key));
         } else {
-          // 掃描全檔案
-          missingKeys = Object.keys(zhTWFlat).filter(key => !targetFlat[key]);
+          missingKeys = Array.from(zhTWMap.keys()).filter(key => !targetMap.get(key));
         }
 
         if (missingKeys.length === 0) {
           return { success: true, translatedCount: 0 };
         }
 
-        // Batch translate missing keys (process in chunks of 10)
+        // Batch translate missing keys
         const forgeApiUrl = process.env.BUILT_IN_FORGE_API_URL;
         const forgeApiKey = process.env.BUILT_IN_FORGE_API_KEY;
 
@@ -1074,13 +939,12 @@ Respond ONLY in valid JSON format:
         };
 
         const targetLangName = langMap[input.lang] || input.lang;
-
         let translatedCount = 0;
         const chunkSize = 10;
 
         for (let i = 0; i < missingKeys.length; i += chunkSize) {
           const chunk = missingKeys.slice(i, i + chunkSize);
-          const textsToTranslate = chunk.map(key => zhTWFlat[key]);
+          const textsToTranslate = chunk.map(key => zhTWMap.get(key)!);
 
           const systemPrompt = `You are a professional translator. Translate the following Traditional Chinese texts to ${targetLangName}.
 Return ONLY a JSON array of translated strings in the same order as input.
@@ -1109,306 +973,61 @@ Example output: ["Air Purifier", "Product Specifications"]`;
           }
 
           const result = await response.json();
-          const responseText = result.choices?.[0]?.message?.content || "[]";
+          let responseText = result.choices?.[0]?.message?.content || "[]";
+
+          // Clean markdown code blocks if present
+          responseText = responseText.replace(/```json\n|```/g, "").trim();
 
           try {
-            const translations = JSON.parse(responseText);
+            const translations_result = JSON.parse(responseText);
 
-            // Update target data with translations
-            chunk.forEach((key, idx) => {
-              if (translations[idx]) {
-                const keys = key.split('.');
-                let current = targetData;
-                for (let j = 0; j < keys.length - 1; j++) {
-                  if (!current[keys[j]]) {
-                    current[keys[j]] = {};
+            if (Array.isArray(translations_result)) {
+              // Insert/update translations in DB
+              for (let idx = 0; idx < chunk.length; idx++) {
+                if (translations_result[idx]) {
+                  const key = chunk[idx];
+                  const value = translations_result[idx];
+
+                  const existing = await db.select()
+                    .from(translations)
+                    .where(and(
+                      eq(translations.key, key),
+                      eq(translations.lang, input.lang)
+                    ));
+
+                  if (existing.length > 0) {
+                    await db.update(translations)
+                      .set({ value })
+                      .where(and(
+                        eq(translations.key, key),
+                        eq(translations.lang, input.lang)
+                      ));
+                  } else {
+                    await db.insert(translations).values({
+                      key,
+                      lang: input.lang,
+                      value,
+                    });
                   }
-                  current = current[keys[j]];
+
+                  translatedCount++;
                 }
-                current[keys[keys.length - 1]] = translations[idx];
-                translatedCount++;
               }
-            });
+            } else {
+              console.error(`Translation response is not an array for chunk ${i}`, translations_result);
+            }
           } catch (error) {
             console.error(`Failed to parse translation response for chunk ${i}:`, error);
           }
         }
 
-        // Write updated translations back to file
-        await fs.writeFile(targetPath, JSON.stringify(targetData, null, 2), 'utf-8');
-
         return { success: true, translatedCount };
       }),
 
-    // Extract hardcoded Chinese from source code and auto-translate
+    // Extract from source - disabled in production as source code is not available
     extractFromSource: adminProcedure
       .mutation(async () => {
-        const fs = await import('fs/promises');
-        const path = await import('path');
-        const crypto = await import('crypto');
-
-        // Debugging paths for Zeabur environment
-        const clientSrcPath = path.join(process.cwd(), 'client/src');
-        const pagesDir = path.join(clientSrcPath, 'pages');
-        const localesDir = path.join(clientSrcPath, 'i18n/locales');
-        const zhTWPath = path.join(localesDir, 'zh-TW.json');
-
-        console.log(`[Extract] Checking paths... CWD: ${process.cwd()}`);
-
-        try {
-          await fs.access(clientSrcPath);
-        } catch (e) {
-          console.error(`[Extract] client/src NOT found at ${clientSrcPath}`);
-          // List root to see what's there
-          const rootFiles = await fs.readdir(process.cwd()).catch(err => [`Error listing root: ${err.message}`]);
-          console.error(`[Extract] Root contents: ${rootFiles.join(', ')}`);
-          throw new Error(`Source code directory missing. Cannot scan for translations.`);
-        }
-
-        // Read existing translations
-        const zhTWContent = await fs.readFile(zhTWPath, 'utf-8');
-        const zhTWData = JSON.parse(zhTWContent);
-
-        let extractedCount = 0;
-        const newTranslations: Record<string, string> = {};
-
-        // Recursively scan all .tsx files
-        async function scanDirectory(dir: string): Promise<void> {
-          const entries = await fs.readdir(dir, { withFileTypes: true });
-
-          for (const entry of entries) {
-            const fullPath = path.join(dir, entry.name);
-
-            if (entry.isDirectory()) {
-              await scanDirectory(fullPath);
-            } else if (entry.name.endsWith('.tsx')) {
-              // Skip Admin pages
-              if (entry.name.startsWith('Admin')) {
-                continue;
-              }
-
-              await processFile(fullPath, entry.name);
-            }
-          }
-        }
-
-        // Process a single file
-        async function processFile(filePath: string, fileName: string): Promise<void> {
-          let content = await fs.readFile(filePath, 'utf-8');
-          let modified = false;
-          const filePrefix = fileName.replace('.tsx', '').toLowerCase();
-
-          // Check if file already has useTranslation
-          const hasTranslationImport = /import.*useTranslation.*from.*react-i18next/.test(content);
-          const hasUseTranslationHook = /const\s*{\s*t\s*}\s*=\s*useTranslation\(\)/.test(content);
-
-          // Regex for JSX content: >中文<
-          const jsxRegex = />([^<>{}]+?[\u4e00-\u9fff]+[^<>{}]*?)</g;
-          const matches: Array<{ text: string; key: string }> = [];
-
-          let match;
-          while ((match = jsxRegex.exec(content)) !== null) {
-            const text = match[1].trim();
-
-            // Skip if empty or already a translation key
-            if (!text || text.includes('{t(') || text.includes('const ') || text.startsWith('//')) {
-              continue;
-            }
-
-            // Generate key
-            const hash = crypto.createHash('md5').update(text).digest('hex').substring(0, 8);
-            const key = `${filePrefix}.t_${hash}`;
-
-            // Check if already exists
-            if (!zhTWData[key] && !newTranslations[key]) {
-              newTranslations[key] = text;
-              matches.push({ text, key });
-              extractedCount++;
-            }
-          }
-
-          // Regex for attributes: attr="中文" or attr='中文'
-          // Improved to catch single single quotes and more attributes
-          const attrRegex = /([a-zA-Z-]+)=["']([^"']*?[\u4e00-\u9fff]+[^"']*?)["']/g;
-          while ((match = attrRegex.exec(content)) !== null) {
-            const attrName = match[1];
-            const text = match[2].trim();
-
-            // Skip certain attributes
-            if (attrName === 'className' || attrName === 'id' || !text || text.includes('{t(')) {
-              continue;
-            }
-
-            const hash = crypto.createHash('md5').update(text).digest('hex').substring(0, 8);
-            const key = `${filePrefix}.t_${hash}`;
-
-            if (!zhTWData[key] && !newTranslations[key]) {
-              newTranslations[key] = text;
-              matches.push({ text, key });
-              extractedCount++;
-            }
-          }
-          // Replace hardcoded text with translation keys
-          if (matches.length > 0) {
-            modified = true;
-
-            // Replace JSX content
-            content = content.replace(jsxRegex, (fullMatch, text) => {
-              const trimmed = text.trim();
-              const found = matches.find(m => m.text === trimmed);
-              if (found) {
-                // preserve open and close brackets logic: original text was wrapped in > <
-                // regex match[0] is >text<
-                // match[1] is text
-                const open = fullMatch[0];
-                const close = fullMatch[fullMatch.length - 1];
-                return `${open}{t('${found.key}')}${close}`;
-              }
-              return fullMatch;
-            });
-
-            // Replace attributes
-            content = content.replace(attrRegex, (fullMatch, attrName, text) => {
-              if (attrName === 'className' || attrName === 'id') {
-                return fullMatch;
-              }
-              const trimmed = text.trim();
-              const found = matches.find(m => m.text === trimmed);
-              if (found) {
-                return `${attrName}={t('${found.key}')}`;
-              }
-              return fullMatch;
-            });
-
-            // Add import and hook if needed
-            if (!hasTranslationImport) {
-              const importStatement = "import { useTranslation } from 'react-i18next';\n";
-              // Insert after first import
-              const firstImportEnd = content.indexOf(';\n') + 2;
-              content = content.slice(0, firstImportEnd) + importStatement + content.slice(firstImportEnd);
-            }
-
-            if (!hasUseTranslationHook) {
-              // Find the function component and add hook. Support function declaration and arrow function const.
-              const functionMatch = content.match(/export default function \w+\([^)]*\)\s*{/) || content.match(/const \w+\s*=\s*\([^)]*\)\s*=>\s*{/);
-              if (functionMatch) {
-                const insertPos = functionMatch.index! + functionMatch[0].length;
-                content = content.slice(0, insertPos) + "\n  const { t } = useTranslation();\n" + content.slice(insertPos);
-              }
-            }
-            // Write modified file
-            await fs.writeFile(filePath, content, 'utf-8');
-          }
-        }
-
-        // Scan all pages
-        await scanDirectory(pagesDir);
-
-        let translatedLangs: string[] = [];
-
-        // Write new translations to zh-TW.json
-        if (Object.keys(newTranslations).length > 0) {
-          const updatedZhTW = { ...zhTWData, ...newTranslations };
-          await fs.writeFile(zhTWPath, JSON.stringify(updatedZhTW, null, 2), 'utf-8');
-
-          // --- Auto-translate to other languages ---
-          const targetLangs = ['en', 'ja', 'ko', 'de', 'fr', 'zh-CN'];
-          const newKeys = Object.keys(newTranslations);
-          const textsToTranslate = newKeys.map(key => newTranslations[key]);
-
-          const forgeApiUrl = process.env.BUILT_IN_FORGE_API_URL;
-          const forgeApiKey = process.env.BUILT_IN_FORGE_API_KEY;
-
-          if (forgeApiUrl && forgeApiKey) {
-            console.log(`[Extract] Starting auto-translation for ${newKeys.length} new keys...`);
-
-            // Process each language
-            for (const lang of targetLangs) {
-              try {
-                const langMap: Record<string, string> = {
-                  'en': 'English',
-                  'ja': 'Japanese',
-                  'ko': 'Korean',
-                  'de': 'German',
-                  'fr': 'French',
-                  'zh-CN': 'Simplified Chinese',
-                };
-                const targetLangName = langMap[lang] || lang;
-                const targetPath = path.join(localesDir, `${lang}.json`);
-
-                // Read target file
-                const targetContent = await fs.readFile(targetPath, 'utf-8').catch(() => '{}');
-                const targetData = JSON.parse(targetContent);
-
-                // Translate in chunks of 20
-                const chunkSize = 20;
-                for (let i = 0; i < textsToTranslate.length; i += chunkSize) {
-                  const chunkTexts = textsToTranslate.slice(i, i + chunkSize);
-                  const chunkKeys = newKeys.slice(i, i + chunkSize);
-
-                  const systemPrompt = `You are a professional translator for Apolnus (High-end appliance brand). Translate the following Traditional Chinese texts to ${targetLangName}.
-Return ONLY a JSON array of translated strings in the same order as input.
-DO NOT include any explanations, markdown formatting, or code blocks.
-Strings: ${JSON.stringify(chunkTexts)}`;
-
-                  const response = await fetch(`${forgeApiUrl}/v1/chat/completions`, {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      "Authorization": `Bearer ${forgeApiKey}`,
-                    },
-                    body: JSON.stringify({
-                      model: "gpt-4o-mini",
-                      messages: [
-                        { role: "system", content: "You are a professional translator. Respond ONLY with JSON array." },
-                        { role: "user", content: systemPrompt },
-                      ],
-                    }),
-                  });
-
-                  if (!response.ok) {
-                    console.error(`Translation failed for ${lang}: ${response.statusText}`);
-                    continue;
-                  }
-
-                  const result = await response.json();
-                  let responseText = result.choices?.[0]?.message?.content || "[]";
-                  // Clean markdown
-                  responseText = responseText.replace(/```json\n|```/g, "").trim();
-
-                  try {
-                    const translations = JSON.parse(responseText);
-                    if (Array.isArray(translations)) {
-                      // Update target data
-                      chunkKeys.forEach((key, idx) => {
-                        if (translations[idx]) {
-                          const kParts = key.split('.');
-                          let current = targetData;
-                          for (let j = 0; j < kParts.length - 1; j++) {
-                            if (!current[kParts[j]]) current[kParts[j]] = {};
-                            current = current[kParts[j]];
-                          }
-                          current[kParts[kParts.length - 1]] = translations[idx];
-                        }
-                      });
-                    }
-                  } catch (e) {
-                    console.error(`Failed to parse response for ${lang}`, e);
-                  }
-                }
-
-                // Write back
-                await fs.writeFile(targetPath, JSON.stringify(targetData, null, 2), 'utf-8');
-                translatedLangs.push(lang);
-
-              } catch (err) {
-                console.error(`Error processing lang ${lang}:`, err);
-              }
-            }
-          }
-        }
-
-        return { success: true, extractedCount, translatedLangs };
+        throw new Error('Source code extraction is not available in production. Please add translations manually via the Admin interface.');
       }),
   }),
 
