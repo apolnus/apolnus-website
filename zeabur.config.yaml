@@ -1,0 +1,10 @@
+routes:
+  - path: /
+    service: web
+
+services:
+  - name: web
+    build:
+      command: npm run build
+    start:
+      command: npm run start
