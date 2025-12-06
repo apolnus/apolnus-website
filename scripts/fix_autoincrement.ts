@@ -1,8 +1,14 @@
 import mysql from 'mysql2/promise';
 
 async function fixAutoIncrement() {
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl) {
+        console.error('DATABASE_URL environment variable is not set');
+        process.exit(1);
+    }
+
     const connection = await mysql.createConnection({
-        uri: 'mysql://root:Bju81O0Kx7iHVEQDCqwN2UJIt534Wg69@sjc1.clusters.zeabur.com:24053/zeabur?ssl={"rejectUnauthorized":false}',
+        uri: dbUrl,
         ssl: {
             rejectUnauthorized: false
         }
