@@ -824,6 +824,100 @@ Example: If input is "Apolnus® Air Purifier", output must be:
       }),
 
     // AI auto-fill missing translations
+    // Create a new translation key
+    create: adminProcedure
+      .input(z.object({
+        key: z.string(),
+        zhTW: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
+        const zhTWPath = path.join(localesDir, 'zh-TW.json');
+
+        // Read current file
+        const content = await fs.readFile(zhTWPath, 'utf-8');
+        const data = JSON.parse(content);
+
+        // Check if key already exists
+        const keys = input.key.split('.');
+        let current = data;
+        let exists = true;
+        for (let i = 0; i < keys.length - 1; i++) {
+          if (!current[keys[i]]) {
+            exists = false;
+            break;
+          }
+          current = current[keys[i]];
+        }
+        if (exists && current[keys[keys.length - 1]]) {
+          throw new Error('Key already exists');
+        }
+
+        // Set value
+        current = data;
+        for (let i = 0; i < keys.length - 1; i++) {
+          if (!current[keys[i]]) {
+            current[keys[i]] = {};
+          }
+          current = current[keys[i]];
+        }
+        current[keys[keys.length - 1]] = input.zhTW;
+
+        // Write back
+        await fs.writeFile(zhTWPath, JSON.stringify(data, null, 2), 'utf-8');
+
+        return { success: true };
+      }),
+
+    // Delete a translation key
+    delete: adminProcedure
+      .input(z.object({
+        key: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
+        const files = await fs.readdir(localesDir);
+
+        for (const file of files) {
+          if (!file.endsWith('.json')) continue;
+
+          const filePath = path.join(localesDir, file);
+          const content = await fs.readFile(filePath, 'utf-8');
+          const data = JSON.parse(content);
+
+          const keys = input.key.split('.');
+          let current = data;
+          const stack: { obj: any, key: string }[] = [];
+
+          // Navigate to parent of leaf
+          let found = true;
+          for (let i = 0; i < keys.length - 1; i++) {
+            if (!current[keys[i]]) {
+              found = false;
+              break;
+            }
+            stack.push({ obj: current, key: keys[i] });
+            current = current[keys[i]];
+          }
+
+          if (found && current[keys[keys.length - 1]] !== undefined) {
+            delete current[keys[keys.length - 1]];
+
+            // Clean up empty objects up the tree
+            // (Optional: usually not strictly necessary but keeps JSON clean)
+
+            await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+          }
+        }
+
+        return { success: true };
+      }),
+
+    // AI auto-fill missing translations
     autoFill: adminProcedure
       .input(z.object({
         lang: z.string(),
@@ -960,6 +1054,9 @@ Example output: ["Air Purifier", "Product Specifications"]`;
     // Extract hardcoded Chinese from source code
     extractFromSource: adminProcedure
       .mutation(async () => {
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        const crypto = await import('crypto');
         const pagesDir = path.join(process.cwd(), 'client/src/pages');
         const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
         const zhTWPath = path.join(localesDir, 'zh-TW.json');
@@ -1002,12 +1099,12 @@ Example output: ["Air Purifier", "Product Specifications"]`;
           const hasUseTranslationHook = /const\s*{\s*t\s*}\s*=\s*useTranslation\(\)/.test(content);
 
           // Regex for JSX content: >中文<
-          const jsxRegex = /(>)([^<>{}]+?[\u4e00-\u9fff]+[^<>{}]*?)(<)/g;
+          const jsxRegex = />([^<>{}]+?[\u4e00-\u9fff]+[^<>{}]*?)</g;
           const matches: Array<{ text: string; key: string }> = [];
 
           let match;
           while ((match = jsxRegex.exec(content)) !== null) {
-            const text = match[2].trim();
+            const text = match[1].trim();
 
             // Skip if empty or already a translation key
             if (!text || text.includes('{t(') || text.includes('const ') || text.startsWith('//')) {
@@ -1026,8 +1123,9 @@ Example output: ["Air Purifier", "Product Specifications"]`;
             }
           }
 
-          // Regex for attributes: attr="中文"
-          const attrRegex = /([a-zA-Z-]+)="([^"]*?[\u4e00-\u9fff]+[^"]*?)"/g;
+          // Regex for attributes: attr="中文" or attr='中文'
+          // Improved to catch single single quotes and more attributes
+          const attrRegex = /([a-zA-Z-]+)=["']([^"']*?[\u4e00-\u9fff]+[^"']*?)["']/g;
           while ((match = attrRegex.exec(content)) !== null) {
             const attrName = match[1];
             const text = match[2].trim();
@@ -1046,16 +1144,20 @@ Example output: ["Air Purifier", "Product Specifications"]`;
               extractedCount++;
             }
           }
-
           // Replace hardcoded text with translation keys
           if (matches.length > 0) {
             modified = true;
 
             // Replace JSX content
-            content = content.replace(jsxRegex, (fullMatch, open, text, close) => {
+            content = content.replace(jsxRegex, (fullMatch, text) => {
               const trimmed = text.trim();
               const found = matches.find(m => m.text === trimmed);
               if (found) {
+                // preserve open and close brackets logic: original text was wrapped in > <
+                // regex match[0] is >text<
+                // match[1] is text
+                const open = fullMatch[0];
+                const close = fullMatch[fullMatch.length - 1];
                 return `${open}{t('${found.key}')}${close}`;
               }
               return fullMatch;
@@ -1083,14 +1185,13 @@ Example output: ["Air Purifier", "Product Specifications"]`;
             }
 
             if (!hasUseTranslationHook) {
-              // Find the function component and add hook
-              const functionMatch = content.match(/export default function \w+\([^)]*\)\s*{/);
+              // Find the function component and add hook. Support function declaration and arrow function const.
+              const functionMatch = content.match(/export default function \w+\([^)]*\)\s*{/) || content.match(/const \w+\s*=\s*\([^)]*\)\s*=>\s*{/);
               if (functionMatch) {
                 const insertPos = functionMatch.index! + functionMatch[0].length;
                 content = content.slice(0, insertPos) + "\n  const { t } = useTranslation();\n" + content.slice(insertPos);
               }
             }
-
             // Write modified file
             await fs.writeFile(filePath, content, 'utf-8');
           }
