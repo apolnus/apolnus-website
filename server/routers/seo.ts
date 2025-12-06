@@ -64,7 +64,7 @@ export const seoRouter = router({
         description: item.description || "",
         keywords: item.keywords || "",
       }));
-      
+
       await batchUpsertSeoSettings(dataList);
       return { success: true, count: dataList.length };
     }),
@@ -108,7 +108,7 @@ export const seoRouter = router({
         description: item.description || "",
         keywords: item.keywords || "",
       }));
-      
+
       await batchUpsertSeoSettings(dataList);
       return { success: true, count: dataList.length };
     }),
@@ -122,7 +122,7 @@ export const seoRouter = router({
     }))
     .mutation(async ({ input }) => {
       const sourceSeo = await getSeoSetting(input.page, input.sourceLanguage);
-      
+
       if (!sourceSeo) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -131,7 +131,7 @@ export const seoRouter = router({
       }
 
       const results: any[] = [];
-      
+
       for (const targetLang of input.targetLanguages) {
         try {
           const langNames: Record<string, string> = {
@@ -169,7 +169,7 @@ Respond in JSON format:
           }
 
           const translated = JSON.parse(content);
-          
+
           await upsertSeoSetting({
             page: input.page,
             language: targetLang,
@@ -246,7 +246,7 @@ Respond in JSON format:
     // 同步到seoSettings表(只添加不存在的頁面,保留已有的SEO設定)
     const { seoSettings } = await import("../../drizzle/schema");
     const { eq, and } = await import("drizzle-orm");
-    
+
     let addedCount = 0;
     const languages = ["zh-TW", "en", "zh-CN", "ja", "ko", "de", "fr"];
 
@@ -290,15 +290,15 @@ Respond in JSON format:
   // 更新 Sitemap 快取 (僅管理員)
   refreshSitemap: adminProcedure.mutation(async () => {
     const { generateSitemap } = await import("../lib/sitemap");
-    
+
     try {
       // 重新生成 Sitemap
       const sitemap = await generateSitemap();
-      
+
       // 獲取統計資訊
       const { getSitemapStats } = await import("../lib/sitemap");
       const stats = await getSitemapStats();
-      
+
       return {
         success: true,
         message: `Sitemap 已更新，包含 ${stats.totalUrls} 個連結`,
@@ -321,7 +321,7 @@ Respond in JSON format:
     .mutation(async ({ input }) => {
       const allSettings = await getAllSeoSettings();
       const sourceSettings = allSettings.filter(s => s.language === input.sourceLanguage);
-      
+
       if (sourceSettings.length === 0) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -330,7 +330,7 @@ Respond in JSON format:
       }
 
       const results: any[] = [];
-      
+
       for (const sourceSeo of sourceSettings) {
         for (const targetLang of input.targetLanguages) {
           try {
@@ -369,7 +369,7 @@ Respond in JSON format:
             }
 
             const translated = JSON.parse(content);
-            
+
             await upsertSeoSetting({
               page: sourceSeo.page,
               language: targetLang,
@@ -396,5 +396,69 @@ Respond in JSON format:
 
       const successCount = results.filter(r => r.success).length;
       return { success: true, total: results.length, successCount, results };
+    }),
+
+  // AI 生成 SEO 建議 (僅管理員)
+  generateSuggestions: adminProcedure
+    .input(z.object({
+      pageId: z.string(),
+      pageName: z.string(),
+      currentTitle: z.string().optional(),
+      currentDescription: z.string().optional(),
+      language: z.string(),
+    }))
+    .mutation(async ({ input }) => {
+      const langNames: Record<string, string> = {
+        "zh-TW": "Traditional Chinese (Taiwan)",
+        "en": "English",
+        "zh-CN": "Simplified Chinese",
+        "ja": "Japanese",
+        "ko": "Korean",
+        "de": "German",
+        "fr": "French",
+      };
+
+      const targetLang = langNames[input.language] || input.language;
+
+      const prompt = `As an SEO Expert, generate optimized SEO content for a webpage.
+Page Context:
+- ID: ${input.pageId}
+- Name: ${input.pageName}
+- Current Title: ${input.currentTitle || "N/A"}
+- Current Description: ${input.currentDescription || "N/A"}
+
+Target Language: ${targetLang}
+
+Requirements:
+1. Title: Engaging, includes relevant keywords, under 60 characters.
+2. Description: Compelling summary, includes call-to-action, under 160 characters.
+3. Keywords: 5-10 relevant keywords, comma-separated.
+
+Respond ONLY in valid JSON format:
+{
+  "title": "Generated Title",
+  "description": "Generated Description",
+  "keywords": "keyword1, keyword2, keyword3"
+}`;
+
+      const response = await invokeLLM({
+        messages: [
+          { role: "system", content: "You are a professional SEO copywriter. Always respond with valid JSON." },
+          { role: "user", content: prompt },
+        ],
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (!content || typeof content !== 'string') {
+        throw new Error("AI 生成回應為空");
+      }
+
+      try {
+        // Clean markdown code blocks if present
+        const jsonStr = content.replace(/```json\n|```/g, "").trim();
+        return JSON.parse(jsonStr);
+      } catch (e) {
+        throw new Error("AI 回應格式錯誤");
+      }
     }),
 });

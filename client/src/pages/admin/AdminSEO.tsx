@@ -46,13 +46,13 @@ export default function AdminSEO() {
   // 從設定中提取唯一的頁面列表
   const pages = settings
     ? Array.from(new Set(settings.map((s) => s.page))).map((pageId) => {
-        // 從第一筆設定中取得頁面名稱(假設zh-TW的title就是頁面名稱)
-        const zhTWSetting = settings.find((s) => s.page === pageId && s.language === "zh-TW");
-        return {
-          id: pageId,
-          name: zhTWSetting?.title || pageId,
-        };
-      })
+      // 從第一筆設定中取得頁面名稱(假設zh-TW的title就是頁面名稱)
+      const zhTWSetting = settings.find((s) => s.page === pageId && s.language === "zh-TW");
+      return {
+        id: pageId,
+        name: zhTWSetting?.title || pageId,
+      };
+    })
     : [];
 
   // 設定初始選中頁面
@@ -66,7 +66,7 @@ export default function AdminSEO() {
   useEffect(() => {
     if (settings && selectedPage) {
       const data: Record<string, { title: string; description: string; keywords: string }> = {};
-      
+
       LANGUAGES.forEach((lang) => {
         const setting = settings.find((s) => s.page === selectedPage && s.language === lang.code);
         data[lang.code] = {
@@ -75,7 +75,7 @@ export default function AdminSEO() {
           keywords: setting?.keywords || "",
         };
       });
-      
+
       setFormData(data);
     }
   }, [settings, selectedPage]);
@@ -200,10 +200,10 @@ export default function AdminSEO() {
     try {
       // 獲取所有繁中頁面
       const zhTWPages = settings.filter(s => s.language === "zh-TW" && s.title && s.title.trim() !== "");
-      
+
       let totalSuccess = 0;
       let totalPages = zhTWPages.length;
-      
+
       // 初始化進度
       setBatchProgress({ current: 0, total: totalPages });
 
@@ -244,9 +244,9 @@ export default function AdminSEO() {
               keywords: keywordsTranslations[lang.code] || page.keywords || "",
             });
           }
-          
+
           totalSuccess++;
-          
+
           // 更新進度
           setBatchProgress({ current: i + 1, total: totalPages });
         } catch (error) {
@@ -297,7 +297,7 @@ export default function AdminSEO() {
   };
 
   // 篩選頁面
-  const filteredPages = pages.filter(page => 
+  const filteredPages = pages.filter(page =>
     page.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     page.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -305,7 +305,7 @@ export default function AdminSEO() {
   // 按分類分組
   const pagesByCategory = filteredPages.reduce((acc, page) => {
     let category = "其他頁面";
-    
+
     if (page.id.startsWith("product-")) {
       category = "產品頁面";
     } else if (["home", "about"].includes(page.id)) {
@@ -315,7 +315,7 @@ export default function AdminSEO() {
     } else if (["profile", "warranty-registration", "support-ticket"].includes(page.id)) {
       category = "用戶頁面";
     }
-    
+
     if (!acc[category]) {
       acc[category] = [];
     }
@@ -333,11 +333,88 @@ export default function AdminSEO() {
     );
   }
 
+  // Google Search Preview Component
+  const GoogleSearchPreview = ({ title, description, url }: { title: string; description: string; url: string }) => {
+    return (
+      <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6">
+        <h3 className="text-sm font-medium text-gray-500 mb-3 flex items-center gap-2">
+          <Globe className="w-4 h-4" /> Google 搜尋結果預覽
+        </h3>
+        <div className="max-w-[600px]">
+          <div className="flex items-center gap-2 text-sm text-[#202124] mb-1">
+            <div className="bg-gray-100 rounded-full w-7 h-7 flex items-center justify-center text-xs">A</div>
+            <div className="flex flex-col">
+              <span className="text-[#202124] text-xs">apolnus.com</span>
+              <span className="text-[#202124] text-xs truncate">{url}</span>
+            </div>
+          </div>
+          <h3 className="text-xl text-[#1a0dab] hover:underline cursor-pointer truncate mb-1">
+            {title || "未設定標題"}
+          </h3>
+          <p className="text-sm text-[#4d5156] line-clamp-2">
+            {description || "未設定描述..."}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  // Character Counter Component
+  const CharacterCounter = ({ current, limit, label }: { current: number; limit: number; label: string }) => {
+    const isOver = current > limit;
+    const isClose = current > limit * 0.8;
+    const colorClass = isOver ? "text-red-500" : isClose ? "text-yellow-600" : "text-green-600";
+
+    return (
+      <div className="flex justify-between items-center text-xs mt-1">
+        <span className="text-gray-500">{label}</span>
+        <span className={`${colorClass} font-medium`}>
+          {current} / {limit}
+        </span>
+      </div>
+    );
+  };
+
+  const generateSuggestions = trpc.admin.seo.generateSuggestions.useMutation();
+  const [generating, setGenerating] = useState(false);
+
+  // AI Generate Suggestions
+  const handleAIGenerate = async (langCode: string) => {
+    const pageName = pages.find(p => p.id === selectedPage)?.name || selectedPage;
+
+    setGenerating(true);
+    try {
+      const result = await generateSuggestions.mutateAsync({
+        pageId: selectedPage,
+        pageName: pageName,
+        currentTitle: formData[langCode]?.title,
+        currentDescription: formData[langCode]?.description,
+        language: langCode,
+      });
+
+      setFormData(prev => ({
+        ...prev,
+        [langCode]: {
+          ...prev[langCode],
+          title: result.title,
+          description: result.description,
+          keywords: result.keywords,
+        }
+      }));
+
+      toast.success("✨ AI 建議已生成！");
+    } catch (error: any) {
+      toast.error(`生成失敗: ${error.message}`);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <AdminNav />
       <AdminSidebar currentPath={location} />
-      
+
       <div className="ml-64 pt-20 p-8">
         {/* SEO 狀態面板 */}
         <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -395,7 +472,7 @@ export default function AdminSEO() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">SEO 管理</h1>
-              <p className="text-gray-600 mt-1 text-sm">管理網站各頁面的 SEO 設定,支援 AI 一鍵多國語言翻譯</p>
+              <p className="text-gray-600 mt-1 text-sm">管理網站各頁面的 SEO 設定，支援 AI 一鍵多國語言翻譯與優化</p>
             </div>
             <div className="flex gap-2">
               <Button
@@ -458,7 +535,7 @@ export default function AdminSEO() {
         <div className="grid grid-cols-12 gap-4">
           {/* 左側:頁面列表 */}
           <div className="col-span-4">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-[calc(100vh-300px)] flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">頁面列表</h3>
                 <Button
@@ -487,10 +564,10 @@ export default function AdminSEO() {
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-3 overflow-y-auto flex-1 pr-2">
                 {Object.entries(pagesByCategory).map(([category, categoryPages]) => (
                   <div key={category}>
-                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5 px-1">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5 px-1 sticky top-0 bg-white z-10">
                       {category}
                     </h4>
                     <div className="space-y-1">
@@ -506,10 +583,10 @@ export default function AdminSEO() {
                             key={page.id}
                             onClick={() => setSelectedPage(page.id)}
                             variant={selectedPage === page.id ? "default" : "ghost"}
-                            className="w-full justify-between text-left"
+                            className="w-full justify-between text-left h-auto py-2"
                           >
-                            <span className="truncate">{page.name}</span>
-                            <div className="flex items-center gap-1 ml-2">
+                            <span className="truncate w-[180px] block">{page.name}</span>
+                            <div className="flex items-center gap-1 ml-2 shrink-0">
                               {zhTWSetting && zhTWSetting.title && (
                                 <span className="w-2 h-2 rounded-full bg-blue-500" title="繁中已設定" />
                               )}
@@ -548,8 +625,8 @@ export default function AdminSEO() {
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        AI 一鍵翻譯
+                        <Globe className="w-4 h-4 mr-2" />
+                        AI 翻譯其他語言
                       </>
                     )}
                   </Button>
@@ -579,7 +656,32 @@ export default function AdminSEO() {
                 </TabsList>
 
                 {LANGUAGES.map((lang) => (
-                  <TabsContent key={lang.code} value={lang.code} className="space-y-4">
+                  <TabsContent key={lang.code} value={lang.code} className="space-y-6">
+
+                    {/* Search Preview */}
+                    <GoogleSearchPreview
+                      title={formData[lang.code]?.title}
+                      description={formData[lang.code]?.description}
+                      url={`https://apolnus.com/${lang.code !== "zh-TW" ? lang.code + "/" : ""}${selectedPage === 'home' ? '' : selectedPage}`}
+                    />
+
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={() => handleAIGenerate(lang.code)}
+                        disabled={generating}
+                        variant="ghost"
+                        size="sm"
+                        className="text-purple-600 hover:bg-purple-50"
+                      >
+                        {generating ? (
+                          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                        ) : (
+                          <Sparkles className="w-3 h-3 mr-1" />
+                        )}
+                        使用 AI 重新生成優化建議
+                      </Button>
+                    </div>
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         標題 (Title) <span className="text-red-500">*</span>
@@ -595,7 +697,11 @@ export default function AdminSEO() {
                         placeholder={`輸入${lang.name}標題`}
                         className="w-full"
                       />
-                      <p className="text-xs text-gray-500 mt-1">建議長度: 50-60 字元</p>
+                      <CharacterCounter
+                        current={formData[lang.code]?.title?.length || 0}
+                        limit={60}
+                        label="建議長度: 50-60 字元"
+                      />
                     </div>
 
                     <div>
@@ -613,7 +719,11 @@ export default function AdminSEO() {
                         rows={4}
                         className="w-full"
                       />
-                      <p className="text-xs text-gray-500 mt-1">建議長度: 150-160 字元</p>
+                      <CharacterCounter
+                        current={formData[lang.code]?.description?.length || 0}
+                        limit={160}
+                        label="建議長度: 150-160 字元"
+                      />
                     </div>
 
                     <div>
