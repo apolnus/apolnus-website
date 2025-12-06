@@ -20,9 +20,9 @@ export const users = mysqlTable("users", {
   address: text("address"),
   loginMethod: text("loginMethod", { length: 64 }),
   role: text("role", { enum: ["user", "admin"] }).default("user").notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(), // SQLite trigger needed for onUpdateNow behavior, handling manually for now
-  lastSignedIn: int("lastSignedIn", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(), // SQLite trigger needed for onUpdateNow behavior, handling manually for now
+  lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -37,10 +37,10 @@ export const warrantyRegistrations = mysqlTable("warrantyRegistrations", {
   phone: text("phone", { length: 20 }).notNull(),
   productModel: text("productModel", { length: 100 }).notNull(),
   serialNumber: text("serialNumber", { length: 100 }).notNull(),
-  purchaseDate: int("purchaseDate", { mode: 'timestamp' }).notNull(),
+  purchaseDate: timestamp("purchaseDate").notNull(),
   purchaseChannel: text("purchaseChannel", { length: 100 }),
   notes: text("notes"),
-  registeredAt: int("registeredAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  registeredAt: timestamp("registeredAt").defaultNow().notNull(),
 });
 
 export type WarrantyRegistration = typeof warrantyRegistrations.$inferSelect;
@@ -55,13 +55,13 @@ export const supportTickets = mysqlTable("supportTickets", {
   contactAddress: text("contactAddress").notNull(),
   productModel: text("productModel", { length: 100 }).notNull(),
   serialNumber: text("serialNumber", { length: 100 }),
-  purchaseDate: int("purchaseDate", { mode: 'timestamp' }),
+  purchaseDate: timestamp("purchaseDate"),
   purchaseChannel: text("purchaseChannel", { length: 100 }),
   issueTitle: text("issueTitle", { length: 200 }).notNull(),
   issueDescription: text("issueDescription").notNull(),
   status: text("status", { enum: ["pending", "in_progress", "resolved", "closed"] }).default("pending").notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type SupportTicket = typeof supportTickets.$inferSelect;
@@ -77,7 +77,7 @@ export const ticketReplies = mysqlTable("ticketReplies", {
   attachments: text("attachments", { mode: 'json' }), // JSON格式儲存圖片URL陣列
   isReadByUser: int("isReadByUser", { mode: 'number' }).default(0).notNull(), // 0=未讀, 1=已讀 (僅當isAdmin=1時有效)
   isReadByAdmin: int("isReadByAdmin", { mode: 'number' }).default(0).notNull(), // 0=未讀, 1=已讀 (僅當isAdmin=0時有效)
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export type TicketReply = typeof ticketReplies.$inferSelect;
@@ -94,8 +94,8 @@ export const serviceCenters = mysqlTable("serviceCenters", {
   latitude: text("latitude", { length: 50 }),
   longitude: text("longitude", { length: 50 }),
   isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type ServiceCenter = typeof serviceCenters.$inferSelect;
@@ -105,7 +105,7 @@ export type InsertServiceCenter = typeof serviceCenters.$inferInsert;
 export const subscribers = mysqlTable("subscribers", {
   id: int("id").primaryKey({ autoIncrement: true }),
   email: text("email", { length: 320 }).notNull().unique(),
-  subscribedAt: int("subscribedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  subscribedAt: timestamp("subscribedAt").defaultNow().notNull(),
 });
 
 export type Subscriber = typeof subscribers.$inferSelect;
@@ -120,7 +120,7 @@ export const partners = mysqlTable("partners", {
   phone: text("phone", { length: 20 }),
   message: text("message"),
   status: text("status", { enum: ["pending", "approved", "rejected"] }).default("pending").notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export type Partner = typeof partners.$inferSelect;
@@ -131,7 +131,7 @@ export const siteSettings = mysqlTable("siteSettings", {
   id: int("id").primaryKey({ autoIncrement: true }),
   key: text("key", { length: 100 }).notNull().unique(),
   value: text("value"),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type SiteSetting = typeof siteSettings.$inferSelect;
@@ -146,8 +146,8 @@ export const productModels = mysqlTable("productModels", {
   slug: text("slug", { length: 100 }),
   isActive: int("isActive", { mode: 'number' }).default(1).notNull(), // 1=上架, 0=下架
   order: int("order", { mode: 'number' }).default(0).notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(), // 用於 Sitemap lastmod
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(), // 用於 Sitemap lastmod
 });
 
 export type ProductModel = typeof productModels.$inferSelect;
@@ -161,8 +161,8 @@ export const socialLinks = mysqlTable("socialLinks", {
   url: text("url").notNull(),
   isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
   displayOrder: int("displayOrder", { mode: 'number' }).default(0).notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 }, (table) => ({
   uniqueLocalePlatform: uniqueIndex("unique_social_locale_platform").on(table.locale, table.platform),
 }));
@@ -182,8 +182,8 @@ export const faqs = mysqlTable("faqs", {
 
   order: int("order", { mode: 'number' }).default(0).notNull(),
   isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type FAQ = typeof faqs.$inferSelect;
@@ -199,8 +199,8 @@ export const authorizedDealers = mysqlTable("authorizedDealers", {
   latitude: text("latitude", { length: 50 }),
   longitude: text("longitude", { length: 50 }),
   isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type AuthorizedDealer = typeof authorizedDealers.$inferSelect;
@@ -217,8 +217,8 @@ export const authorizedServiceCenters = mysqlTable("authorizedServiceCenters", {
   latitude: text("latitude", { length: 50 }),
   longitude: text("longitude", { length: 50 }),
   isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type AuthorizedServiceCenter = typeof authorizedServiceCenters.$inferSelect;
@@ -234,8 +234,8 @@ export const onlineStores = mysqlTable("onlineStores", {
   logo: text("logo"), // Logo 圖片網址
   isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
   displayOrder: int("displayOrder", { mode: 'number' }).default(0).notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type OnlineStore = typeof onlineStores.$inferSelect;
@@ -267,9 +267,9 @@ export const jobs = mysqlTable("jobs", {
   description: text("description").notNull(), // HTML content
   requirements: text("requirements"), // HTML content
   isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
-  postedAt: int("postedAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  createdAt: int("createdAt", { mode: 'timestamp' }).defaultNow().notNull(),
-  updatedAt: int("updatedAt", { mode: 'timestamp' }).defaultNow().notNull(),
+  postedAt: timestamp("postedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export type Job = typeof jobs.$inferSelect;
