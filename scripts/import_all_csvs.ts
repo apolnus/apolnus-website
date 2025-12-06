@@ -111,7 +111,54 @@ async function importCSV(filePath: string, table: any, tableName: string, db: an
 
     console.log(`\n[Start] 匯入 ${tableName}...`);
     const content = fs.readFileSync(fullPath, 'utf-8');
-    const lines = content.split('\n').filter(l => l.trim().length > 0);
+
+    // 使用自定義分割函數處理引號內的換行
+    const lines = splitCSVContent(content).filter(l => l.trim().length > 0);
+
+    // ... (rest of the code)
+}
+
+/**
+ * 分割 CSV 內容為行，但忽略引號內的換行符
+ */
+function splitCSVContent(content: string): string[] {
+    const lines: string[] = [];
+    let currentLine = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < content.length; i++) {
+        const char = content[i];
+
+        if (char === '"') {
+            // 檢查是否是跳脫的引號 ("")
+            if (inQuotes && i + 1 < content.length && content[i + 1] === '"') {
+                currentLine += '"';
+                i++; // 跳過下一個引號
+                // 狀態保持不變 (仍在引號內)
+                continue;
+            }
+            inQuotes = !inQuotes;
+        }
+
+        if (char === '\n' && !inQuotes) {
+            lines.push(currentLine);
+            currentLine = '';
+        } else if (char === '\r' && !inQuotes) {
+            // 忽略 \r 如果後面跟著 \n，或者直接忽略
+            if (i + 1 < content.length && content[i + 1] === '\n') {
+                i++;
+                lines.push(currentLine);
+                currentLine = '';
+            }
+        } else {
+            currentLine += char;
+        }
+    }
+    if (currentLine.length > 0) {
+        lines.push(currentLine);
+    }
+    return lines;
+
 
     if (lines.length <= 1) {
         console.log(`[Info] ${tableName} 無資料 (僅標題)`);
