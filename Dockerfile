@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches
 
-# Install dependencies
+# Install ALL dependencies (including dev) for build
 RUN pnpm install --frozen-lockfile
 
 # Copy source code
@@ -30,8 +30,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches
 
-# Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
+# Install ALL dependencies (not just --prod) because start script needs drizzle-kit and tsx from devDependencies
+RUN pnpm install --frozen-lockfile
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
