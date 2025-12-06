@@ -6,7 +6,7 @@ import { subscribers, partners, siteSettings, productModels, faqs, warrantyRegis
 import { eq, and, desc, sql, like, or } from 'drizzle-orm';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import Razorpay from 'razorpay';
+
 import crypto from 'crypto';
 import * as XLSX from 'xlsx';
 
