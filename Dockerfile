@@ -36,6 +36,12 @@ RUN pnpm install --prod --frozen-lockfile
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
 
+# Copy necessary config and script files for runtime
+COPY drizzle.config.ts ./
+COPY drizzle ./drizzle
+COPY scripts ./scripts
+COPY shared ./shared
+
 # Expose port (Zeabur will override this with PORT env var)
 EXPOSE 3000
 
