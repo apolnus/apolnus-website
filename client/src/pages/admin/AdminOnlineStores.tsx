@@ -26,6 +26,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import AdminNav, { AdminSidebar } from "@/components/AdminNav";
+import { useLocation } from "wouter";
 
 const COUNTRIES = [
   { code: "tw", name: "Taiwan (台灣)" },
@@ -38,6 +40,7 @@ const COUNTRIES = [
 ];
 
 export default function AdminOnlineStores() {
+  const [location] = useLocation();
   const [selectedCountry, setSelectedCountry] = useState("tw");
   const [editingStore, setEditingStore] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -64,7 +67,7 @@ export default function AdminOnlineStores() {
   const handleSaveOfficial = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    
+
     try {
       await upsertMutation.mutateAsync({
         id: officialStore?.id,
@@ -85,7 +88,7 @@ export default function AdminOnlineStores() {
   const handleSavePlatform = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    
+
     try {
       let logoUrl = editingStore?.logo;
 
@@ -135,7 +138,7 @@ export default function AdminOnlineStores() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("確定要刪除此平台嗎?")) return;
-    
+
     try {
       await deleteMutation.mutateAsync({ id });
       toast.success("已刪除");
@@ -169,166 +172,173 @@ export default function AdminOnlineStores() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">線上銷售渠道管理</h1>
+    <div className="min-h-screen bg-gray-50">
+      <AdminNav />
+      <AdminSidebar currentPath={location} />
 
-      {/* 國家/語言切換 Tabs */}
-      <Tabs value={selectedCountry} onValueChange={setSelectedCountry} className="mb-8">
-        <TabsList>
-          {COUNTRIES.map(country => (
-            <TabsTrigger key={country.code} value={country.code}>
-              {country.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <div className="ml-64 pt-20 p-8">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-2xl font-bold mb-6">線上銷售渠道管理</h1>
 
-        {COUNTRIES.map(country => (
-          <TabsContent key={country.code} value={country.code} className="space-y-8">
-            {/* 區塊 A - 官方商城設定 */}
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">官方商城設定 (Official Store)</h2>
-              <form onSubmit={handleSaveOfficial} className="space-y-4">
-                <div>
-                  <Label htmlFor="officialName">商城名稱</Label>
-                  <Input
-                    id="officialName"
-                    name="officialName"
-                    defaultValue={officialStore?.name || "Apolnus 官方商城"}
-                    placeholder="Apolnus 官方商城"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="officialUrl">商城連結</Label>
-                  <Input
-                    id="officialUrl"
-                    name="officialUrl"
-                    type="url"
-                    defaultValue={officialStore?.url || ""}
-                    placeholder="https://store.apolnus.com"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">若為空,前台按鈕將顯示為 Disabled 狀態</p>
-                </div>
-                <div>
-                  <Label htmlFor="officialLogo">Logo URL (選填)</Label>
-                  <Input
-                    id="officialLogo"
-                    name="officialLogo"
-                    type="url"
-                    defaultValue={officialStore?.logo || ""}
-                    placeholder="https://example.com/logo.png"
-                  />
-                </div>
-                <Button type="submit" disabled={upsertMutation.isPending}>
-                  {upsertMutation.isPending ? "儲存中..." : "儲存官方商城"}
-                </Button>
-              </form>
-            </Card>
+          {/* 國家/語言切換 Tabs */}
+          <Tabs value={selectedCountry} onValueChange={setSelectedCountry} className="mb-8">
+            <TabsList>
+              {COUNTRIES.map(country => (
+                <TabsTrigger key={country.code} value={country.code}>
+                  {country.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-            {/* 區塊 B - 線上經銷平台 */}
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">線上平台 (Online Retailers)</h2>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button onClick={() => setEditingStore(null)}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      新增平台
+            {COUNTRIES.map(country => (
+              <TabsContent key={country.code} value={country.code} className="space-y-8">
+                {/* 區塊 A - 官方商城設定 */}
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">官方商城設定 (Official Store)</h2>
+                  <form onSubmit={handleSaveOfficial} className="space-y-4">
+                    <div>
+                      <Label htmlFor="officialName">商城名稱</Label>
+                      <Input
+                        id="officialName"
+                        name="officialName"
+                        defaultValue={officialStore?.name || "Apolnus 官方商城"}
+                        placeholder="Apolnus 官方商城"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="officialUrl">商城連結</Label>
+                      <Input
+                        id="officialUrl"
+                        name="officialUrl"
+                        type="url"
+                        defaultValue={officialStore?.url || ""}
+                        placeholder="https://store.apolnus.com"
+                      />
+                      <p className="text-sm text-gray-500 mt-1">若為空,前台按鈕將顯示為 Disabled 狀態</p>
+                    </div>
+                    <div>
+                      <Label htmlFor="officialLogo">Logo URL (選填)</Label>
+                      <Input
+                        id="officialLogo"
+                        name="officialLogo"
+                        type="url"
+                        defaultValue={officialStore?.logo || ""}
+                        placeholder="https://example.com/logo.png"
+                      />
+                    </div>
+                    <Button type="submit" disabled={upsertMutation.isPending}>
+                      {upsertMutation.isPending ? "儲存中..." : "儲存官方商城"}
                     </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>{editingStore ? "編輯平台" : "新增平台"}</DialogTitle>
-                    </DialogHeader>
-                    <form onSubmit={handleSavePlatform} className="space-y-4">
-                      <div>
-                        <Label htmlFor="platformName">平台名稱 *</Label>
-                        <Input
-                          id="platformName"
-                          name="platformName"
-                          required
-                          defaultValue={editingStore?.name || ""}
-                          placeholder="Amazon JP"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="platformUrl">連結</Label>
-                        <Input
-                          id="platformUrl"
-                          name="platformUrl"
-                          type="url"
-                          defaultValue={editingStore?.url || ""}
-                          placeholder="https://amazon.co.jp/..."
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="platformLogo">Logo 圖片</Label>
-                        <Input
-                          id="platformLogo"
-                          name="platformLogo"
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              logoFileRef.current = file;
-                              const reader = new FileReader();
-                              reader.onloadend = () => {
-                                setLogoPreview(reader.result as string);
-                              };
-                              reader.readAsDataURL(file);
-                            }
-                          }}
-                        />
-                        {(logoPreview || editingStore?.logo) && (
-                          <div className="mt-2 flex items-center justify-center h-16 border rounded p-2">
-                            <img
-                              src={logoPreview || editingStore?.logo}
-                              alt="Logo preview"
-                              className="max-h-full object-contain"
+                  </form>
+                </Card>
+
+                {/* 區塊 B - 線上經銷平台 */}
+                <Card className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">線上平台 (Online Retailers)</h2>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button onClick={() => setEditingStore(null)}>
+                          <Plus className="w-4 h-4 mr-2" />
+                          新增平台
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>{editingStore ? "編輯平台" : "新增平台"}</DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={handleSavePlatform} className="space-y-4">
+                          <div>
+                            <Label htmlFor="platformName">平台名稱 *</Label>
+                            <Input
+                              id="platformName"
+                              name="platformName"
+                              required
+                              defaultValue={editingStore?.name || ""}
+                              placeholder="Amazon JP"
                             />
                           </div>
-                        )}
-                      </div>
-                      <Button type="submit" disabled={upsertMutation.isPending}>
-                        {upsertMutation.isPending ? "儲存中..." : "儲存"}
-                      </Button>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              </div>
+                          <div>
+                            <Label htmlFor="platformUrl">連結</Label>
+                            <Input
+                              id="platformUrl"
+                              name="platformUrl"
+                              type="url"
+                              defaultValue={editingStore?.url || ""}
+                              placeholder="https://amazon.co.jp/..."
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="platformLogo">Logo 圖片</Label>
+                            <Input
+                              id="platformLogo"
+                              name="platformLogo"
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  logoFileRef.current = file;
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setLogoPreview(reader.result as string);
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                            {(logoPreview || editingStore?.logo) && (
+                              <div className="mt-2 flex items-center justify-center h-16 border rounded p-2">
+                                <img
+                                  src={logoPreview || editingStore?.logo}
+                                  alt="Logo preview"
+                                  className="max-h-full object-contain"
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <Button type="submit" disabled={upsertMutation.isPending}>
+                            {upsertMutation.isPending ? "儲存中..." : "儲存"}
+                          </Button>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
 
-              {platformStores.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">尚無經銷平台,點擊「新增平台」開始設定</p>
-              ) : (
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={platformStores.map(s => s.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <div className="space-y-3">
-                      {platformStores.map(store => (
-                        <SortableStoreItem
-                          key={store.id}
-                          store={store}
-                          onEdit={() => {
-                            setEditingStore(store);
-                            setIsDialogOpen(true);
-                          }}
-                          onDelete={() => handleDelete(store.id)}
-                        />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
-              )}
-            </Card>
-          </TabsContent>
-        ))}
-      </Tabs>
+                  {platformStores.length === 0 ? (
+                    <p className="text-gray-500 text-center py-8">尚無經銷平台,點擊「新增平台」開始設定</p>
+                  ) : (
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext
+                        items={platformStores.map(s => s.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="space-y-3">
+                          {platformStores.map(store => (
+                            <SortableStoreItem
+                              key={store.id}
+                              store={store}
+                              onEdit={() => {
+                                setEditingStore(store);
+                                setIsDialogOpen(true);
+                              }}
+                              onDelete={() => handleDelete(store.id)}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    </DndContext>
+                  )}
+                </Card>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
+      </div>
     </div>
   );
 }

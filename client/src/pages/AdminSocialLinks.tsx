@@ -7,15 +7,17 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { 
-  MessageCircle, 
-  Facebook, 
-  Instagram, 
-  Youtube, 
+import {
+  MessageCircle,
+  Facebook,
+  Instagram,
+  Youtube,
   Twitter,
   Linkedin,
   Loader2
 } from "lucide-react";
+import AdminNav, { AdminSidebar } from "@/components/AdminNav";
+import { useLocation } from "wouter";
 
 // Platform configurations for each locale
 const PLATFORM_CONFIGS = {
@@ -59,6 +61,7 @@ interface LinkState {
 }
 
 export default function AdminSocialLinks() {
+  const [location] = useLocation();
   const [activeLocale, setActiveLocale] = useState<LocaleKey>('zh-TW');
   const [links, setLinks] = useState<Record<string, LinkState>>({});
 
@@ -138,97 +141,104 @@ export default function AdminSocialLinks() {
   const platformConfigs = PLATFORM_CONFIGS[activeLocale];
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">社群平台連結管理</h1>
-        <p className="text-muted-foreground">
-          針對不同語言/地區設定專屬的社群平台連結
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <AdminNav />
+      <AdminSidebar currentPath={location} />
 
-      <Tabs value={activeLocale} onValueChange={(value) => setActiveLocale(value as LocaleKey)}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="zh-TW">繁體中文 (台灣)</TabsTrigger>
-          <TabsTrigger value="zh-CN">簡體中文 (中國)</TabsTrigger>
-          <TabsTrigger value="en">English (國際)</TabsTrigger>
-          <TabsTrigger value="ja">日本語 (日本)</TabsTrigger>
-        </TabsList>
+      <div className="ml-64 pt-20 p-8">
+        <div className="container mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2">社群平台連結管理</h1>
+            <p className="text-muted-foreground">
+              針對不同語言/地區設定專屬的社群平台連結
+            </p>
+          </div>
 
-        <TabsContent value={activeLocale}>
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {activeLocale === 'zh-TW' && '台灣地區社群平台'}
-                {activeLocale === 'zh-CN' && '中國大陸地區社群平台'}
-                {activeLocale === 'en' && '國際地區社群平台'}
-                {activeLocale === 'ja' && '日本地區社群平台'}
-              </CardTitle>
-              <CardDescription>
-                設定在 footer 顯示的社群平台連結
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin" />
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {platformConfigs.map((config) => {
-                    const Icon = config.icon;
-                    const linkData = links[config.platform];
-                    
-                    return (
-                      <div key={config.platform} className="flex items-start gap-4 p-4 border rounded-lg">
-                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-6 h-6 text-primary" />
-                        </div>
-                        
-                        <div className="flex-1 space-y-3">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-base font-semibold">{config.name}</Label>
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor={`${config.platform}-active`} className="text-sm">
-                                啟用
-                              </Label>
-                              <Switch
-                                id={`${config.platform}-active`}
-                                checked={linkData?.isActive === 1}
-                                onCheckedChange={(checked) => handleToggle(config.platform, checked)}
-                              />
+          <Tabs value={activeLocale} onValueChange={(value) => setActiveLocale(value as LocaleKey)}>
+            <TabsList className="mb-6">
+              <TabsTrigger value="zh-TW">繁體中文 (台灣)</TabsTrigger>
+              <TabsTrigger value="zh-CN">簡體中文 (中國)</TabsTrigger>
+              <TabsTrigger value="en">English (國際)</TabsTrigger>
+              <TabsTrigger value="ja">日本語 (日本)</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value={activeLocale}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    {activeLocale === 'zh-TW' && '台灣地區社群平台'}
+                    {activeLocale === 'zh-CN' && '中國大陸地區社群平台'}
+                    {activeLocale === 'en' && '國際地區社群平台'}
+                    {activeLocale === 'ja' && '日本地區社群平台'}
+                  </CardTitle>
+                  <CardDescription>
+                    設定在 footer 顯示的社群平台連結
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {isLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {platformConfigs.map((config) => {
+                        const Icon = config.icon;
+                        const linkData = links[config.platform];
+
+                        return (
+                          <div key={config.platform} className="flex items-start gap-4 p-4 border rounded-lg">
+                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <Icon className="w-6 h-6 text-primary" />
+                            </div>
+
+                            <div className="flex-1 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <Label className="text-base font-semibold">{config.name}</Label>
+                                <div className="flex items-center gap-2">
+                                  <Label htmlFor={`${config.platform}-active`} className="text-sm">
+                                    啟用
+                                  </Label>
+                                  <Switch
+                                    id={`${config.platform}-active`}
+                                    checked={linkData?.isActive === 1}
+                                    onCheckedChange={(checked) => handleToggle(config.platform, checked)}
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <Label htmlFor={`${config.platform}-url`}>連結 URL</Label>
+                                <Input
+                                  id={`${config.platform}-url`}
+                                  type="url"
+                                  placeholder={`https://...`}
+                                  value={linkData?.url || ''}
+                                  onChange={(e) => handleUrlChange(config.platform, e.target.value)}
+                                />
+                              </div>
                             </div>
                           </div>
-                          
-                          <div className="space-y-2">
-                            <Label htmlFor={`${config.platform}-url`}>連結 URL</Label>
-                            <Input
-                              id={`${config.platform}-url`}
-                              type="url"
-                              placeholder={`https://...`}
-                              value={linkData?.url || ''}
-                              onChange={(e) => handleUrlChange(config.platform, e.target.value)}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                        );
+                      })}
 
-                  <div className="flex justify-end gap-3 pt-4">
-                    <Button
-                      onClick={handleSave}
-                      disabled={updateMutation.isLoading}
-                    >
-                      {updateMutation.isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                      儲存變更
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                      <div className="flex justify-end gap-3 pt-4">
+                        <Button
+                          onClick={handleSave}
+                          disabled={updateMutation.isLoading}
+                        >
+                          {updateMutation.isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                          儲存變更
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
     </div>
   );
 }
