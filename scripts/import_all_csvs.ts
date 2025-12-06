@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from 'mysql2/promise';
 import * as schema from '../drizzle/schema';
 import { sql } from 'drizzle-orm';
 import 'dotenv/config';
@@ -87,11 +87,11 @@ function processValue(value: string, fieldName: string, tableName: string) {
         return value ? value : null; // Keep as string
     }
 
-    // 處理日期 (SQLite 無 Date 型別，使用 integer timestamp 或 ISO string)
+    // 處理日期
     if (fieldName.endsWith('At') || fieldName.endsWith('Date')) {
         const date = new Date(value);
         if (isNaN(date.getTime())) return null;
-        return date; // Drizzle handles Date object -> timestamp conversion based on schema mode
+        return date;
     }
 
     return value;
@@ -132,12 +132,12 @@ async function importCSV(filePath: string, table: any, tableName: string, db: an
     }
 
     if (valuesToInsert.length > 0) {
-        // LibSQL: 分批 Insert，避免 payload 過大
+        // 分批 Insert，避免 payload 過大
         const BATCH_SIZE = 50;
         for (let i = 0; i < valuesToInsert.length; i += BATCH_SIZE) {
             const batch = valuesToInsert.slice(i, i + BATCH_SIZE);
             try {
-                await db.insert(table).values(batch).onConflictDoNothing();
+                await db.insert(table).values(batch).onDuplicateKeyIgnore();
             } catch (e) {
                 console.error(`[Error] 匯入批次失敗 (${tableName}):`, e);
             }
@@ -147,17 +147,26 @@ async function importCSV(filePath: string, table: any, tableName: string, db: an
 }
 
 async function main() {
-    const client = createClient({ url: 'file:sqlite.db' });
-    const db = drizzle(client);
+    const databaseUrl = process.env.DATABASE_URL;
+    if (!databaseUrl) {
+        console.error('[Error] DATABASE_URL environment variable is not set');
+        process.exit(1);
+    }
 
-    // SQLite 不支援 SET FOREIGN_KEY_CHECKS，使用 PRAGMA
-    await client.execute("PRAGMA foreign_keys = OFF");
+    const connection = await mysql.createConnection(databaseUrl);
+    const db = drizzle(connection);
+
+    // MySQL: 停用外鍵檢查
+    await connection.execute("SET FOREIGN_KEY_CHECKS = 0");
 
     for (const { file, table, name } of CSV_MAPPING) {
         await importCSV(file, table, name, db);
     }
 
-    await client.execute("PRAGMA foreign_keys = ON");
+    // 恢復外鍵檢查
+    await connection.execute("SET FOREIGN_KEY_CHECKS = 1");
+
+    await connection.end();
     console.log('\n所有 CSV 匯入完成！');
     process.exit(0);
 }
