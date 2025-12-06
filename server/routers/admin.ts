@@ -1140,15 +1140,30 @@ Example output: ["Air Purifier", "Product Specifications"]`;
         return { success: true, translatedCount };
       }),
 
-    // Extract hardcoded Chinese from source code
+    // Extract hardcoded Chinese from source code and auto-translate
     extractFromSource: adminProcedure
       .mutation(async () => {
         const fs = await import('fs/promises');
         const path = await import('path');
         const crypto = await import('crypto');
-        const pagesDir = path.join(process.cwd(), 'client/src/pages');
-        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
+
+        // Debugging paths for Zeabur environment
+        const clientSrcPath = path.join(process.cwd(), 'client/src');
+        const pagesDir = path.join(clientSrcPath, 'pages');
+        const localesDir = path.join(clientSrcPath, 'i18n/locales');
         const zhTWPath = path.join(localesDir, 'zh-TW.json');
+
+        console.log(`[Extract] Checking paths... CWD: ${process.cwd()}`);
+
+        try {
+          await fs.access(clientSrcPath);
+        } catch (e) {
+          console.error(`[Extract] client/src NOT found at ${clientSrcPath}`);
+          // List root to see what's there
+          const rootFiles = await fs.readdir(process.cwd()).catch(err => [`Error listing root: ${err.message}`]);
+          console.error(`[Extract] Root contents: ${rootFiles.join(', ')}`);
+          throw new Error(`Source code directory missing. Cannot scan for translations.`);
+        }
 
         // Read existing translations
         const zhTWContent = await fs.readFile(zhTWPath, 'utf-8');
@@ -1289,13 +1304,111 @@ Example output: ["Air Purifier", "Product Specifications"]`;
         // Scan all pages
         await scanDirectory(pagesDir);
 
+        let translatedLangs: string[] = [];
+
         // Write new translations to zh-TW.json
         if (Object.keys(newTranslations).length > 0) {
-          const updatedData = { ...zhTWData, ...newTranslations };
-          await fs.writeFile(zhTWPath, JSON.stringify(updatedData, null, 2), 'utf-8');
+          const updatedZhTW = { ...zhTWData, ...newTranslations };
+          await fs.writeFile(zhTWPath, JSON.stringify(updatedZhTW, null, 2), 'utf-8');
+
+          // --- Auto-translate to other languages ---
+          const targetLangs = ['en', 'ja', 'ko', 'de', 'fr', 'zh-CN'];
+          const newKeys = Object.keys(newTranslations);
+          const textsToTranslate = newKeys.map(key => newTranslations[key]);
+
+          const forgeApiUrl = process.env.BUILT_IN_FORGE_API_URL;
+          const forgeApiKey = process.env.BUILT_IN_FORGE_API_KEY;
+
+          if (forgeApiUrl && forgeApiKey) {
+            console.log(`[Extract] Starting auto-translation for ${newKeys.length} new keys...`);
+
+            // Process each language
+            for (const lang of targetLangs) {
+              try {
+                const langMap: Record<string, string> = {
+                  'en': 'English',
+                  'ja': 'Japanese',
+                  'ko': 'Korean',
+                  'de': 'German',
+                  'fr': 'French',
+                  'zh-CN': 'Simplified Chinese',
+                };
+                const targetLangName = langMap[lang] || lang;
+                const targetPath = path.join(localesDir, `${lang}.json`);
+
+                // Read target file
+                const targetContent = await fs.readFile(targetPath, 'utf-8').catch(() => '{}');
+                const targetData = JSON.parse(targetContent);
+
+                // Translate in chunks of 20
+                const chunkSize = 20;
+                for (let i = 0; i < textsToTranslate.length; i += chunkSize) {
+                  const chunkTexts = textsToTranslate.slice(i, i + chunkSize);
+                  const chunkKeys = newKeys.slice(i, i + chunkSize);
+
+                  const systemPrompt = `You are a professional translator for Apolnus (High-end appliance brand). Translate the following Traditional Chinese texts to ${targetLangName}.
+Return ONLY a JSON array of translated strings in the same order as input.
+DO NOT include any explanations, markdown formatting, or code blocks.
+Strings: ${JSON.stringify(chunkTexts)}`;
+
+                  const response = await fetch(`${forgeApiUrl}/v1/chat/completions`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": `Bearer ${forgeApiKey}`,
+                    },
+                    body: JSON.stringify({
+                      model: "gpt-4o-mini",
+                      messages: [
+                        { role: "system", content: "You are a professional translator. Respond ONLY with JSON array." },
+                        { role: "user", content: systemPrompt },
+                      ],
+                    }),
+                  });
+
+                  if (!response.ok) {
+                    console.error(`Translation failed for ${lang}: ${response.statusText}`);
+                    continue;
+                  }
+
+                  const result = await response.json();
+                  let responseText = result.choices?.[0]?.message?.content || "[]";
+                  // Clean markdown
+                  responseText = responseText.replace(/```json\n|```/g, "").trim();
+
+                  try {
+                    const translations = JSON.parse(responseText);
+                    if (Array.isArray(translations)) {
+                      // Update target data
+                      chunkKeys.forEach((key, idx) => {
+                        if (translations[idx]) {
+                          const kParts = key.split('.');
+                          let current = targetData;
+                          for (let j = 0; j < kParts.length - 1; j++) {
+                            if (!current[kParts[j]]) current[kParts[j]] = {};
+                            current = current[kParts[j]];
+                          }
+                          current[kParts[kParts.length - 1]] = translations[idx];
+                        }
+                      });
+                    }
+                  } catch (e) {
+                    console.error(`Failed to parse response for ${lang}`, e);
+                  }
+                }
+
+                // Write back
+                await fs.writeFile(targetPath, JSON.stringify(targetData, null, 2), 'utf-8');
+                translatedLangs.push(lang);
+
+              } catch (err) {
+                console.error(`Error processing lang ${lang}:`, err);
+              }
+            }
+          }
         }
 
-        return { success: true, extractedCount };
+        return { success: true, extractedCount, translatedLangs };
       }),
   }),
 
