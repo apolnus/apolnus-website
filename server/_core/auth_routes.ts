@@ -54,9 +54,12 @@ authRouter.get('/api/auth/google/callback', async (req: Request, res: Response) 
     });
 
     res.redirect(redirectPath);
-  } catch (error) {
-    console.error('Google Login Error:', error);
-    res.redirect('/login?error=google_failed');
+  } catch (error: any) {
+    console.error('[Auth Error] Google Login Failed:', {
+      message: error.message,
+      stack: error.stack
+    });
+    res.redirect(`/login?error=google_failed&reason=${encodeURIComponent(error.message || 'unknown')}`);
   }
 });
 
@@ -112,9 +115,14 @@ authRouter.get('/api/auth/line/callback', async (req: Request, res: Response) =>
     });
 
     res.redirect(redirectPath);
-  } catch (error) {
-    console.error('LINE Login Error:', error);
-    res.redirect('/login?error=line_failed');
+  } catch (error: any) {
+    console.error('[Auth Error] LINE Login Failed:', {
+      message: error.message,
+      response: error.response?.data,
+      stack: error.stack
+    });
+    // 將錯誤訊息帶到 URL 以便前端顯示 (或暫時用於除錯)
+    res.redirect(`/login?error=line_failed&reason=${encodeURIComponent(error.message || 'unknown')}`);
   }
 });
 
