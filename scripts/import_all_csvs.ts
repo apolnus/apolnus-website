@@ -12,7 +12,7 @@ const CSV_MAPPING = [
     { file: 'authorizedDealers_20251205_104217.csv', table: schema.authorizedDealers, name: 'authorizedDealers' },
     { file: 'authorizedServiceCenters_20251205_104221.csv', table: schema.authorizedServiceCenters, name: 'authorizedServiceCenters' },
     { file: 'faqs_20251205_104224.csv', table: schema.faqs, name: 'faqs' },
-    { file: 'jobs_20251205_104227.csv', table: schema.jobs, name: 'jobs' },
+    { file: 'jobs_20251206_073026.csv', table: schema.jobs, name: 'jobs' },
     { file: 'onlineStores_20251205_104234.csv', table: schema.onlineStores, name: 'onlineStores' },
     { file: 'productModels_20251205_104239.csv', table: schema.productModels, name: 'productModels' },
     { file: 'seoSettings_20251205_104245.csv', table: schema.seoSettings, name: 'seoSettings' },
@@ -116,7 +116,47 @@ async function importCSV(filePath: string, table: any, tableName: string, db: an
     // 使用自定義分割函數處理引號內的換行
     const lines = splitCSVContent(content).filter(l => l.trim().length > 0);
 
-    // ... (rest of the code)
+    if (lines.length <= 1) {
+        console.log(`[Info] ${tableName} 無資料 (僅標題)`);
+        return;
+    }
+
+    const headers = parseCSVLine(lines[0].trim());
+    const dataRows = lines.slice(1);
+    const valuesToInsert: any[] = [];
+
+    for (const line of dataRows) {
+        const values = parseCSVLine(line.trim());
+        if (values.length !== headers.length) {
+            continue;
+        }
+
+        const row: any = {};
+        headers.forEach((header, index) => {
+            row[header] = processValue(values[index], header, tableName);
+        });
+        valuesToInsert.push(row);
+    }
+
+    if (valuesToInsert.length > 0) {
+        // 分批 Insert，避免 payload 過大
+        const BATCH_SIZE = 50;
+        for (let i = 0; i < valuesToInsert.length; i += BATCH_SIZE) {
+            const batch = valuesToInsert.slice(i, i + BATCH_SIZE);
+            try {
+                // @ts-ignore
+                await db.insert(table).values(batch);
+            } catch (e: any) {
+                // 若是重複鍵值錯誤 (ER_DUP_ENTRY)，則忽略 (模擬 Ignore 行為)
+                if (e.code === 'ER_DUP_ENTRY') {
+                    console.log(`[Info] 部分資料已存在 (${tableName})，跳過批次`);
+                } else {
+                    console.error(`[Error] 匯入批次失敗 (${tableName}):`, e);
+                }
+            }
+        }
+        console.log(`[Done] 已處理 ${valuesToInsert.length} 筆資料至 ${tableName}`);
+    }
 }
 
 /**
@@ -159,49 +199,6 @@ function splitCSVContent(content: string): string[] {
         lines.push(currentLine);
     }
     return lines;
-
-
-    if (lines.length <= 1) {
-        console.log(`[Info] ${tableName} 無資料 (僅標題)`);
-        return;
-    }
-
-    const headers = parseCSVLine(lines[0].trim());
-    const dataRows = lines.slice(1);
-    const valuesToInsert: any[] = [];
-
-    for (const line of dataRows) {
-        const values = parseCSVLine(line.trim());
-        if (values.length !== headers.length) {
-            continue;
-        }
-
-        const row: any = {};
-        headers.forEach((header, index) => {
-            row[header] = processValue(values[index], header, tableName);
-        });
-        valuesToInsert.push(row);
-    }
-
-    if (valuesToInsert.length > 0) {
-        // 分批 Insert，避免 payload 過大
-        const BATCH_SIZE = 50;
-        for (let i = 0; i < valuesToInsert.length; i += BATCH_SIZE) {
-            const batch = valuesToInsert.slice(i, i + BATCH_SIZE);
-            try {
-                // @ts-ignore
-                await db.insert(table).values(batch);
-            } catch (e: any) {
-                // 若是重複鍵值錯誤 (ER_DUP_ENTRY)，則忽略 (模擬 Ignore 行為)
-                if (e.code === 'ER_DUP_ENTRY') {
-                    console.log(`[Info] 部分資料已存在 (${tableName})，跳過批次`);
-                } else {
-                    console.error(`[Error] 匯入批次失敗 (${tableName}):`, e);
-                }
-            }
-        }
-        console.log(`[Done] 已處理 ${valuesToInsert.length} 筆資料至 ${tableName}`);
-    }
 }
 
 async function main() {
