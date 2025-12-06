@@ -16,6 +16,7 @@ import {
   Share2,
   ShoppingCart,
   Briefcase,
+  Users,
 } from "lucide-react";
 
 export default function AdminNav() {
@@ -53,47 +54,94 @@ interface AdminSidebarProps {
   currentPath: string;
 }
 
+type MenuItem = {
+  path: string;
+  label: string;
+  icon: any;
+};
+
+type MenuCategory = {
+  title: string;
+  items: MenuItem[];
+};
+
 export function AdminSidebar({ currentPath }: AdminSidebarProps) {
-  const menuItems = [
-    { path: "/admin", label: "儀表板", icon: LayoutDashboard },
-    { path: "/admin/subscribers", label: "訂閱者管理", icon: Mail },
-    { path: "/admin/partners", label: "合作夥伴管理", icon: Handshake },
-    { path: "/admin/settings", label: "網站設定", icon: Settings },
-    { path: "/admin/product-models", label: "產品型號管理", icon: Package },
-    { path: "/admin/faqs", label: "常見問題管理", icon: HelpCircle },
-    { path: "/admin/warranties", label: "保固登錄管理", icon: FileText },
-    { path: "/admin/tickets", label: "工單管理", icon: ClipboardList },
-    { path: "/admin/dealers", label: "授權經銷商管理", icon: Store },
-    { path: "/admin/service-centers", label: "授權維修中心管理", icon: Wrench },
-    { path: "/admin/online-stores", label: "線上銷售渠道管理", icon: ShoppingCart },
-    { path: "/admin/seo", label: "SEO 管理", icon: Search },
-    { path: "/admin/translations", label: "AI 翻譯管理", icon: Languages },
-    { path: "/admin/social-links", label: "社群平台連結", icon: Share2 },
-    { path: "/admin/jobs", label: "職缺管理", icon: Briefcase },
+  const categories: MenuCategory[] = [
+    {
+      title: "Overview",
+      items: [
+        { path: "/admin", label: "儀表板", icon: LayoutDashboard },
+      ]
+    },
+    {
+      title: "商務管理",
+      items: [
+        { path: "/admin/warranties", label: "保固登錄管理", icon: FileText },
+        { path: "/admin/tickets", label: "工單管理", icon: ClipboardList },
+        { path: "/admin/partners", label: "合作夥伴申請", icon: Handshake },
+        { path: "/admin/subscribers", label: "訂閱者管理", icon: Mail },
+      ]
+    },
+    {
+      title: "內容管理",
+      items: [
+        { path: "/admin/product-models", label: "產品型號", icon: Package },
+        { path: "/admin/faqs", label: "常見問題", icon: HelpCircle },
+        { path: "/admin/jobs", label: "職缺管理", icon: Briefcase },
+        { path: "/admin/seo", label: "SEO 設定", icon: Search },
+        { path: "/admin/translations", label: "AI 翻譯", icon: Languages },
+      ]
+    },
+    {
+      title: "營運與據點",
+      items: [
+        { path: "/admin/dealers", label: "授權經銷商", icon: Store },
+        { path: "/admin/service-centers", label: "授權維修中心", icon: Wrench },
+        { path: "/admin/online-stores", label: "線上銷售通路", icon: ShoppingCart },
+        { path: "/admin/social-links", label: "社群連結", icon: Share2 },
+      ]
+    },
+    {
+      title: "系統設定",
+      items: [
+        { path: "/admin/users", label: "使用者管理", icon: Users },
+        { path: "/admin/settings", label: "網站設定", icon: Settings },
+      ]
+    }
   ];
 
   return (
-    <aside className="fixed left-0 top-16 bottom-0 w-64 bg-gray-50 border-r border-gray-200 overflow-y-auto">
-      <nav className="p-4 space-y-1">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentPath === item.path;
-          
-          return (
-            <Link key={item.path} href={item.path}>
-              <div
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors cursor-pointer ${
-                  isActive
-                    ? "bg-blue-50 text-blue-600 font-medium"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                <span>{item.label}</span>
-              </div>
-            </Link>
-          );
-        })}
+    <aside className="fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-gray-200 overflow-y-auto z-40 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)]">
+      <nav className="p-4 space-y-6">
+        {categories.map((category, idx) => (
+          <div key={category.title}>
+            {category.title !== "Overview" && (
+              <h3 className="px-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                {category.title}
+              </h3>
+            )}
+            <div className="space-y-1">
+              {category.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPath === item.path;
+
+                return (
+                  <Link key={item.path} href={item.path}>
+                    <div
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 cursor-pointer group ${isActive
+                          ? "bg-slate-900 text-white shadow-md shadow-slate-200"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        }`}
+                    >
+                      <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-900"}`} />
+                      <span className="text-sm font-medium">{item.label}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
     </aside>
   );

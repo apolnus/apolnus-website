@@ -40,6 +40,7 @@ import AdminSEO from "@/pages/admin/AdminSEO";
 import AdminTranslations from "@/pages/AdminTranslations";
 import AdminSocialLinks from "./pages/AdminSocialLinks";
 import AdminJobs from "./pages/admin/AdminJobs";
+import AdminUsers from "./pages/admin/AdminUsers";
 import Profile from "./pages/Profile";
 import PartnerProgram from "./pages/PartnerProgram";
 import ProductOneX from "./pages/ProductOneX";
@@ -67,18 +68,18 @@ function AppRoutes() {
       {/* 核心頁面 */}
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
-      
+
       {/* 產品頁 */}
       <Route path="/products/one-x" component={ProductOneX} />
       <Route path="/products/one-x/specs" component={ProductOneXSpecs} />
       <Route path="/products/one-x/downloads" component={ProductOneXDownloads} />
       <Route path="/products/one-x/faq" component={ProductOneXFAQ} />
-      
+
       <Route path="/products/ultra-s7" component={ProductUltraS7} />
       <Route path="/products/ultra-s7/specs" component={ProductUltraS7Specs} />
       <Route path="/products/ultra-s7/downloads" component={ProductUltraS7Downloads} />
       <Route path="/products/ultra-s7/faq" component={ProductUltraS7FAQ} />
-      
+
       {/* 服務與支援 */}
       <Route path="/where-to-buy" component={WhereToBuy} />
       <Route path="/service-centers" component={ServiceCenters} />
@@ -87,14 +88,14 @@ function AppRoutes() {
       <Route path="/support/warranty" component={WarrantyRegistration} />
       <Route path="/support-ticket" component={SupportTicket} />
       <Route path="/warranty-registration" component={WarrantyRegistration} />
-      
+
       {/* 會員功能 */}
       <Route path="/login" component={Login} />
       <Route path="/profile" component={Profile} />
       <Route path="/tickets" component={Tickets} />
       <Route path="/tickets/:id" component={TicketDetail} />
 
-      
+
       {/* 其他頁面 */}
       <Route path="/careers" component={Careers} />
       <Route path="/careers-search" component={CareersSearch} />
@@ -102,7 +103,7 @@ function AppRoutes() {
       <Route path="/partner-program" component={PartnerProgram} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
-      
+
       {/* Admin 路由 (支援語言前置) */}
       <Route path="/admin" component={Admin} />
       <Route path="/admin/subscribers" component={AdminSubscribers} />
@@ -120,9 +121,10 @@ function AppRoutes() {
       <Route path="/admin/translations" component={AdminTranslations} />
       <Route path="/admin/social-links" component={AdminSocialLinks} />
       <Route path="/admin/jobs" component={AdminJobs} />
-      
+      <Route path="/admin/users" component={AdminUsers} />
+
       <Route path="/test-api" component={TestAPI} />
-      
+
       {/* 404 Fallback */}
       <Route component={NotFound} />
     </Switch>
@@ -136,7 +138,7 @@ function AppRoutes() {
  */
 function LanguageWrapper({ langCode, base }: { langCode: string; base: string }) {
   const { i18n } = useTranslation();
-  
+
   useEffect(() => {
     if (i18n.language !== langCode) {
       i18n.changeLanguage(langCode);
@@ -183,17 +185,18 @@ function App() {
             <Route path="/admin/seo" component={AdminSEO} />
             <Route path="/admin/translations" component={AdminTranslations} />
             <Route path="/admin/social-links" component={AdminSocialLinks} />
-      <Route path="/admin/jobs" component={AdminJobs} />
-            
+            <Route path="/admin/jobs" component={AdminJobs} />
+            <Route path="/admin/users" component={AdminUsers} />
+
             <Route path="/test-api" component={TestAPI} />
-            
+
             {/* 2. 非英文語言路由 (明確定義前綴) */}
             {PREFIX_LANGS.map(prefix => (
               <Route key={prefix} path={`/${prefix}/*?`}>
                 <LanguageWrapper langCode={URL_PREFIX_MAP[prefix]} base={`/${prefix}`} />
               </Route>
             ))}
-            
+
             {/* 3. 英文/預設路由 (根目錄) */}
             {/* 這是 Catch-all，所有沒被上面抓走的都會落到這裡 -> 視為英文版 */}
             <Route path="/*?">

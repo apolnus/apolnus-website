@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { User, Shield, MessageSquare, Settings } from "lucide-react";
+import { User, Shield, MessageSquare, Settings, LogOut } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,10 +52,14 @@ export default function Profile() {
     });
   };
 
+  const handleLogout = () => {
+    window.location.href = "/api/auth/logout";
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-      <SEOHead pageKey="profile" />
+        <SEOHead pageKey="profile" />
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">{t('profile.t_d3933730')}</p>
@@ -74,10 +78,11 @@ export default function Profile() {
               <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h1 className="text-2xl font-bold mb-4">{t('profile.t_7174cce7')}</h1>
               <p className="text-gray-600 mb-6">{t('profile.t_2b5d7f4b')}</p>
-              <Button
-                onClick={() => window.location.href = "/api/oauth/login"}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >{t('profile.t_c8ee6c82')}</Button>
+              <Link href="/login">
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700 text-white w-full"
+                >{t('profile.t_c8ee6c82')}</Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -94,33 +99,47 @@ export default function Profile() {
       <section className="bg-gradient-to-br from-blue-50 to-blue-100 pt-[124px] md:pt-[164px] pb-16 border-b">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-                <User className="w-8 h-8 text-white" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                  {user?.avatar ? (
+                    <img src={user.avatar} alt={user.name || "User"} className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-8 h-8 text-white" />
+                  )}
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold">{t('profile.t_f2be7e3b')}</h1>
+                  <p className="text-gray-700">歡迎回來，{user?.name || "用戶"}</p>
+                  <p className="text-sm text-gray-500">{user?.email}</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl font-bold">{t('profile.t_f2be7e3b')}</h1>
-                <p className="text-gray-700">歡迎回來，{user?.name || "用戶"}</p>
-              </div>
+
+              <Button
+                variant="outline"
+                onClick={handleLogout}
+                className="hidden md:flex gap-2 text-red-600 border-red-200 hover:bg-red-50"
+              >
+                <LogOut className="w-4 h-4" />
+                登出
+              </Button>
             </div>
-            
+
             {/* Tab Navigation */}
             <div className="flex gap-4 mt-6">
               <button
                 onClick={() => setActiveTab("overview")}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  activeTab === "overview"
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "overview"
                     ? "bg-white text-blue-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
-                }`}
+                  }`}
               >{t('profile.t_dfe666da')}</button>
               <button
                 onClick={() => setActiveTab("settings")}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  activeTab === "settings"
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "settings"
                     ? "bg-white text-blue-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-900"
-                }`}
+                  }`}
               >{t('profile.t_00ea9671')}</button>
             </div>
           </div>
@@ -262,23 +281,22 @@ export default function Profile() {
                                   </span>
                                 )}
                                 <span
-                                  className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${
-                                    ticket.status === "pending"
+                                  className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${ticket.status === "pending"
                                       ? "bg-yellow-100 text-yellow-800"
                                       : ticket.status === "in_progress"
-                                      ? "bg-blue-100 text-blue-800"
-                                      : ticket.status === "resolved"
-                                      ? "bg-green-100 text-green-800"
-                                      : "bg-gray-100 text-gray-800"
-                                  }`}
+                                        ? "bg-blue-100 text-blue-800"
+                                        : ticket.status === "resolved"
+                                          ? "bg-green-100 text-green-800"
+                                          : "bg-gray-100 text-gray-800"
+                                    }`}
                                 >
                                   {ticket.status === "pending"
                                     ? "待處理"
                                     : ticket.status === "in_progress"
-                                    ? "處理中"
-                                    : ticket.status === "resolved"
-                                    ? "已解決"
-                                    : "已關閉"}
+                                      ? "處理中"
+                                      : ticket.status === "resolved"
+                                        ? "已解決"
+                                        : "已關閉"}
                                 </span>
                               </div>
                             </div>
@@ -308,7 +326,7 @@ export default function Profile() {
                   {/* Basic Information */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">{t('profile.t_63f2f203')}</h3>
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="name">{t('profile.t_60d0458a')}</Label>
                       <Input
@@ -355,11 +373,20 @@ export default function Profile() {
                   </div>
 
                   {/* Save Button */}
-                  <div className="flex justify-end pt-6 border-t">
+                  <div className="flex justify-between items-center pt-6 border-t">
+                    <Button
+                      variant="destructive"
+                      onClick={handleLogout}
+                      className="md:hidden flex gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      登出
+                    </Button>
+
                     <Button
                       onClick={handleSaveProfile}
                       disabled={updateProfile.isPending}
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      className="bg-blue-600 hover:bg-blue-700 text-white ml-auto"
                     >
                       {updateProfile.isPending ? "儲存中..." : "儲存變更"}
                     </Button>
