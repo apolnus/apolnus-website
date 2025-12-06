@@ -98,10 +98,14 @@ function processValue(value: string, fieldName: string, tableName: string) {
 }
 
 async function importCSV(filePath: string, table: any, tableName: string, db: any) {
-    const fullPath = path.resolve(process.cwd(), '..', filePath);
+    // 優先在當前目錄尋找，如果沒有才往上找 (兼容本地開發與 Docker)
+    let fullPath = path.resolve(process.cwd(), filePath);
+    if (!fs.existsSync(fullPath)) {
+        fullPath = path.resolve(process.cwd(), '..', filePath);
+    }
 
     if (!fs.existsSync(fullPath)) {
-        console.log(`[Skip] 檔案不存在: ${filePath}`);
+        console.log(`[Skip] 檔案不存在: ${filePath} (嘗試了 . 和 ..)`);
         return;
     }
 
@@ -137,6 +141,7 @@ async function importCSV(filePath: string, table: any, tableName: string, db: an
         for (let i = 0; i < valuesToInsert.length; i += BATCH_SIZE) {
             const batch = valuesToInsert.slice(i, i + BATCH_SIZE);
             try {
+                // @ts-ignore
                 await db.insert(table).values(batch).onDuplicateKeyIgnore();
             } catch (e) {
                 console.error(`[Error] 匯入批次失敗 (${tableName}):`, e);
@@ -153,7 +158,13 @@ async function main() {
         process.exit(1);
     }
 
-    const connection = await mysql.createConnection(databaseUrl);
+    // 支援 SSL 連線，這對於外部連線至 Zeabur MySQL 是必需的
+    const connection = await mysql.createConnection({
+        uri: databaseUrl,
+        ssl: {
+            rejectUnauthorized: false
+        }
+    });
     const db = drizzle(connection);
 
     // MySQL: 停用外鍵檢查
