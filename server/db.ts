@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { InsertUser, users } from "../drizzle/schema";
+import { sql } from "drizzle-orm";
 import { ENV } from './_core/env';
 
 // Global connection pool
@@ -51,15 +52,15 @@ export async function upsertUser(user: Partial<Omit<InsertUser, 'id'>> & Pick<In
   try {
     const now = new Date();
 
-    // 明確構建完整的值物件，不依賴 database defaults
+    // 強制使用明確的 NULL，避免 Drizzle 使用 default
     const values = {
       openId: user.openId,
-      name: user.name || null,
-      email: (user.email && user.email.trim() !== '') ? user.email : null,
-      avatar: user.avatar || null,
-      phone: user.phone || null,
-      address: user.address || null,
-      loginMethod: user.loginMethod || null,
+      name: user.name || sql`NULL`,
+      email: (user.email && user.email.trim() !== '') ? user.email : sql`NULL`,
+      avatar: user.avatar || sql`NULL`,
+      phone: sql`NULL`,
+      address: sql`NULL`,
+      loginMethod: user.loginMethod || sql`NULL`,
       role: user.role || (user.openId === ENV.ownerOpenId ? 'admin' as const : 'user' as const),
       createdAt: now,
       updatedAt: now,
@@ -68,15 +69,15 @@ export async function upsertUser(user: Partial<Omit<InsertUser, 'id'>> & Pick<In
 
     // Update set - 只更新這些欄位
     const updateSet = {
-      name: values.name,
-      email: values.email,
-      avatar: values.avatar,
-      loginMethod: values.loginMethod,
+      name: user.name || sql`NULL`,
+      email: (user.email && user.email.trim() !== '') ? user.email : sql`NULL`,
+      avatar: user.avatar || sql`NULL`,
+      loginMethod: user.loginMethod || sql`NULL`,
       updatedAt: now,
-      lastSignedIn: values.lastSignedIn,
+      lastSignedIn: user.lastSignedIn || now,
     };
 
-    console.log('[Database] Upserting user:', { openId: user.openId, email: values.email });
+    console.log('[Database] Upserting user:', { openId: user.openId, email: user.email || 'NULL' });
 
     await db.insert(users).values(values).onDuplicateKeyUpdate({
       set: updateSet,
