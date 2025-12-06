@@ -1,0 +1,12 @@
+id,country,type,name,url,logo,isActive,displayOrder,createdAt,updatedAt
+1,tw,official,官方商城,https://store.apolnus.com/,,1,0,2025-11-25 17:54:13,2025-11-26 17:01:11
+2,jp,platform,Amazon JP,https://www.amazon.co.jp/stores/page/EC5825CC-15EA-4E7C-975E-AA97AABDBCE7?ingress=2&lp_context_asin=B0CFPBRSPV&visitId=79790271-6029-434a-bbce-962943aa2a6c&store_ref=bl_ast_dp_brandLogo_sto&ref_=ast_bln,https://upload.wikimedia.org/wikipedia/commons/3/3c/Amazon.co.jp_Logo.png,1,1,2025-11-25 17:59:21,2025-11-25 18:02:30
+3,jp,official,公式オンラインストア,https://apolnus.co.jp/,https://www.google.com/imgres?q=amazon%20jp%20logo&imgurl=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fa%2Faf%2FAmazon.co.jp_logo.svg%2F1200px-Amazon.co.jp_logo.svg.png&imgrefurl=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AAmazon.co.jp_logo.svg&docid=Qm-64No51OT3UM&tbnid=Y_Yv284HqK8rhM&vet=12ahUKEwiZyOeO8Y2RAxWoZvUHHZJKFikQM3oECBoQAA..i&w=1200&h=280&hcb=2&ved=2ahUKEwiZyOeO8Y2RAxWoZvUHHZJKFikQM3oECBoQAA,1,0,2025-11-25 17:59:57,2025-11-26 17:02:02
+30001,tw,platform,MOMO 購物網,https://www.momoshop.com.tw/search/searchShop.jsp?keyword=Apolnus+%E6%B3%A2%E9%82%A3%E6%96%AF&brand=Apolnus+%E6%B3%A2%E9%82%A3%E6%96%AF&brandNo=20241011171328152&isBrandPage=1&serviceCode=MT04&_isFuzzy=0&searchType=6,https://d2xsxph8kpxj0f.cloudfront.net/310519663216678001/fSQyfmdSvtTzG7Fo7nT3qq/online-store-logos/1764125669896-aff220adf28f6b9aa07d088e51bfe8f9.jpg,1,0,2025-11-26 02:35:59,2025-11-26 02:56:09
+30002,tw,platform,Pchome 24h,https://24h.pchome.com.tw/store/DMAUEL,https://d2xsxph8kpxj0f.cloudfront.net/310519663216678001/fSQyfmdSvtTzG7Fo7nT3qq/online-store-logos/1764125661631-b0c5779c385b65def5baf19c7b1f3bd4.png,1,1,2025-11-26 02:39:58,2025-11-26 02:54:23
+30004,tw,platform,Shopee蝦皮購物,https://shopee.tw/shop/911049095,https://d2xsxph8kpxj0f.cloudfront.net/310519663216678001/fSQyfmdSvtTzG7Fo7nT3qq/online-store-logos/1764125736126-822b64cab0ec9e6d87e96fa2bd9c8bd3.png,1,2,2025-11-26 02:52:27,2025-11-26 02:55:37
+60001,us,official,Official Store,,,1,0,2025-11-26 17:01:15,2025-11-26 17:01:15
+60002,kr,official,공식 스토어,,,1,0,2025-11-26 17:02:14,2025-11-26 17:02:14
+60003,de,official,Offizieller Store,,,1,0,2025-11-26 17:02:23,2025-11-26 17:02:23
+60004,fr,official,Boutique officielle,,,1,0,2025-11-26 17:02:32,2025-11-26 17:02:32
+60005,cn,official,官方商城,,,1,0,2025-11-26 17:02:41,2025-11-26 17:02:41

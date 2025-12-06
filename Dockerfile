@@ -41,6 +41,7 @@ COPY drizzle.config.ts ./
 COPY drizzle ./drizzle
 COPY scripts ./scripts
 COPY shared ./shared
+COPY *.csv ./
 
 # Expose port (Zeabur will override this with PORT env var)
 EXPOSE 3000
