@@ -2,7 +2,7 @@ import { trpc } from "@/lib/trpc";
 import { useMemo } from "react";
 
 export function useAuth() {
-  const { data: user, isLoading, refetch } = trpc.auth.me.useQuery(undefined, {
+  const { data: user, isPending, refetch } = trpc.auth.me.useQuery(undefined, {
     retry: false,
     refetchOnWindowFocus: false
   });
@@ -20,9 +20,9 @@ export function useAuth() {
 
   return useMemo(() => ({
     user,
-    isLoading,
+    isLoading: isPending,
     isAuthenticated: !!user,
     login,
     logout,
-  }), [user, isLoading]);
+  }), [user, isPending]);
 }

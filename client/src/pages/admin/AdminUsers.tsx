@@ -146,9 +146,9 @@ export default function AdminUsers() {
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => handleRoleChange(user.id, 'admin')}
-                                                        disabled={updateRoleMutation.isLoading}
+                                                        disabled={updateRoleMutation.isPending}
                                                     >
-                                                        {updateRoleMutation.isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Make Admin"}
+                                                        {updateRoleMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Make Admin"}
                                                     </Button>
                                                 ) : (
                                                     <Button
@@ -156,9 +156,9 @@ export default function AdminUsers() {
                                                         size="sm"
                                                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                                         onClick={() => handleRoleChange(user.id, 'user')}
-                                                        disabled={updateRoleMutation.isLoading}
+                                                        disabled={updateRoleMutation.isPending}
                                                     >
-                                                        {updateRoleMutation.isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Revoke Admin"}
+                                                        {updateRoleMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Revoke Admin"}
                                                     </Button>
                                                 )}
                                             </div>
