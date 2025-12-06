@@ -8,6 +8,7 @@ import 'dotenv/config';
 
 // 定義 CSV 檔案與 Table 的對應
 const CSV_MAPPING = [
+    { file: 'users_20251206_072842.csv', table: schema.users, name: 'users' },
     { file: 'authorizedDealers_20251205_104217.csv', table: schema.authorizedDealers, name: 'authorizedDealers' },
     { file: 'authorizedServiceCenters_20251205_104221.csv', table: schema.authorizedServiceCenters, name: 'authorizedServiceCenters' },
     { file: 'faqs_20251205_104224.csv', table: schema.faqs, name: 'faqs' },
