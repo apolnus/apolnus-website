@@ -52,36 +52,33 @@ export async function upsertUser(user: Partial<Omit<InsertUser, 'id'>> & Pick<In
   try {
     const now = new Date();
 
-    // 強制使用明確的 NULL，避免 Drizzle 使用 default
-    const values = {
-      openId: user.openId,
-      name: user.name || sql`NULL`,
-      email: (user.email && user.email.trim() !== '') ? user.email : sql`NULL`,
-      avatar: user.avatar || sql`NULL`,
-      phone: sql`NULL`,
-      address: sql`NULL`,
-      loginMethod: user.loginMethod || sql`NULL`,
-      role: user.role || (user.openId === ENV.ownerOpenId ? 'admin' as const : 'user' as const),
-      createdAt: now,
-      updatedAt: now,
-      lastSignedIn: user.lastSignedIn || now,
-    };
-
-    // Update set - 只更新這些欄位
-    const updateSet = {
-      name: user.name || sql`NULL`,
-      email: (user.email && user.email.trim() !== '') ? user.email : sql`NULL`,
-      avatar: user.avatar || sql`NULL`,
-      loginMethod: user.loginMethod || sql`NULL`,
-      updatedAt: now,
-      lastSignedIn: user.lastSignedIn || now,
-    };
-
     console.log('[Database] Upserting user:', { openId: user.openId, email: user.email || 'NULL' });
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
-    });
+    // 直接執行原生 SQL，完全控制
+    const connection = await (db as any).$client;
+
+    await connection.execute(
+      `INSERT INTO users (openId, name, email, avatar, phone, address, loginMethod, role, createdAt, updatedAt, lastSignedIn)
+       VALUES (?, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         name = VALUES(name),
+         email = VALUES(email),
+         avatar = VALUES(avatar),
+         loginMethod = VALUES(loginMethod),
+         updatedAt = VALUES(updatedAt),
+         lastSignedIn = VALUES(lastSignedIn)`,
+      [
+        user.openId,
+        user.name || null,
+        (user.email && user.email.trim() !== '') ? user.email : null,
+        user.avatar || null,
+        user.loginMethod || null,
+        user.role || (user.openId === ENV.ownerOpenId ? 'admin' : 'user'),
+        now,
+        now,
+        user.lastSignedIn || now
+      ]
+    );
 
     console.log('[Database] User upsert successful:', user.openId);
   } catch (error: any) {
