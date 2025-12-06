@@ -37,7 +37,7 @@ export async function getDb() {
   return _db;
 }
 
-export async function upsertUser(user: InsertUser): Promise<void> {
+export async function upsertUser(user: Partial<Omit<InsertUser, 'id'>> & Pick<InsertUser, 'openId'>): Promise<void> {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
   }
@@ -49,7 +49,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   }
 
   try {
-    const values: InsertUser = {
+    const values: Partial<InsertUser> = {
       openId: user.openId,
     };
     const updateSet: Record<string, unknown> = {};
@@ -61,7 +61,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       // @ts-ignore - dynamic access
       const value = user[field];
       if (value === undefined) return;
-      const normalized = value ?? null;
+      // 將空字串轉為 null，避免資料庫儲存空字串
+      const normalized = value && value.trim() !== '' ? value : null;
       // @ts-ignore
       values[field] = normalized;
       updateSet[field] = normalized;
@@ -90,6 +91,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     }
 
     // MySQL uses onDuplicateKeyUpdate
+    // @ts-ignore - values is partial but Drizzle will handle defaults
     await db.insert(users).values(values).onDuplicateKeyUpdate({
       set: updateSet,
     });

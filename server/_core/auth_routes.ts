@@ -137,13 +137,10 @@ async function handleUserLogin(req: Request, res: Response, userData: any) {
   await upsertUser({
     openId: userData.openId,
     name: userData.name,
-    email: userData.email, // undefined 會在 upsertUser 中被忽略 (轉為 NULL 或 skip)
+    email: userData.email, // undefined 會在 upsertUser 中被跳過，空字串會轉為 null
     avatar: userData.avatar,
     loginMethod: userData.loginMethod,
-    role: undefined, // Let DB default handling it or upsertUser logic
-    createdAt: undefined,
-    updatedAt: undefined,
-    lastSignedIn: new Date() // upsertUser 邏輯會處理這個
+    lastSignedIn: new Date()
   });
 
   // 建立 Session
