@@ -49,54 +49,48 @@ export async function upsertUser(user: Partial<Omit<InsertUser, 'id'>> & Pick<In
   }
 
   try {
-    const values: Partial<InsertUser> = {
+    const now = new Date();
+
+    // 明確構建完整的值物件，不依賴 database defaults
+    const values = {
       openId: user.openId,
-    };
-    const updateSet: Record<string, unknown> = {};
-
-    const textFields = ["name", "email", "loginMethod", "phone", "address", "avatar"] as const;
-    type TextField = (typeof textFields)[number];
-
-    const assignNullable = (field: TextField) => {
-      // @ts-ignore - dynamic access
-      const value = user[field];
-      if (value === undefined) return;
-      // 將空字串轉為 null，避免資料庫儲存空字串
-      const normalized = value && value.trim() !== '' ? value : null;
-      // @ts-ignore
-      values[field] = normalized;
-      updateSet[field] = normalized;
+      name: user.name || null,
+      email: (user.email && user.email.trim() !== '') ? user.email : null,
+      avatar: user.avatar || null,
+      phone: user.phone || null,
+      address: user.address || null,
+      loginMethod: user.loginMethod || null,
+      role: user.role || (user.openId === ENV.ownerOpenId ? 'admin' as const : 'user' as const),
+      createdAt: now,
+      updatedAt: now,
+      lastSignedIn: user.lastSignedIn || now,
     };
 
-    textFields.forEach(assignNullable);
+    // Update set - 只更新這些欄位
+    const updateSet = {
+      name: values.name,
+      email: values.email,
+      avatar: values.avatar,
+      loginMethod: values.loginMethod,
+      updatedAt: now,
+      lastSignedIn: values.lastSignedIn,
+    };
 
-    if (user.lastSignedIn !== undefined) {
-      values.lastSignedIn = user.lastSignedIn;
-      updateSet.lastSignedIn = user.lastSignedIn;
-    }
-    if (user.role !== undefined) {
-      values.role = user.role;
-      updateSet.role = user.role;
-    } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
-    }
+    console.log('[Database] Upserting user:', { openId: user.openId, email: values.email });
 
-    if (!values.lastSignedIn) {
-      values.lastSignedIn = new Date();
-    }
-
-    if (Object.keys(updateSet).length === 0) {
-      updateSet.lastSignedIn = new Date();
-    }
-
-    // MySQL uses onDuplicateKeyUpdate
-    // @ts-ignore - values is partial but Drizzle will handle defaults
     await db.insert(users).values(values).onDuplicateKeyUpdate({
       set: updateSet,
     });
-  } catch (error) {
-    console.error("[Database] Failed to upsert user:", error);
+
+    console.log('[Database] User upsert successful:', user.openId);
+  } catch (error: any) {
+    console.error("[Database] Failed to upsert user:", {
+      openId: user.openId,
+      error: error.message,
+      code: error.code,
+      sqlMessage: error.sqlMessage,
+      sql: error.sql,
+    });
     throw error;
   }
 }
