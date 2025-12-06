@@ -778,47 +778,70 @@ Respond ONLY in valid JSON format:
         const targetPath = path.join(localesDir, `${input.lang}.json`);
 
         // Read both files
-        const [zhTWContent, targetContent] = await Promise.all([
-          fs.readFile(zhTWPath, 'utf-8'),
-          fs.readFile(targetPath, 'utf-8').catch(() => '{}'),
-        ]);
+        try {
+          // Check if directory exists first
+          try {
+            await fs.access(localesDir);
+          } catch (e) {
+            console.error(`Locales directory not found at: ${localesDir}`);
+            const clientSrc = path.join(process.cwd(), 'client/src');
+            const filesInSrc = await fs.readdir(clientSrc).catch(err => `Error reading ${clientSrc}: ${err.message}`);
+            throw new Error(`Locales directory missing at ${localesDir}. client/src contents: ${Array.isArray(filesInSrc) ? filesInSrc.join(', ') : filesInSrc}`);
+          }
 
-        const zhTWData = JSON.parse(zhTWContent);
-        const targetData = JSON.parse(targetContent);
+          const [zhTWContent, targetContent] = await Promise.all([
+            fs.readFile(zhTWPath, 'utf-8'),
+            fs.readFile(targetPath, 'utf-8').catch(() => '{}'),
+          ]);
 
-        // Flatten nested objects to get all keys
-        const flattenObject = (obj: any, prefix = ''): Record<string, string> => {
-          return Object.keys(obj).reduce((acc: Record<string, string>, key) => {
-            const newKey = prefix ? `${prefix}.${key}` : key;
-            if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-              Object.assign(acc, flattenObject(obj[key], newKey));
-            } else {
-              acc[newKey] = obj[key];
-            }
-            return acc;
-          }, {});
-        };
+          const zhTWData = JSON.parse(zhTWContent);
+          const targetData = JSON.parse(targetContent);
 
-        const zhTWFlat = flattenObject(zhTWData);
-        const targetFlat = flattenObject(targetData);
+          // Flatten nested objects to get all keys
+          const flattenObject = (obj: any, prefix = ''): Record<string, string> => {
+            return Object.keys(obj).reduce((acc: Record<string, string>, key) => {
+              const newKey = prefix ? `${prefix}.${key}` : key;
+              if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+                Object.assign(acc, flattenObject(obj[key], newKey));
+              } else {
+                acc[newKey] = obj[key];
+              }
+              return acc;
+            }, {});
+          };
 
-        // Build translation entries
-        const entries = Object.keys(zhTWFlat).map(key => ({
-          key,
-          zhTW: zhTWFlat[key],
-          target: targetFlat[key] || '',
-          missing: !targetFlat[key],
-        }));
+          const zhTWFlat = flattenObject(zhTWData);
+          const targetFlat = flattenObject(targetData);
 
-        const totalCount = entries.length;
-        const missingCount = entries.filter(e => e.missing).length;
+          // Build translation entries
+          const entries = Object.keys(zhTWFlat).map(key => ({
+            key,
+            zhTW: zhTWFlat[key],
+            target: targetFlat[key] || '',
+            missing: !targetFlat[key],
+          }));
 
-        return {
-          lang: input.lang,
-          totalCount,
-          missingCount,
-          entries,
-        };
+          const totalCount = entries.length;
+          const missingCount = entries.filter(e => e.missing).length;
+
+          return {
+            lang: input.lang,
+            totalCount,
+            missingCount,
+            entries,
+          };
+
+        } catch (error: any) {
+          console.error('Error in translations.list:', error);
+          if (error.code === 'ENOENT') {
+            // List directory contents to debug
+            const files = await fs.readdir(localesDir).catch(e => [`Error listing directory: ${e.message}`]);
+            throw new Error(`Translation file not found at ${zhTWPath}. Locales dir (${localesDir}) contains: ${files.join(', ')}`);
+          }
+          throw error;
+        }
+
+
       }),
 
     // Update a single translation entry
