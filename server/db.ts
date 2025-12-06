@@ -39,7 +39,7 @@ export async function getDb() {
       await connection.ping();
       connection.release();
 
-      _db = drizzle(_pool, { mode: "default" });
+      _db = drizzle(_pool as any, { mode: "default" });
       console.log("[Database] ✓ Connected to MySQL successfully");
     } catch (error: any) {
       console.error("[Database] ✗ Failed to connect:", {
@@ -51,6 +51,7 @@ export async function getDb() {
       throw error;
     }
   }
+  if (!_db) throw new Error("Database initialization failed");
   return _db;
 }
 

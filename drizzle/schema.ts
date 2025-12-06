@@ -1,4 +1,4 @@
-import { int, mysqlTable, text, uniqueIndex, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlTable, text, uniqueIndex, timestamp, varchar, json } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -10,7 +10,7 @@ export const users = mysqlTable("users", {
    * Surrogate primary key. Auto-incremented numeric value managed by the database.
    * Use this for relations between tables.
    */
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
@@ -30,7 +30,7 @@ export type InsertUser = typeof users.$inferInsert;
 
 // Warranty Registration Table
 export const warrantyRegistrations = mysqlTable("warrantyRegistrations", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(), // 綁定用戶ID，確保每個用戶只能看到自己的保固登錄
   name: varchar("name", { length: 100 }).notNull(),
   email: varchar("email", { length: 320 }).notNull(),
@@ -48,7 +48,7 @@ export type InsertWarrantyRegistration = typeof warrantyRegistrations.$inferInse
 
 // Support Ticket Table
 export const supportTickets = mysqlTable("supportTickets", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   userId: int("userId"),
   contactName: varchar("contactName", { length: 100 }).notNull(),
   contactPhone: varchar("contactPhone", { length: 20 }).notNull(),
@@ -69,14 +69,14 @@ export type InsertSupportTicket = typeof supportTickets.$inferInsert;
 
 // Ticket Reply Table
 export const ticketReplies = mysqlTable("ticketReplies", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   ticketId: int("ticketId").notNull(),
   userId: int("userId"),
-  isAdmin: int("isAdmin", { mode: 'number' }).default(0).notNull(), // 0 or 1
+  isAdmin: int("isAdmin").default(0).notNull(), // 0 or 1
+  isReadByUser: int("isReadByUser").default(0).notNull(), // 0=未讀, 1=已讀 (僅當isAdmin=1時有效)
+  isReadByAdmin: int("isReadByAdmin").default(0).notNull(), // 0=未讀, 1=已讀 (僅當isAdmin=0時有效)
   message: text("message").notNull(),
-  attachments: text("attachments", { mode: 'json' }), // JSON格式儲存圖片URL陣列
-  isReadByUser: int("isReadByUser", { mode: 'number' }).default(0).notNull(), // 0=未讀, 1=已讀 (僅當isAdmin=1時有效)
-  isReadByAdmin: int("isReadByAdmin", { mode: 'number' }).default(0).notNull(), // 0=未讀, 1=已讀 (僅當isAdmin=0時有效)
+  attachments: text("attachments"), // JSON string
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -85,7 +85,7 @@ export type InsertTicketReply = typeof ticketReplies.$inferInsert;
 
 // Service Center Table
 export const serviceCenters = mysqlTable("serviceCenters", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
   address: text("address").notNull(),
   phone: varchar("phone", { length: 20 }).notNull(),
@@ -93,7 +93,7 @@ export const serviceCenters = mysqlTable("serviceCenters", {
   services: text("services"),
   latitude: varchar("latitude", { length: 50 }),
   longitude: varchar("longitude", { length: 50 }),
-  isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
+  isActive: int("isActive").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -103,7 +103,7 @@ export type InsertServiceCenter = typeof serviceCenters.$inferInsert;
 
 // Subscribers Table (for newsletter)
 export const subscribers = mysqlTable("subscribers", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   email: varchar("email", { length: 320 }).notNull().unique(),
   subscribedAt: timestamp("subscribedAt").defaultNow().notNull(),
 });
@@ -113,7 +113,7 @@ export type InsertSubscriber = typeof subscribers.$inferInsert;
 
 // Partners Table (for partnership applications)
 export const partners = mysqlTable("partners", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   companyName: varchar("companyName", { length: 200 }).notNull(),
   contactName: varchar("contactName", { length: 100 }).notNull(),
   email: varchar("email", { length: 320 }).notNull(),
@@ -128,7 +128,7 @@ export type InsertPartner = typeof partners.$inferInsert;
 
 // Site Settings Table (for GA and Meta Pixel)
 export const siteSettings = mysqlTable("siteSettings", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   key: varchar("key", { length: 100 }).notNull().unique(),
   value: text("value"),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -139,13 +139,13 @@ export type InsertSiteSetting = typeof siteSettings.$inferInsert;
 
 // Product Models Table
 export const productModels = mysqlTable("productModels", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 100 }).notNull().unique(),
   // slug 欄位：有 slug = 前台產品 (FAQ/Sitemap 可用)
   //         無 slug = 僅後勤使用 (工單/保固)
   slug: varchar("slug", { length: 100 }),
-  isActive: int("isActive", { mode: 'number' }).default(1).notNull(), // 1=上架, 0=下架
-  order: int("order", { mode: 'number' }).default(0).notNull(),
+  isActive: int("isActive").default(1).notNull(), // 1=上架, 0=下架
+  order: int("order").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(), // 用於 Sitemap lastmod
 });
@@ -155,12 +155,12 @@ export type InsertProductModel = typeof productModels.$inferInsert;
 
 // FAQ Table
 export const socialLinks = mysqlTable("socialLinks", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   locale: varchar("locale", { length: 10 }).notNull(), // 'zh-TW', 'en', 'ja', 'zh-CN'
   platform: varchar("platform", { length: 50 }).notNull(), // 'line', 'facebook', 'instagram', etc.
   url: text("url").notNull(),
-  isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
-  displayOrder: int("displayOrder", { mode: 'number' }).default(0).notNull(),
+  isActive: int("isActive").default(1).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 }, (table) => ({
@@ -168,20 +168,20 @@ export const socialLinks = mysqlTable("socialLinks", {
 }));
 
 export const faqs = mysqlTable("faqs", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   // 分類 (如：保固、使用、APP)
   category: varchar("category", { length: 100 }).notNull(),
 
   // 關聯產品 (JSON Array, e.g., ["one-x", "ultra-s7"])
   // 若為空陣列或 null，代表通用問題
-  relatedProducts: text("relatedProducts", { mode: 'json' }),
+  relatedProducts: json("relatedProducts"),
 
   // 多語言內容 (JSON Object, e.g., { "zh-TW": "問題...", "en": "Question..." })
-  question: text("question", { mode: 'json' }).notNull(),
-  answer: text("answer", { mode: 'json' }).notNull(),
+  question: json("question").notNull(),
+  answer: json("answer").notNull(),
 
-  order: int("order", { mode: 'number' }).default(0).notNull(),
-  isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
+  order: int("order").default(0).notNull(),
+  isActive: int("isActive").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -191,14 +191,14 @@ export type InsertFAQ = typeof faqs.$inferInsert;
 
 // Authorized Dealers Table
 export const authorizedDealers = mysqlTable("authorizedDealers", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
   phone: varchar("phone", { length: 20 }).notNull(),
   address: text("address").notNull(),
   businessHours: text("businessHours"),
   latitude: varchar("latitude", { length: 50 }),
   longitude: varchar("longitude", { length: 50 }),
-  isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
+  isActive: int("isActive").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -208,7 +208,7 @@ export type InsertAuthorizedDealer = typeof authorizedDealers.$inferInsert;
 
 // Authorized Service Centers Table
 export const authorizedServiceCenters = mysqlTable("authorizedServiceCenters", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
   phone: varchar("phone", { length: 20 }).notNull(),
   address: text("address").notNull(),
@@ -216,7 +216,7 @@ export const authorizedServiceCenters = mysqlTable("authorizedServiceCenters", {
   services: text("services"),
   latitude: varchar("latitude", { length: 50 }),
   longitude: varchar("longitude", { length: 50 }),
-  isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
+  isActive: int("isActive").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -226,14 +226,14 @@ export type InsertAuthorizedServiceCenter = typeof authorizedServiceCenters.$inf
 
 // Online Stores Table (線上銷售渠道)
 export const onlineStores = mysqlTable("onlineStores", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   country: varchar("country", { length: 10 }).notNull(), // tw, jp, us...
   type: varchar("type", { length: 20 }).default("platform").notNull(), // 'official' (官方) | 'platform' (經銷)
   name: varchar("name", { length: 100 }).notNull(), // 平台名稱
   url: text("url"), // 連結 (若為空則前台顯示"敬請期待"或隱藏)
   logo: text("logo"), // Logo 圖片網址
-  isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
-  displayOrder: int("displayOrder", { mode: 'number' }).default(0).notNull(),
+  isActive: int("isActive").default(1).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -243,10 +243,10 @@ export type InsertOnlineStore = typeof onlineStores.$inferInsert;
 
 // SEO Settings Table
 export const seoSettings = mysqlTable("seoSettings", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   page: varchar("page", { length: 100 }).notNull(), // 頁面識別碼 (e.g., "home", "about")
   language: varchar("language", { length: 10 }).notNull(), // 語言代碼 (e.g., "zh-TW", "en")
-  title: text("title", { length: 500 }).notNull(),
+  title: text("title").notNull(),
   description: text("description"),
   keywords: text("keywords"),
 }, (t) => ({
@@ -258,7 +258,7 @@ export type InsertSeoSetting = typeof seoSettings.$inferInsert;
 
 // Jobs Table (職缺資料)
 export const jobs = mysqlTable("jobs", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+  id: int("id").autoincrement().primaryKey(),
   jobId: varchar("jobId", { length: 50 }).notNull(), // e.g. ENG-TW-001
   title: varchar("title", { length: 200 }).notNull(),
   department: varchar("department", { length: 100 }).notNull(), // e.g. R&D, Marketing
@@ -266,7 +266,8 @@ export const jobs = mysqlTable("jobs", {
   country: varchar("country", { length: 10 }).notNull(), // e.g. tw, us, jp
   description: text("description").notNull(), // HTML content
   requirements: text("requirements"), // HTML content
-  isActive: int("isActive", { mode: 'number' }).default(1).notNull(),
+  attachments: text("attachments"), // JSON格式儲存圖片URL陣列 content
+  isActive: int("isActive").default(1).notNull(),
   postedAt: timestamp("postedAt").defaultNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),

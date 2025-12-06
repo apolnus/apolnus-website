@@ -59,7 +59,10 @@ export default function AdminUsers() {
     });
 
     const handleRoleChange = (userId: number, newRole: string) => {
-        updateRoleMutation.mutate({ id: userId, role: newRole });
+        updateRoleMutation.mutate({
+            id: userId,
+            role: newRole as "user" | "admin",
+        });
     };
 
     return (

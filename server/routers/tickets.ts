@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { supportTickets, ticketReplies } from "../../drizzle/schema";
@@ -54,7 +54,7 @@ export const ticketsRouter = router({
       .from(supportTickets)
       .where(eq(supportTickets.userId, ctx.user.id))
       .orderBy(desc(supportTickets.createdAt));
-    
+
     // For each ticket, count unread admin replies
     const ticketsWithUnreadCount = await Promise.all(
       tickets.map(async (ticket) => {
@@ -62,18 +62,18 @@ export const ticketsRouter = router({
           .select()
           .from(ticketReplies)
           .where(eq(ticketReplies.ticketId, ticket.id));
-        
+
         const unreadCount = unreadReplies.filter(
           (reply) => reply.isAdmin === 1 && reply.isReadByUser === 0
         ).length;
-        
+
         return {
           ...ticket,
           unreadCount,
         };
       })
     );
-    
+
     return ticketsWithUnreadCount;
   }),
 
@@ -86,7 +86,7 @@ export const ticketsRouter = router({
       .select()
       .from(supportTickets)
       .orderBy(desc(supportTickets.createdAt));
-    
+
     return tickets;
   }),
 
@@ -101,7 +101,7 @@ export const ticketsRouter = router({
         .select()
         .from(supportTickets)
         .where(eq(supportTickets.id, input.id));
-      
+
       const ticket = result[0];
       if (!ticket) return null;
 
@@ -109,7 +109,7 @@ export const ticketsRouter = router({
       if (ctx.user.role !== 'admin' && ticket.userId !== ctx.user.id) {
         throw new Error('您沒有權限查看此工單');
       }
-      
+
       return ticket;
     }),
 
@@ -153,7 +153,7 @@ export const ticketsRouter = router({
         .from(ticketReplies)
         .where(eq(ticketReplies.ticketId, input.ticketId))
         .orderBy(ticketReplies.createdAt);
-      
+
       return replies;
     }),
 
@@ -180,15 +180,34 @@ export const ticketsRouter = router({
   // Mark all replies of a ticket as read
   markRepliesAsRead: protectedProcedure
     .input(z.object({ ticketId: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
-      // Mark all admin replies as read
-      await db
-        .update(ticketReplies)
-        .set({ isReadByUser: 1 })
-        .where(eq(ticketReplies.ticketId, input.ticketId));
+      // Check user role (assuming ctx.user exists in protectedProcedure)
+      // Note: protectedProcedure adds `user` to ctx
+
+      const isUserAdmin = ctx.user.role === 'admin';
+
+      if (isUserAdmin) {
+        // Mark user replies as read by admin
+        await db
+          .update(ticketReplies)
+          .set({ isReadByAdmin: 1 })
+          .where(and(
+            eq(ticketReplies.ticketId, input.ticketId),
+            eq(ticketReplies.isAdmin, 0) // Only mark user replies
+          ));
+      } else {
+        // Mark admin replies as read by user
+        await db
+          .update(ticketReplies)
+          .set({ isReadByUser: 1 })
+          .where(and(
+            eq(ticketReplies.ticketId, input.ticketId),
+            eq(ticketReplies.isAdmin, 1) // Only mark admin replies
+          ));
+      }
 
       return { success: true };
     }),
@@ -213,9 +232,9 @@ export const ticketsRouter = router({
           .where(eq(supportTickets.id, ticketId));
       }
 
-      return { 
-        success: true, 
-        count: input.ticketIds.length 
+      return {
+        success: true,
+        count: input.ticketIds.length
       };
     }),
 
@@ -238,7 +257,7 @@ export const ticketsRouter = router({
       }
 
       const tickets = await query.orderBy(desc(supportTickets.createdAt));
-      
+
       // Filter by search keyword if provided
       let filteredTickets = tickets;
       if (input.search) {
@@ -258,11 +277,11 @@ export const ticketsRouter = router({
             .select()
             .from(ticketReplies)
             .where(eq(ticketReplies.ticketId, ticket.id));
-          
+
           const unreadCount = unreadReplies.filter(
             (reply) => reply.isAdmin === 0 && reply.isReadByAdmin === 0
           ).length;
-          
+
           return {
             ...ticket,
             unreadCount,

@@ -1566,7 +1566,7 @@ Example output: ["Air Purifier", "Product Specifications"]`;
     updateRole: adminProcedure
       .input(z.object({
         id: z.number(),
-        role: z.string(),
+        role: z.enum(["user", "admin"]),
       }))
       .mutation(async ({ input }) => {
         const db = await getDb();

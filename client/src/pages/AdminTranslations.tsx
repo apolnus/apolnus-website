@@ -377,8 +377,8 @@ export default function AdminTranslations() {
 
                       {/* 進度條容器：使用保留空間策略避免閃爍 */}
                       <div className={`space-y-2 transition-all duration-300 ${progressVisible && translationProgress.total > 0
-                          ? 'opacity-100 max-h-32'
-                          : 'opacity-0 max-h-0 overflow-hidden'
+                        ? 'opacity-100 max-h-32'
+                        : 'opacity-0 max-h-0 overflow-hidden'
                         }`}>
                         <div className="flex items-center justify-between text-sm text-gray-600">
                           <span>
@@ -391,12 +391,12 @@ export default function AdminTranslations() {
                         <div className="w-full bg-gray-200 rounded-full h-2.5">
                           <div
                             className={`h-2.5 rounded-full transition-all duration-500 ${autoFillMutation.isPending
-                                ? "bg-gradient-to-r from-purple-600 to-blue-600"
-                                : "bg-green-500"
+                              ? "bg-gradient-to-r from-purple-600 to-blue-600"
+                              : "bg-green-500"
                               }`}
                             style={{
                               width: `${(translationProgress.current / (translationProgress.total || 1)) * 100}%`,
-                            }}
+                            } as React.CSSProperties}
                           />
                         </div>
                         <p className="text-xs text-gray-500">
@@ -530,6 +530,7 @@ export default function AdminTranslations() {
                                     }
                                   }}
                                   className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                  aria-label="Select all translations"
                                 />
                               </TableHead>
                               <TableHead className="w-[300px]">Key</TableHead>
@@ -563,6 +564,7 @@ export default function AdminTranslations() {
                                         }
                                       }}
                                       className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                      aria-label={`Select translation ${entry.key}`}
                                     />
                                   </TableCell>
                                   <TableCell className="font-mono text-xs text-gray-600">
