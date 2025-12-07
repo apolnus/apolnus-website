@@ -79,7 +79,10 @@ async function main() {
 
     } catch (error) {
         console.error('Migration failed:', error);
-        process.exit(1);
+        // Do not crash the deployment if migration fails (e.g. connectivity issues)
+        // The server should still attempt to start.
+        console.warn('Migration warning: Continuing startup despite migration failure.');
+        process.exit(0);
     }
 }
 
