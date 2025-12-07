@@ -1,21 +1,34 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import HttpBackend from 'i18next-http-backend';
 
-// Initialize i18n
+// Import all locale JSON files directly
+import zhTW from './locales/zh-TW.json';
+import zhCN from './locales/zh-CN.json';
+import en from './locales/en.json';
+import ja from './locales/ja.json';
+import ko from './locales/ko.json';
+import de from './locales/de.json';
+import fr from './locales/fr.json';
+
+// Initialize i18n with local JSON files
 i18n
-  .use(HttpBackend)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    backend: {
-      loadPath: '/api/translations/{{lng}}',
+    resources: {
+      'zh-TW': { translation: zhTW },
+      'zh-CN': { translation: zhCN },
+      'en': { translation: en },
+      'ja': { translation: ja },
+      'ko': { translation: ko },
+      'de': { translation: de },
+      'fr': { translation: fr },
     },
     fallbackLng: 'zh-TW',
     lng: 'zh-TW', // Set default language explicitly
     supportedLngs: ['zh-TW', 'zh-CN', 'en', 'ja', 'ko', 'de', 'fr'],
-    debug: true,
+    debug: false,
     interpolation: {
       escapeValue: false,
     },
@@ -24,17 +37,10 @@ i18n
       caches: ['localStorage'],
     },
     react: {
-      useSuspense: false, // Disable suspense to avoid loading issues used in components without Suspense boundary
+      useSuspense: false,
     },
   });
 
-console.log('[i18n] Initialized');
-console.log('[i18n] Current language:', i18n.language);
-console.log('[i18n] Test translation:', i18n.t('nav.one'));
-
-// Expose to window for debugging
-if (typeof window !== 'undefined') {
-  (window as any).i18next = i18n;
-}
+console.log('[i18n] Initialized with local JSON files');
 
 export default i18n;
