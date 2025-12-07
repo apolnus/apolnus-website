@@ -47,6 +47,9 @@ COPY *.csv ./
 # Copy client directory from builder stage to ensure all files are present
 COPY --from=builder /app/client ./client
 
+# Explicitly copy i18n locales from build context (not builder) as they may be modified during build
+COPY client/src/i18n/locales ./client/src/i18n/locales
+
 # Debug: List locales directory to confirm files are copied
 RUN ls -la /app/client/src/i18n/locales/ || echo "Locales directory not found!"
 
