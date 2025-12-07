@@ -777,7 +777,14 @@ Respond ONLY in valid JSON format:
       .input(z.object({ lang: z.string() }))
       .mutation(async ({ input }) => {
         // Use process.cwd() for reliable path resolution in both dev and production
+        // Use process.cwd() for reliable path resolution in both dev and production
         const projectRoot = process.cwd();
+        console.log(`[Scan] Current working directory: ${projectRoot}`);
+        try {
+          console.log(`[Scan] Root directory contents:`, fsSync.readdirSync(projectRoot));
+        } catch (e) {
+          console.log(`[Scan] Failed to list root directory:`, e);
+        }
 
         // Define potential locales directories (Production vs Development)
         const possiblePaths = [
@@ -787,9 +794,19 @@ Respond ONLY in valid JSON format:
 
         let localesDir = '';
         for (const p of possiblePaths) {
-          if (fsSync.existsSync(p)) {
-            localesDir = p;
-            break;
+          const exists = fsSync.existsSync(p);
+          console.log(`[Scan] Checking path: ${p} -> Exists? ${exists}`);
+          if (exists) {
+            try {
+              const files = fsSync.readdirSync(p);
+              console.log(`[Scan] Files in ${p}:`, files);
+              if (files.length > 0) {
+                localesDir = p;
+                break;
+              }
+            } catch (e) {
+              console.log(`[Scan] Error reading directory ${p}:`, e);
+            }
           }
         }
 
