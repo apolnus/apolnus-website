@@ -792,7 +792,11 @@ Respond ONLY in valid JSON format:
           const zhTWContent = await fs.readFile(zhTWPath, 'utf-8');
           zhTWData = JSON.parse(zhTWContent);
         } catch (error) {
-          throw new Error('無法讀取繁體中文翻譯檔案');
+          console.error(`[Translations] Failed to read zh-TW.json from: ${zhTWPath}`);
+          console.error(`[Translations] Locales dir: ${localesDir}`);
+          console.error(`[Translations] Project root: ${projectRoot}`);
+          console.error(`[Translations] Error:`, error);
+          throw new Error(`無法讀取繁體中文翻譯檔案 (路徑: ${zhTWPath})`);
         }
 
         try {
