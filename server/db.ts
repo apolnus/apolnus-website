@@ -1,8 +1,9 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { eq } from "drizzle-orm";
-import { InsertUser, users } from "../drizzle/schema";
-import { ENV } from './_core/env';
+import { users } from "../drizzle/schema.ts";
+import type { InsertUser } from "../drizzle/schema.ts";
+import { ENV } from "./_core/env.ts";
 
 // Global connection pool
 let _pool: mysql.Pool | null = null;
