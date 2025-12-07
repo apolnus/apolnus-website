@@ -811,8 +811,8 @@ Respond ONLY in valid JSON format:
         }
 
         if (!localesDir) {
-          console.error(`[Translations] Locales directory not found in: ${possiblePaths.join(', ')}`);
-          throw new Error('找不到翻譯檔案目錄');
+          console.error(`[Translations] (NEW CHECK) Locales directory not found in: ${possiblePaths.join(', ')}`);
+          throw new Error('找不到翻譯檔案目錄 (NEW CHECK)');
         }
 
         const zhTWPath = path.join(localesDir, 'zh-TW.json');
