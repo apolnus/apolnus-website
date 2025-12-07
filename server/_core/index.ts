@@ -48,8 +48,9 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
     // Check both potential paths
     const localesPaths = [
+      path.join(projectRoot, "locales"), // Production (new reliable path)
       path.join(projectRoot, "client/src/i18n/locales"),
-      path.join(projectRoot, "dist/client/src/i18n/locales") // Just in case structure is different in dist
+      path.join(projectRoot, "dist/client/src/i18n/locales")
     ];
 
     let found = false;

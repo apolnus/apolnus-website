@@ -5,6 +5,7 @@ import { getDb } from "../db";
 import { subscribers, partners, siteSettings, productModels, faqs, warrantyRegistrations, supportTickets, ticketReplies, seoSettings, jobs, users } from "../../drizzle/schema";
 import { eq, and, desc, sql, like, or } from 'drizzle-orm';
 import * as fs from 'fs/promises';
+import * as fsSync from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -777,9 +778,26 @@ Respond ONLY in valid JSON format:
       .mutation(async ({ input }) => {
         // Use process.cwd() for reliable path resolution in both dev and production
         const projectRoot = process.cwd();
-        const localesDir = path.join(projectRoot, 'client/src/i18n/locales');
 
-        // Read zh-TW (source) and target language JSON files
+        // Define potential locales directories (Production vs Development)
+        const possiblePaths = [
+          path.join(projectRoot, 'locales'),              // Production (simplified path)
+          path.join(projectRoot, 'client/src/i18n/locales') // Development
+        ];
+
+        let localesDir = '';
+        for (const p of possiblePaths) {
+          if (fsSync.existsSync(p)) {
+            localesDir = p;
+            break;
+          }
+        }
+
+        if (!localesDir) {
+          console.error(`[Translations] Locales directory not found in: ${possiblePaths.join(', ')}`);
+          throw new Error('找不到翻譯檔案目錄');
+        }
+
         const zhTWPath = path.join(localesDir, 'zh-TW.json');
         const targetPath = path.join(localesDir, `${input.lang}.json`);
 
@@ -849,8 +867,27 @@ Respond ONLY in valid JSON format:
       }))
       .mutation(async ({ input }) => {
         // Use process.cwd() for reliable path resolution in both dev and production
+        // Use process.cwd() for reliable path resolution in both dev and production
         const projectRoot = process.cwd();
-        const localesDir = path.join(projectRoot, 'client/src/i18n/locales');
+
+        // Define potential locales directories (Production vs Development)
+        const possiblePaths = [
+          path.join(projectRoot, 'locales'),              // Production (simplified path)
+          path.join(projectRoot, 'client/src/i18n/locales') // Development
+        ];
+
+        let localesDir = '';
+        for (const p of possiblePaths) {
+          if (fsSync.existsSync(p)) {
+            localesDir = p;
+            break;
+          }
+        }
+
+        if (!localesDir) {
+          throw new Error('找不到翻譯檔案目錄');
+        }
+
         const targetPath = path.join(localesDir, `${input.lang}.json`);
 
         // Read existing target JSON
@@ -893,9 +930,27 @@ Respond ONLY in valid JSON format:
         keys: z.array(z.string()),
       }))
       .mutation(async ({ input }) => {
-        // Use process.cwd() for reliable path resolution in both dev and production
         const projectRoot = process.cwd();
-        const localesDir = path.join(projectRoot, 'client/src/i18n/locales');
+
+        // Define potential locales directories (Production vs Development)
+        const possiblePaths = [
+          path.join(projectRoot, 'locales'),              // Production (simplified path)
+          path.join(projectRoot, 'client/src/i18n/locales') // Development
+        ];
+
+        let localesDir = '';
+        for (const p of possiblePaths) {
+          if (fsSync.existsSync(p)) {
+            localesDir = p;
+            break;
+          }
+        }
+
+        if (!localesDir) {
+          console.error(`[Translations] Locales directory not found in: ${possiblePaths.join(', ')}`);
+          throw new Error('找不到翻譯檔案目錄');
+        }
+
         const zhTWPath = path.join(localesDir, 'zh-TW.json');
         const targetPath = path.join(localesDir, `${input.lang}.json`);
 

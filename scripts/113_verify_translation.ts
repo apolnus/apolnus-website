@@ -10,7 +10,25 @@ async function verifyTranslationAccess() {
     console.log(`[Diagnostic] process.cwd(): ${projectRoot}`);
 
     // Construct path exactly as in the server code
-    const localesDir = path.join(projectRoot, 'client/src/i18n/locales');
+    const possiblePaths = [
+        path.join(projectRoot, 'locales'),              // Production (simplified path)
+        path.join(projectRoot, 'client/src/i18n/locales') // Development
+    ];
+
+    let localesDir = '';
+    for (const p of possiblePaths) {
+        if (fs.existsSync(p)) {
+            localesDir = p;
+            console.log(`[Diagnostic] Found locales at: ${localesDir}`);
+            break;
+        }
+    }
+
+    if (!localesDir) {
+        console.error(`[Diagnostic] ❌ Locales directory NOT found in any expected path: ${possiblePaths.join(', ')}`);
+        return;
+    }
+
     const zhTWPath = path.join(localesDir, 'zh-TW.json');
 
     console.log(`[Diagnostic] Constructed Path: ${zhTWPath}`);
