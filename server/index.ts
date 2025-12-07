@@ -6,53 +6,6 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// --- Diagnostics Check ---
-(async function runDiagnostics() {
-  try {
-    const fs = await import("fs");
-    console.log("[Diagnostics] Starting checks...");
-
-    // 1. Check Project Root and Locales
-    const projectRoot = process.cwd();
-    console.log(`[Diagnostics] Process CWD: ${projectRoot}`);
-
-    const localesDir = path.join(projectRoot, "client/src/i18n/locales");
-    console.log(`[Diagnostics] Checking locales dir: ${localesDir}`);
-
-    if (fs.existsSync(localesDir)) {
-      const files = fs.readdirSync(localesDir);
-      console.log(`[Diagnostics] Locales found (${files.length} files):`, files.join(", "));
-      if (files.includes("zh-TW.json")) {
-        console.log("[Diagnostics] ✅ zh-TW.json exists.");
-      } else {
-        console.error("[Diagnostics] ❌ zh-TW.json MISSING!");
-      }
-    } else {
-      console.error("[Diagnostics] ❌ LOCALES DIRECTORY DOES NOT EXIST!");
-      // Try listing parent dirs to see what exists
-      const clientSrc = path.join(projectRoot, "client/src");
-      if (fs.existsSync(clientSrc)) console.log(`[Diagnostics] client/src content: ${fs.readdirSync(clientSrc).join(", ")}`);
-      else console.log("[Diagnostics] client/src missing");
-    }
-
-    // 2. Check AI Env Vars
-    const hasApiUrl = !!process.env.BUILT_IN_FORGE_API_URL;
-    const hasApiKey = !!process.env.BUILT_IN_FORGE_API_KEY;
-    console.log(`[Diagnostics] AI Env Vars: URL=${hasApiUrl ? "OK" : "MISSING"}, KEY=${hasApiKey ? "OK" : "MISSING"}`);
-
-    if (hasApiUrl && hasApiKey) {
-      console.log("[Diagnostics] ✅ AI Translation service ready.");
-    } else {
-      console.warn("[Diagnostics] ⚠️ AI Translation service NOT configured (missing env vars).");
-    }
-
-    console.log("[Diagnostics] Checks completed.");
-  } catch (e) {
-    console.error("[Diagnostics] Critical error during checks:", e);
-  }
-})();
-// -------------------------
-
 async function startServer() {
   const app = express();
   const server = createServer(app);
