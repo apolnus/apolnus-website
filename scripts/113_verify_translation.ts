@@ -29,30 +29,25 @@ async function verifyTranslationAccess() {
         return;
     }
 
-    const zhTWPath = path.join(localesDir, 'zh-TW.json');
-
-    console.log(`[Diagnostic] Constructed Path: ${zhTWPath}`);
-
-    try {
-        if (fs.existsSync(zhTWPath)) {
-            console.log('[Diagnostic] ✅ File exists on disk.');
-            const content = fs.readFileSync(zhTWPath, 'utf-8');
-            const data = JSON.parse(content);
-            const keys = Object.keys(data).length;
-            console.log(`[Diagnostic] ✅ File parsed successfully. Found ${keys} keys.`);
-            console.log('[Diagnostic] Sample keys:', Object.keys(data).slice(0, 3));
-        } else {
-            console.error('[Diagnostic] ❌ File NOT found at constructed path.');
-
-            // Debug: what IS in the parent dir?
-            if (fs.existsSync(localesDir)) {
-                console.log(`[Diagnostic] Contents of ${localesDir}:`, fs.readdirSync(localesDir));
+    // New filenames after renaming
+    const newFiles = ['jp.json', 'tw.json', 'cn.json'];
+    for (const fileName of newFiles) {
+        const filePath = path.join(localesDir, fileName);
+        console.log(`[Diagnostic] Checking file: ${filePath}`);
+        try {
+            if (fs.existsSync(filePath)) {
+                console.log('[Diagnostic] ✅ File exists on disk.');
+                const content = fs.readFileSync(filePath, 'utf-8');
+                const data = JSON.parse(content);
+                const keys = Object.keys(data).length;
+                console.log(`[Diagnostic] ✅ File parsed successfully. Found ${keys} keys.`);
+                console.log('[Diagnostic] Sample keys:', Object.keys(data).slice(0, 3));
             } else {
-                console.log(`[Diagnostic] Parent directory ${localesDir} does not exist.`);
+                console.error('[Diagnostic] ❌ File NOT found at constructed path.');
             }
+        } catch (error) {
+            console.error('[Diagnostic] ❌ Error reading file:', error);
         }
-    } catch (error) {
-        console.error('[Diagnostic] ❌ Error reading file:', error);
     }
 
     console.log('--- Verification Script End ---');

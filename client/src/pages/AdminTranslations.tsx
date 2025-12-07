@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,11 +19,11 @@ interface TranslationEntry {
 
 const LANGUAGES = [
     { code: 'en', name: 'English' },
-    { code: 'ja', name: '日本語' },
+    { code: 'jp', name: '日本語' },
     { code: 'ko', name: '한국어' },
     { code: 'de', name: 'Deutsch' },
     { code: 'fr', name: 'Français' },
-    { code: 'zh-CN', name: '简体中文' },
+    { code: 'cn', name: '简体中文' },
 ];
 
 export default function AdminTranslations() {
