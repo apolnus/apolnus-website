@@ -3,10 +3,10 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Import all locale JSON files directly
-import zhTW from './locales/zh-TW.json';
-import zhCN from './locales/zh-CN.json';
+import tw from './locales/tw.json';
+import cn from './locales/cn.json';
 import en from './locales/en.json';
-import ja from './locales/ja.json';
+import jp from './locales/jp.json';
 import ko from './locales/ko.json';
 import de from './locales/de.json';
 import fr from './locales/fr.json';
@@ -17,10 +17,10 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      'zh-TW': { translation: zhTW },
-      'zh-CN': { translation: zhCN },
+      'zh-TW': { translation: tw },
+      'zh-CN': { translation: cn },
       'en': { translation: en },
-      'ja': { translation: ja },
+      'ja': { translation: jp },
       'ko': { translation: ko },
       'de': { translation: de },
       'fr': { translation: fr },
