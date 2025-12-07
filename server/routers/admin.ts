@@ -1024,10 +1024,109 @@ Example output: ["Air Purifier", "Product Specifications"]`;
         return { success: true, translatedCount };
       }),
 
-    // Extract from source - disabled in production as source code is not available
+    // Extract from source - scan frontend code for t() function calls
     extractFromSource: adminProcedure
       .mutation(async () => {
-        throw new Error('Source code extraction is not available in production. Please add translations manually via the Admin interface.');
+        const db = await getDb();
+        const clientDir = path.join(process.cwd(), 'client/src');
+
+        // Check if client directory exists
+        try {
+          await fs.access(clientDir);
+        } catch {
+          throw new Error('前端原始碼目錄不存在。請確認 Docker 映像檔已正確包含 client 資料夾。');
+        }
+
+        const extractedKeys = new Set<string>();
+
+        // Recursive function to scan files
+        async function scanDirectory(dir: string): Promise<void> {
+          const entries = await fs.readdir(dir, { withFileTypes: true });
+
+          for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name);
+
+            if (entry.isDirectory()) {
+              // Skip node_modules and other non-essential directories
+              if (!['node_modules', '.git', 'dist', 'build'].includes(entry.name)) {
+                await scanDirectory(fullPath);
+              }
+            } else if (entry.isFile() && /\.(tsx?|jsx?)$/.test(entry.name)) {
+              // Read and scan TypeScript/JavaScript files
+              const content = await fs.readFile(fullPath, 'utf-8');
+
+              // Match t('key'), t("key"), t(`key`)
+              const regex = /\bt\s*\(\s*['"`]([^'"`]+)['"`]/g;
+              let match;
+
+              while ((match = regex.exec(content)) !== null) {
+                const key = match[1];
+                // Filter out dynamic keys (containing ${}) and very short keys
+                if (!key.includes('${') && key.length > 1) {
+                  extractedKeys.add(key);
+                }
+              }
+
+              // Also match useTranslation pattern: i18n.t('key')
+              const i18nRegex = /i18n\.t\s*\(\s*['"`]([^'"`]+)['"`]/g;
+              while ((match = i18nRegex.exec(content)) !== null) {
+                const key = match[1];
+                if (!key.includes('${') && key.length > 1) {
+                  extractedKeys.add(key);
+                }
+              }
+            }
+          }
+        }
+
+        await scanDirectory(clientDir);
+
+        if (extractedKeys.size === 0) {
+          return { success: true, newKeysCount: 0, message: '未找到任何翻譯 key' };
+        }
+
+        // Get existing keys from database
+        const existingEntries = await db.select({ key: translations.key })
+          .from(translations)
+          .where(eq(translations.lang, 'zh-TW'));
+
+        const existingKeys = new Set(existingEntries.map(e => e.key));
+
+        // Find new keys that don't exist in database
+        const newKeys = Array.from(extractedKeys).filter(key => !existingKeys.has(key));
+
+        if (newKeys.length === 0) {
+          return {
+            success: true,
+            newKeysCount: 0,
+            totalScanned: extractedKeys.size,
+            message: '所有 key 都已存在於資料庫中'
+          };
+        }
+
+        // Insert new keys with placeholder values
+        const insertValues = newKeys.map(key => ({
+          key,
+          lang: 'zh-TW',
+          value: key, // Use key as placeholder value
+          namespace: 'translation',
+        }));
+
+        // Insert in batches
+        const batchSize = 100;
+        for (let i = 0; i < insertValues.length; i += batchSize) {
+          const batch = insertValues.slice(i, i + batchSize);
+          await db.insert(translations)
+            .values(batch)
+            .onDuplicateKeyUpdate({ set: { key: sql`key` } }); // Ignore duplicates
+        }
+
+        return {
+          success: true,
+          newKeysCount: newKeys.length,
+          totalScanned: extractedKeys.size,
+          message: `成功新增 ${newKeys.length} 個新的翻譯 key`
+        };
       }),
   }),
 

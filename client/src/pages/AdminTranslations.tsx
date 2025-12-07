@@ -114,6 +114,18 @@ export default function AdminTranslations() {
     onError: (error) => toast.error(`刪除失敗: ${error.message}`),
   });
 
+  const extractMutation = trpc.admin.translations.extractFromSource.useMutation({
+    onSuccess: (result) => {
+      if (result.newKeysCount > 0) {
+        toast.success(`掃描完成！新增 ${result.newKeysCount} 個翻譯 key（共掃描 ${result.totalScanned} 個）`);
+      } else {
+        toast.info(result.message || '掃描完成，沒有發現新的翻譯 key');
+      }
+      refetch();
+    },
+    onError: (error) => toast.error(`掃描失敗: ${error.message}`),
+  });
+
   // Simulate progress updates during AI translation
   useEffect(() => {
     if (autoFillMutation.isPending && data && data.missingCount > 0) {
@@ -301,16 +313,52 @@ export default function AdminTranslations() {
                   </Card>
                 </div>
 
-                {/* AI Auto-Fill Buttons */}
-                <div className="grid grid-cols-1 gap-4">
+                {/* Scan Source Code */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>掃描網站文字</CardTitle>
+                      <CardDescription>
+                        掃描前端原始碼，自動提取所有使用 t() 函數的翻譯 key
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button
+                        onClick={() => {
+                          const confirmed = confirm('確定要掃描整個網站的前端原始碼嗎？\n\n這將會提取所有需要翻譯的文字 key。');
+                          if (confirmed) {
+                            extractMutation.mutate();
+                          }
+                        }}
+                        disabled={extractMutation.isPending}
+                        variant="outline"
+                        className="w-full"
+                        size="lg"
+                      >
+                        {extractMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            掃描中...
+                          </>
+                        ) : (
+                          <>
+                            <ScanSearch className="w-4 h-4 mr-2" />
+                            🔍 掃描並提取新文字
+                          </>
+                        )}
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  {/* AI Auto-Fill */}
                   <Card>
                     <CardHeader>
                       <CardTitle>AI 自動翻譯</CardTitle>
                       <CardDescription>
-                        使用AI自動翻譯所有缺漏的條目，基於繁體中文原文進行翻譯
+                        使用AI自動翻譯所有缺漏的條目
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent>
                       <Button
                         onClick={handleAutoFill}
                         disabled={autoFillMutation.isPending || (data && data.missingCount === 0 && selectedKeys.length === 0)}
@@ -334,58 +382,62 @@ export default function AdminTranslations() {
                           </>
                         )}
                       </Button>
+                    </CardContent>
+                  </Card>
+                </div>
 
-                      {/* 進度條容器：使用保留空間策略避免閃爍 */}
-                      <div className={`space-y-2 transition-all duration-300 ${progressVisible && translationProgress.total > 0
-                        ? 'opacity-100 max-h-32'
-                        : 'opacity-0 max-h-0 overflow-hidden'
-                        }`}>
-                        <div className="flex items-center justify-between text-sm text-gray-600">
-                          <span>
-                            {autoFillMutation.isPending ? "翻譯進度" : "✅ 翻譯完成"}
-                          </span>
-                          <span className="font-medium">
-                            {Math.round((translationProgress.current / (translationProgress.total || 1)) * 100)}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
-                          <div
-                            className={`h-2.5 rounded-full transition-all duration-500 ${autoFillMutation.isPending
-                              ? "bg-gradient-to-r from-purple-600 to-blue-600"
-                              : "bg-green-500"
-                              }`}
-                            aria-valuenow={Math.round((translationProgress.current / (translationProgress.total || 1)) * 100)}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                            role="progressbar"
-
-                            // eslint-disable-next-line react-dom/no-unsafe-inline-style
-                            style={{
-                              width: `${(translationProgress.current / (translationProgress.total || 1)) * 100}%`,
-                            } as React.CSSProperties}
-                          />
-                        </div>
-                        <p className="text-xs text-gray-500">
-                          {autoFillMutation.isPending
-                            ? "正在使用 AI 翻譯，請稍候..."
-                            : "已更新翻譯檔案，正在刷新列表..."}
-                        </p>
-                        {/* 翻譯完成提示 */}
-                        {translationProgress.current === translationProgress.total && translationProgress.total > 0 && (
-                          <div className="text-green-600 font-bold text-center animate-pulse pt-2">
-                            🎉 翻譯完成！
-                          </div>
-                        )}
+                {/* Progress Bar for AI Translation */}
+                <div className={`space-y-2 transition-all duration-300 ${progressVisible && translationProgress.total > 0
+                  ? 'opacity-100 max-h-32'
+                  : 'opacity-0 max-h-0 overflow-hidden'
+                  }`}>
+                  <Card>
+                    <CardContent className="pt-4">
+                      <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                        <span>
+                          {autoFillMutation.isPending ? "翻譯進度" : "✅ 翻譯完成"}
+                        </span>
+                        <span className="font-medium">
+                          {Math.round((translationProgress.current / (translationProgress.total || 1)) * 100)}%
+                        </span>
                       </div>
-                      {data && data.missingCount === 0 && (
-                        <p className="text-sm text-green-600 mt-2 flex items-center gap-1">
-                          <CheckCircle2 className="w-4 h-4" />
-                          所有翻譯已完成！
-                        </p>
+                      <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div
+                          className={`h-2.5 rounded-full transition-all duration-500 ${autoFillMutation.isPending
+                            ? "bg-gradient-to-r from-purple-600 to-blue-600"
+                            : "bg-green-500"
+                            }`}
+                          aria-valuenow={Math.round((translationProgress.current / (translationProgress.total || 1)) * 100)}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          role="progressbar"
+                          title={`翻譯進度: ${Math.round((translationProgress.current / (translationProgress.total || 1)) * 100)}%`}
+                          // eslint-disable-next-line react-dom/no-unsafe-inline-style
+                          style={{
+                            width: `${(translationProgress.current / (translationProgress.total || 1)) * 100}%`,
+                          } as React.CSSProperties}
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {autoFillMutation.isPending
+                          ? "正在使用 AI 翻譯，請稍候..."
+                          : "已更新翻譯檔案，正在刷新列表..."}
+                      </p>
+                      {translationProgress.current === translationProgress.total && translationProgress.total > 0 && (
+                        <div className="text-green-600 font-bold text-center animate-pulse pt-2">
+                          🎉 翻譯完成！
+                        </div>
                       )}
                     </CardContent>
                   </Card>
                 </div>
+
+                {data && data.missingCount === 0 && (
+                  <p className="text-sm text-green-600 flex items-center gap-1">
+                    <CheckCircle2 className="w-4 h-4" />
+                    所有翻譯已完成！
+                  </p>
+                )}
 
                 {/* Search */}
                 <Card>
