@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { getDb } from '../server/db.ts';
-import { translations } from '../drizzle/schema.ts';
+import { getDb } from '../server/db';
+import { translations } from '../drizzle/schema';
 import fs from 'fs/promises';
 import path from 'path';
 import { sql } from 'drizzle-orm';

@@ -40,6 +40,7 @@ COPY --from=builder /app/dist ./dist
 COPY drizzle.config.ts ./
 COPY drizzle ./drizzle
 COPY scripts ./scripts
+COPY server ./server
 COPY shared ./shared
 COPY --from=builder /app/client ./client
 COPY client/src/i18n/locales ./client/src/i18n/locales
