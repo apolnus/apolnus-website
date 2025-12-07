@@ -47,6 +47,9 @@ COPY *.csv ./
 # Copy client directory from builder stage to ensure all files are present
 COPY --from=builder /app/client ./client
 
+# Debug: List locales directory to confirm files are copied
+RUN ls -la /app/client/src/i18n/locales/ || echo "Locales directory not found!"
+
 # Expose port (Zeabur will override this with PORT env var)
 EXPOSE 3000
 
