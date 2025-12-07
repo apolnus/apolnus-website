@@ -46,9 +46,12 @@ COPY *.csv ./
 
 # Explicitly copy i18n locales to a dedicated directory for reliability
 COPY --from=builder /app/client/src/i18n/locales ./locales/
+# Also copy to the original development path for fallback
+COPY --from=builder /app/client/src/i18n/locales ./client/src/i18n/locales/
 
-# Debug: List locales directory to confirm files are copied
-RUN ls -la /app/locales/ || echo "Locales directory not found!"
+# Debug: List both locales directories to confirm files are copied
+RUN echo "=== /app/locales ===" && ls -la /app/locales/ || echo "Locales not found in /app/locales"
+RUN echo "=== /app/client/src/i18n/locales ===" && ls -la /app/client/src/i18n/locales/ || echo "Locales not found in /app/client/src/i18n/locales"
 
 # Expose port (Zeabur will override this with PORT env var)
 EXPOSE 3000
