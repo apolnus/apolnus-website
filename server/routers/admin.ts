@@ -775,10 +775,8 @@ Respond ONLY in valid JSON format:
     scan: adminProcedure
       .input(z.object({ lang: z.string() }))
       .mutation(async ({ input }) => {
-        // Calculate project root from this file's location (server/routers/admin.ts)
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = path.dirname(__filename);
-        const projectRoot = path.resolve(__dirname, '../..');
+        // Use process.cwd() for reliable path resolution in both dev and production
+        const projectRoot = process.cwd();
         const localesDir = path.join(projectRoot, 'client/src/i18n/locales');
 
         // Read zh-TW (source) and target language JSON files
@@ -850,10 +848,8 @@ Respond ONLY in valid JSON format:
         })),
       }))
       .mutation(async ({ input }) => {
-        // Calculate project root from this file's location (server/routers/admin.ts)
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = path.dirname(__filename);
-        const projectRoot = path.resolve(__dirname, '../..');
+        // Use process.cwd() for reliable path resolution in both dev and production
+        const projectRoot = process.cwd();
         const localesDir = path.join(projectRoot, 'client/src/i18n/locales');
         const targetPath = path.join(localesDir, `${input.lang}.json`);
 
@@ -897,10 +893,8 @@ Respond ONLY in valid JSON format:
         keys: z.array(z.string()),
       }))
       .mutation(async ({ input }) => {
-        // Calculate project root from this file's location (server/routers/admin.ts)
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = path.dirname(__filename);
-        const projectRoot = path.resolve(__dirname, '../..');
+        // Use process.cwd() for reliable path resolution in both dev and production
+        const projectRoot = process.cwd();
         const localesDir = path.join(projectRoot, 'client/src/i18n/locales');
         const zhTWPath = path.join(localesDir, 'zh-TW.json');
         const targetPath = path.join(localesDir, `${input.lang}.json`);
