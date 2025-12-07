@@ -45,7 +45,7 @@ COPY shared ./shared
 COPY *.csv ./
 
 # Explicitly copy i18n locales to a dedicated directory for reliability
-COPY client/src/i18n/locales/ ./locales/
+COPY --from=builder /app/client/src/i18n/locales ./locales/
 
 # Debug: List locales directory to confirm files are copied
 RUN ls -la /app/locales/ || echo "Locales directory not found!"

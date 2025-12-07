@@ -799,7 +799,9 @@ Respond ONLY in valid JSON format:
         }
 
         const zhTWPath = path.join(localesDir, 'zh-TW.json');
-        const targetPath = path.join(localesDir, `${input.lang}.json`);
+        const langMap: Record<string, string> = { ja: 'jp', 'zh-TW': 'tw', 'zh-CN': 'cn' };
+        const targetFileName = `${langMap[input.lang] ?? input.lang}.json`;
+        const targetPath = path.join(localesDir, targetFileName);
 
         let zhTWData: Record<string, any> = {};
         let targetData: Record<string, any> = {};
@@ -848,11 +850,17 @@ Respond ONLY in valid JSON format:
           isMissing: !targetFlat[key],
         }));
 
+        const totalCount = entries.length;
+        const missingCount = entries.filter(e => e.isMissing).length;
+        const completedCount = totalCount - missingCount;
+        const completionRate = totalCount === 0 ? 100 : Math.round((completedCount / totalCount) * 100);
         return {
           lang: input.lang,
           entries,
-          totalCount: entries.length,
-          missingCount: entries.filter(e => e.isMissing).length,
+          totalCount,
+          missingCount,
+          completedCount,
+          completionRate,
         };
       }),
 
