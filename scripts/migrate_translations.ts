@@ -63,11 +63,9 @@ async function main() {
                     const chunk = records.slice(i, i + chunkSize);
                     await db.insert(translations)
                         .values(chunk)
-                        // @ts-ignore - drizzle mysql upsert syntax variation
-                        // Use SQL to perform INSERT IGNORE behavior (do nothing on conflict)
-                        // This ensures that any manual edits in Admin DB are preserved,
-                        // while new keys from JSON are added.
-                        .onDuplicateKeyUpdate({ set: { key: sql`key` } });
+                        // Update the value on conflict so that JSON file translations
+                        // always overwrite database entries (fixes zh-TW showing key instead of value)
+                        .onDuplicateKeyUpdate({ set: { value: sql`VALUES(value)` } });
                 }
 
                 console.log(`  Imported ${records.length} keys for ${lang}`);
