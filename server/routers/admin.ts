@@ -768,6 +768,254 @@ Respond ONLY in valid JSON format:
       }),
   }),
 
+  // Translations Management (JSON File-based)
+  translations: router({
+    // Scan and get translations list
+    scan: adminProcedure
+      .input(z.object({ lang: z.string() }))
+      .mutation(async ({ input }) => {
+        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
+
+        // Read zh-TW (source) and target language JSON files
+        const zhTWPath = path.join(localesDir, 'zh-TW.json');
+        const targetPath = path.join(localesDir, `${input.lang}.json`);
+
+        let zhTWData: Record<string, any> = {};
+        let targetData: Record<string, any> = {};
+
+        try {
+          const zhTWContent = await fs.readFile(zhTWPath, 'utf-8');
+          zhTWData = JSON.parse(zhTWContent);
+        } catch (error) {
+          throw new Error('無法讀取繁體中文翻譯檔案');
+        }
+
+        try {
+          const targetContent = await fs.readFile(targetPath, 'utf-8');
+          targetData = JSON.parse(targetContent);
+        } catch {
+          // Target file might not exist yet
+          targetData = {};
+        }
+
+        // Flatten nested JSON to dot notation
+        function flattenObject(obj: Record<string, any>, prefix = ''): Record<string, string> {
+          const result: Record<string, string> = {};
+          for (const key in obj) {
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+            if (typeof obj[key] === 'object' && obj[key] !== null) {
+              Object.assign(result, flattenObject(obj[key], fullKey));
+            } else {
+              result[fullKey] = String(obj[key] || '');
+            }
+          }
+          return result;
+        }
+
+        const zhTWFlat = flattenObject(zhTWData);
+        const targetFlat = flattenObject(targetData);
+
+        // Build entries
+        const entries = Object.entries(zhTWFlat).map(([key, zhTW]) => ({
+          key,
+          zhTW,
+          target: targetFlat[key] || '',
+          isMissing: !targetFlat[key],
+        }));
+
+        return {
+          lang: input.lang,
+          entries,
+          totalCount: entries.length,
+          missingCount: entries.filter(e => e.isMissing).length,
+        };
+      }),
+
+    // Save translations
+    save: adminProcedure
+      .input(z.object({
+        lang: z.string(),
+        updates: z.array(z.object({
+          key: z.string(),
+          value: z.string(),
+        })),
+      }))
+      .mutation(async ({ input }) => {
+        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
+        const targetPath = path.join(localesDir, `${input.lang}.json`);
+
+        // Read existing target JSON
+        let targetData: Record<string, any> = {};
+        try {
+          const content = await fs.readFile(targetPath, 'utf-8');
+          targetData = JSON.parse(content);
+        } catch {
+          targetData = {};
+        }
+
+        // Set nested value by dot notation key
+        function setNestedValue(obj: Record<string, any>, key: string, value: string) {
+          const parts = key.split('.');
+          let current = obj;
+          for (let i = 0; i < parts.length - 1; i++) {
+            if (!current[parts[i]] || typeof current[parts[i]] !== 'object') {
+              current[parts[i]] = {};
+            }
+            current = current[parts[i]];
+          }
+          current[parts[parts.length - 1]] = value;
+        }
+
+        // Apply updates
+        for (const update of input.updates) {
+          setNestedValue(targetData, update.key, update.value);
+        }
+
+        // Write back to file
+        await fs.writeFile(targetPath, JSON.stringify(targetData, null, 2), 'utf-8');
+
+        return { success: true, updatedCount: input.updates.length };
+      }),
+
+    // AI translate selected keys
+    aiTranslate: adminProcedure
+      .input(z.object({
+        lang: z.string(),
+        keys: z.array(z.string()),
+      }))
+      .mutation(async ({ input }) => {
+        const localesDir = path.join(process.cwd(), 'client/src/i18n/locales');
+        const zhTWPath = path.join(localesDir, 'zh-TW.json');
+        const targetPath = path.join(localesDir, `${input.lang}.json`);
+
+        // Read zh-TW JSON
+        let zhTWData: Record<string, any> = {};
+        try {
+          const content = await fs.readFile(zhTWPath, 'utf-8');
+          zhTWData = JSON.parse(content);
+        } catch {
+          throw new Error('無法讀取繁體中文翻譯檔案');
+        }
+
+        // Read target JSON
+        let targetData: Record<string, any> = {};
+        try {
+          const content = await fs.readFile(targetPath, 'utf-8');
+          targetData = JSON.parse(content);
+        } catch {
+          targetData = {};
+        }
+
+        // Flatten zh-TW to get source texts
+        function flattenObject(obj: Record<string, any>, prefix = ''): Record<string, string> {
+          const result: Record<string, string> = {};
+          for (const key in obj) {
+            const fullKey = prefix ? `${prefix}.${key}` : key;
+            if (typeof obj[key] === 'object' && obj[key] !== null) {
+              Object.assign(result, flattenObject(obj[key], fullKey));
+            } else {
+              result[fullKey] = String(obj[key] || '');
+            }
+          }
+          return result;
+        }
+
+        // Set nested value
+        function setNestedValue(obj: Record<string, any>, key: string, value: string) {
+          const parts = key.split('.');
+          let current = obj;
+          for (let i = 0; i < parts.length - 1; i++) {
+            if (!current[parts[i]] || typeof current[parts[i]] !== 'object') {
+              current[parts[i]] = {};
+            }
+            current = current[parts[i]];
+          }
+          current[parts[parts.length - 1]] = value;
+        }
+
+        const zhTWFlat = flattenObject(zhTWData);
+
+        // Language name mapping
+        const langNames: Record<string, string> = {
+          'en': 'English',
+          'ja': 'Japanese',
+          'ko': 'Korean',
+          'de': 'German',
+          'fr': 'French',
+          'zh-CN': 'Simplified Chinese',
+        };
+        const targetLangName = langNames[input.lang] || input.lang;
+
+        // Get Forge API credentials
+        const forgeApiUrl = process.env.BUILT_IN_FORGE_API_URL;
+        const forgeApiKey = process.env.BUILT_IN_FORGE_API_KEY;
+
+        if (!forgeApiUrl || !forgeApiKey) {
+          throw new Error('AI 翻譯服務未配置');
+        }
+
+        // Translate in batches
+        const chunkSize = 10;
+        let translatedCount = 0;
+
+        for (let i = 0; i < input.keys.length; i += chunkSize) {
+          const chunk = input.keys.slice(i, i + chunkSize);
+          const textsToTranslate: Record<string, string> = {};
+
+          for (const key of chunk) {
+            if (zhTWFlat[key]) {
+              textsToTranslate[key] = zhTWFlat[key];
+            }
+          }
+
+          if (Object.keys(textsToTranslate).length === 0) continue;
+
+          const prompt = `Translate the following Traditional Chinese texts to ${targetLangName}.
+Return ONLY a valid JSON object with the exact same keys and translated values.
+Do not include any markdown formatting or code blocks.
+
+${JSON.stringify(textsToTranslate, null, 2)}`;
+
+          try {
+            const response = await fetch(`${forgeApiUrl}/v1/chat/completions`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${forgeApiKey}`,
+              },
+              body: JSON.stringify({
+                model: 'gpt-4o-mini',
+                messages: [{ role: 'user', content: prompt }],
+              }),
+            });
+
+            if (!response.ok) {
+              console.error(`AI translation error: ${response.statusText}`);
+              continue;
+            }
+
+            const result = await response.json();
+            let responseText = result.choices?.[0]?.message?.content || '{}';
+            responseText = responseText.replace(/```json\n|```/g, '').trim();
+
+            const translatedObj = JSON.parse(responseText) as Record<string, string>;
+
+            for (const [key, value] of Object.entries(translatedObj)) {
+              setNestedValue(targetData, key, value);
+              translatedCount++;
+            }
+          } catch (error) {
+            console.error('AI translation batch error:', error);
+          }
+        }
+
+        // Write updated target JSON
+        await fs.writeFile(targetPath, JSON.stringify(targetData, null, 2), 'utf-8');
+
+        return { success: true, translatedCount };
+      }),
+  }),
+
   // Jobs Management
   jobs: router({
     list: adminProcedure.query(async () => {

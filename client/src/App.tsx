@@ -37,6 +37,7 @@ import AdminDealers from "./pages/AdminDealers";
 import AdminServiceCenters from "./pages/AdminServiceCenters";
 import AdminOnlineStores from "./pages/admin/AdminOnlineStores";
 import AdminSEO from "@/pages/admin/AdminSEO";
+import AdminTranslations from "@/pages/AdminTranslations";
 import AdminSocialLinks from "./pages/AdminSocialLinks";
 import AdminJobs from "./pages/admin/AdminJobs";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -117,6 +118,7 @@ function AppRoutes() {
       <Route path="/admin/service-centers" component={AdminServiceCenters} />
       <Route path="/admin/online-stores" component={AdminOnlineStores} />
       <Route path="/admin/seo" component={AdminSEO} />
+      <Route path="/admin/translations" component={AdminTranslations} />
       <Route path="/admin/social-links" component={AdminSocialLinks} />
       <Route path="/admin/jobs" component={AdminJobs} />
       <Route path="/admin/users" component={AdminUsers} />
@@ -181,6 +183,7 @@ function App() {
             <Route path="/admin/service-centers" component={AdminServiceCenters} />
             <Route path="/admin/online-stores" component={AdminOnlineStores} />
             <Route path="/admin/seo" component={AdminSEO} />
+            <Route path="/admin/translations" component={AdminTranslations} />
             <Route path="/admin/social-links" component={AdminSocialLinks} />
             <Route path="/admin/jobs" component={AdminJobs} />
             <Route path="/admin/users" component={AdminUsers} />
