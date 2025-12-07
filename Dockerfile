@@ -42,11 +42,10 @@ COPY drizzle ./drizzle
 COPY scripts ./scripts
 COPY server ./server
 COPY shared ./shared
-COPY client ./client
 COPY *.csv ./
 
-# Ensure i18n locales directory exists and is writable for translations feature
-RUN mkdir -p /app/client/src/i18n/locales && chmod -R 755 /app/client/src/i18n
+# Copy client directory from builder stage to ensure all files are present
+COPY --from=builder /app/client ./client
 
 # Expose port (Zeabur will override this with PORT env var)
 EXPOSE 3000
